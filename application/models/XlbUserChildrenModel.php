@@ -14,6 +14,11 @@ class XlbUserChildrenModel extends Xlb
     protected  $_primary    = 'uc_id';
 
     /**
+     * @var string
+     */
+    protected $_key = 'uc_id';
+
+    /**
      * @var XlbUserChildrenModel
      */
     public static $_instance = null;
@@ -60,7 +65,7 @@ class XlbUserChildrenModel extends Xlb
     public function editData($id,$array)
     {
         $db = $this->getAdapter();
-        $where = $db->quoteInto($this->_primary."=?", $id);
+        $where = $db->quoteInto($this->_key."=?", $id);
         return $this->update($array, $where);
     }
 
@@ -72,7 +77,7 @@ class XlbUserChildrenModel extends Xlb
     public function delData($id)
     {
         $db = $this->getAdapter();
-        $where = $db->quoteInto($this->_primary."=?", $id);
+        $where = $db->quoteInto($this->_key."=?", $id);
         return $this->delete($where);
     }
 }

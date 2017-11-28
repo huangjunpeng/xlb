@@ -86,7 +86,7 @@
 .sidebar-toggle1 {
     background-image: url(../../images/switch_top.png);
     float: left;
-    margin-left: 30px;
+    margin-left: 20px;
     width: 16px;
     height: 11px;
     margin-top: 19px;
@@ -98,7 +98,6 @@
     padding-top: 50px;
     height: 100%;
     position: fixed;
-    position: absolute;
     top: 0;
     left: 0;
     padding-top: 50px;
@@ -166,3 +165,45 @@
 .sidebar-menu > ul > li:hover > svg { fill:#22b7e6; }
 
 .sidebar-menu > ul > li:hover { background-color:#17242d;color:#fff; }
+
+@media screen and (max-width: 768px){
+    .sidebar-mini .main-header .logo {
+        display: none;
+    }
+
+    .sidebar-mini .main-sidebar {
+       display: none;
+    }
+
+    .sidebar-mini.sidebar-collapse .main-sidebar {
+        opacity: 1;
+        display: block;
+        height: calc(100% - 50px);
+        padding-top: 0px;
+        top: 50px;
+        width: 200px !important;
+    }
+}
+@media screen and (max-width: 992px) and (min-width: 768px) {
+    .sidebar-mini .main-header .logo > .logo-mini{
+        opacity: 1;
+    }
+
+    .sidebar-mini .main-header .logo > .logo-lg{
+        opacity: 0;
+    }
+    .sidebar-mini .main-header .logo {
+        width: 60px !important;
+        background-color: #1c2b36;
+    }
+    .sidebar-mini .main-sidebar {
+        width: 60px !important;
+    }
+}
+@media screen and (max-width: 1200px) and (min-width: 992px) {
+
+}
+
+@media screen and (min-width: 1200px) {
+    
+}
