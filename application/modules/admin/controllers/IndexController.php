@@ -1,13 +1,13 @@
 <?php
-class Admin_IndexController extends XlbController
+class Admin_IndexController extends Zend_Controller_Action
 {
     /**
      * 柜子首页
      */
     public function indexAction()
     {
-        $xcm = XlbCabinetModel::getInstance();
-        $this->view->tables = $xcm->getAllCabinet();
+        /*$xcm = XlbCabinetModel::getInstance();
+        $this->view->tables = $xcm->getAllCabinet();*/
     }
 
     /**
