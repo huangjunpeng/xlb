@@ -166,6 +166,57 @@
 
 .sidebar-menu > ul > li:hover { background-color:#17242d;color:#fff; }
 
+
+.content-wrapper {
+    margin-top: 50px;
+    padding-top: 0px;
+    margin-left: 200px;
+    background-color: #edeff4 !important;
+    height: calc(100% - 50px);
+    min-height: 483px;
+}
+
+.content {
+    min-height: 250px;
+    padding: 0px;
+    margin-right: auto;
+    margin-left: auto;
+    padding-top: 1px;
+}
+.content-wrapper > .content {
+    height: 100%;
+}
+
+.fullscreenable {
+    margin: 5px 15px 0px 15px;
+}
+
+.content-wrapper .content>div {
+    border-radius: 4px;
+}
+
+.content-wrapper > .content > .fullscreenable {
+    height: calc(100% - 5px);
+}
+
+.content-wrapper > .content > .fullscreenable > #min-height {
+    background-color: #edeff4;
+    overflow-y: hidden;
+    height: 100%;
+}
+
+#content{
+    height: 100%;
+    background-color: #edeff4;
+    overflow-y: hidden;
+}
+
+iframe{
+    border: none;
+    width: 100%;
+    height: 100%;
+}
+
 @media screen and (max-width: 768px){
     .sidebar-mini .main-header .logo {
         display: none;
@@ -173,6 +224,21 @@
 
     .sidebar-mini .main-sidebar {
        display: none;
+    }
+
+    .sidebar-mini .content-wrapper{
+        margin-left: 0px; !important;
+        -webkit-transition: background-color .3s ease-in-out, width .3s ease-in-out;
+        -moz-transition: background-color .3s ease-in-out, width .3s ease-in-out;
+        -o-transition: background-color .3s ease-in-out, width .3s ease-in-out;
+        transition: background-color .3s ease-in-out, width .3s ease-in-out;
+    }
+    .sidebar-mini.sidebar-collapse .content-wrapper{
+        margin-left: 200px; !important;
+        -webkit-transition: background-color .3s ease-in-out, width .3s ease-in-out;
+        -moz-transition: background-color .3s ease-in-out, width .3s ease-in-out;
+        -o-transition: background-color .3s ease-in-out, width .3s ease-in-out;
+        transition: background-color .3s ease-in-out, width .3s ease-in-out;
     }
 
     .sidebar-mini.sidebar-collapse .main-sidebar {
@@ -183,6 +249,7 @@
         top: 50px;
         width: 200px !important;
     }
+
 }
 @media screen and (max-width: 992px) and (min-width: 768px) {
     .sidebar-mini .main-header .logo > .logo-mini{
@@ -199,11 +266,14 @@
     .sidebar-mini .main-sidebar {
         width: 60px !important;
     }
+    .sidebar-mini .content-wrapper{
+        margin-left: 60px; !important;
+    }
 }
 @media screen and (max-width: 1200px) and (min-width: 992px) {
 
 }
 
 @media screen and (min-width: 1200px) {
-    
+
 }
