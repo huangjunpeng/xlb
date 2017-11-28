@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <title>小萝卜</title>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/scripts/jquery/css/jquery.alerts.css" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/styles/user/style.css" />
+    <style type="text/css">
+        .body {
+            background-color: #f0f0f0;
+        }
+        .wp {
+            width: 960px;
+            margin: 0 auto;
+        }
+        .div-head{
+            height: 50px;
+            background-color: #ffeb16;
+            position: relative;
+            top: 0px;
+            width: 960px;
+        }
+        .div-footer{
+            height: 10px;
+            position: fixed;
+            bottom: 0px;
+            width: 960px;
+        }
+        .div-center{
+            margin-top: 0;
+            background-color: #cbcbcb;
+            position: relative;
+            padding: 10px;
+        }
+        .content {
+            height: 600px;
+            border-radius: 2px;
+            background-color: #f8f8f8;
+            border-color: #e7e7e7;
+        }
+
+        #tbody_ td {
+            text-align: center;
+        }
+
+    </style>
+<body class="body">
+<div class="wp">
+    <div class="div-head">
+        <nav class="navbar navbar-default" role="navigation" style="border: none">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">小萝卜</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="div-center">
+        <div class="content">
+            <table id="tbid" class="table table-striped" style="margin-bottom: 0px">
+                <caption style="text-align: center;font-weight: bolder">书柜信息</caption>
+                <thead>
+                <tr>
+                    <th style="width: 16.6%;text-align: center">书柜编号</th>
+                    <th style="width: 16.6%;text-align: center">柜格子数</th>
+                    <th style="width: 16.6%;text-align: center">书柜名</th>
+                    <th style="width: 16.6%;text-align: center">书柜描述</th>
+                    <th style="width: 16.6%;text-align: center">经度</th>
+                    <th style="width: 16.6%;text-align: center">纬度</th>
+                </tr>
+                </thead>
+
+            </table>
+            <div style="height: 450px;overflow-y: scroll">
+                <table class="table table-striped">
+                    <tbody id="tbody_" >
+                    <?php foreach ($this->tables as $table){?>
+                        <?php echo "<tr data-id='{$table['_id']}'><td style='width: 16.6%;text-align: center'>{$table['_no']}</td>"?>
+                        <?php echo "<td style='width: 16.6%;text-align: center'>{$table['_space_num']}</td>"?>
+                        <?php echo "<td style='width: 16.6%;text-align: center'>{$table['_name']}</td>"?>
+                        <?php echo "<td style='width: 16.6%;text-align: center'>{$table['_desc']}</td>"?>
+                        <?php echo "<td style='width: 16.6%;text-align: center'>{$table['_long']}</td>"?>
+                        <?php echo "<td style='width: 16.6%;text-align: center'>{$table['_lat']}</td></tr>"?>
+                    <?php }?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="float-left" style="margin-left: 20px;margin-top: 20px">
+                <button type="button" class="btn btn-default"  data-toggle="modal" data-target="#myModal">新增书柜</button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="border-radius: 0px">
+                <div style="width: 598px;height: 56px;margin-bottom: 20px">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">标题</h4>
+                    </div>
+                </div>
+                <form class="form-horizontal" role="form" method="post" action="/xlb/admin/index/cabi-add">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="_no" class="col-sm-2 control-label">柜子编号</label>
+                            <div class="col-sm-10">
+                                <input name="_no" class="form-control"  type="text" style="width: auto"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="_space_num" class="col-sm-2 control-label">柜格子数</label>
+                            <div class="col-sm-10">
+                                <input name="_space_num" class="form-control"  type="text" style="width: auto"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="_name" class="col-sm-2 control-label">书柜名</label>
+                            <div class="col-sm-10">
+                                <input name="_name" class="form-control"  type="text" style="width: auto"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="_desc" class="col-sm-2 control-label">书柜描述</label>
+                            <div class="col-sm-10">
+                                <input name="_desc" class="form-control"  type="text" style="width: auto"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="_long" class="col-sm-2 control-label">经度</label>
+                            <div class="col-sm-10">
+                                <input name="_long" class="form-control"  type="text" style="width: auto"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="_lat" class="col-sm-2 control-label">纬度</label>
+                            <div class="col-sm-10">
+                                <input name="_lat" class="form-control"  type="text" style="width: auto"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary">提交更改</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <div class="div-footer">
+
+    </div>
+</div>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/jQuery-2.2.0.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/json2.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/Common.js"></script>
+<script type="text/javascript">
+    function createTable(tblId,rows,cells){
+        var tbody = document.getElementById(tblId);
+        var len = $('#tbody_ tr').length;
+        if (len >= 10) {
+            return false;
+        }
+        for(var i=0;i<rows;i++){
+            var tr=document.createElement("tr");
+            for(var j=0;j<cells;j++){
+                var cell=document.createElement("td");
+                var input = document.createElement("input");
+                input.setAttribute("type","text");
+                input.setAttribute("style","width:130px;height: 25px");
+                input.setAttribute("class","form-control");
+                cell.setAttribute("style","text-align: center");
+                cell.appendChild(input);
+                tr.appendChild(cell);
+            }
+            tbody.appendChild(tr);
+        }
+    }
+    $(function () {
+        $("#save").click(function () {
+            var data = [];
+            $("#tbody_").find('tr').each(function(){
+                var param       = {};
+                var input       = $(this).find("input");
+                param['na']     = input.eq(0).val();
+                param['cd']     = input.eq(1).val();
+                param['asdf']   = input.eq(2).val();
+                param['afds']   = input.eq(3).val();
+                param['dsa']    = input.eq(4).val();
+                param['afd']    = input.eq(5).val();
+                data.push(param);
+            });
+            console.table(data);
+        })
+    });
+</script>
+</body>
+</html>
