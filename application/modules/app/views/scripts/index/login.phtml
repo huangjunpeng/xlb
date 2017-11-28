@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <title>小萝卜</title>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/scripts/jquery/css/jquery.alerts.css" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/styles/user/style.css" />
+    <style type="text/css">
+        .body {
+            background-color: #7b7b7b;
+            background-position: bottom left;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .wp {
+            width: 360px;
+            margin: 0 auto;
+        }
+        .form {
+            position: relative;
+            top: 200px;
+            height: 300px;
+            background-color: #fff;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #36393f;
+        }
+        #login{
+            padding: 30px;
+        }
+        .button{
+            width: 77px;
+            height: 28px;
+            border-radius: 4px;
+            top: 3px;
+            position: absolute;
+            right: 0;
+            border: none;
+        }
+        .button:hover{
+            border: solid 1px dodgerblue;
+        }
+        .padding_bottom_20{padding-bottom: 20px}
+        .blod{font-weight: bold}
+        .register-button {
+            min-width: 100px;
+            height: 36px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #0d83c6;
+            border: 1px solid #0d83c6;
+            border-radius: 6px;
+        }
+    </style>
+<body class="body">
+    <div class="wp">
+        <div class="form">
+            <form id="login">
+                <div class="padding_bottom_20">
+                    <span>登录</span>
+                    <span class="blod">小萝卜账号</span>
+                </div>
+                <div class="form-group">
+                    <input id="username" name="username" class="form-control" placeholder="手机号" autofocus="" required="required" style="padding-right: 50px;" type="text" />
+                </div>
+                <div class="form-group" style="position: relative">
+                    <input id="password" name="password" class="form-control" placeholder="验证吗" type="password"  style="padding-right: 50px;" />
+                    <input id="send" class="button" type="button" value="发送验证吗" style="" />
+                </div>
+                <div style="text-align:center;margin-top: 42px;">
+                    <button id="reg" class="register-button" style="margin-right: 50px;" type="button">注册</button>
+                    <button id="log" class="register-button" type="button">登录</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/jQuery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/json2.js"></script>
+    <script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/Common.js"></script>
+    <script type="text/javascript">
+        Date.prototype.Format = function (fmt) { //author: meizz
+            var o = {
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "h+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds(), //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        };
+
+        function checkTel(){
+            var tel = document.getElementById('username').value;
+            if( tel=="" ){
+                alert("手机号不能为空");
+                return false;
+            }
+            if(document.getElementById('username').value.length != 11){
+                alert("手机号不符合格式");
+                return false;
+            }
+            return tel;
+        };
+        function chkAuthcode(){
+            var code = document.getElementById('password').value;
+            if( code=="" ){
+                alert("验证码不能为空");
+               return false;
+            }
+            return code;
+        };
+        function send(type) {
+            var tel = checkTel();
+            if (!tel) {
+                return false;
+            }
+            var code = chkAuthcode();
+            if (!code) {
+                return false;
+            }
+            var date = new Date();
+            var str = "userMobile=" + tel + "&smsCode=" + code + "&callSource=IOS&callTime=" + date.Format("yyyy-MM-dd hh:mm:ss");
+            var url_ = url;
+            if( 1 == type ){
+                url_ = url+"/xlb/index/register";
+            }else{
+                url_ = url+"/xlb/index/login";
+            }
+            myPostSync(url_, str, function(json) {
+                if (json.code == '1') {
+                    alert(json.message);
+                } else if (json.code  != '1') {
+                    alert(json.message);
+                } else {
+                    alert('登录失败');
+                }
+            });
+        }
+        $(function () {
+            $('#send').click(function () {
+                var tel = checkTel();
+                if (!tel) {
+                    return false;
+                }
+                var date = new Date();
+                var str = "userMobile=" + tel + "&callSource=IOS&callTime=" + date.Format("yyyy-MM-dd hh:mm:ss");
+                myPostSync(url + '/xlb/index/sendsms', str, function(json) {
+                    if (json.code == '1') {
+                        alert('发送成功');
+                    } else if (json.code  != '1') {
+                        alert(json.message);
+                    } else {
+                        alert('发送失败');
+                    }
+                });
+                var times = 60;
+                var timer = null;
+                var that = this;
+                $(this).attr("disabled", true);
+                timer = setInterval(function () {
+                    times--;
+                    that.value = times + "秒后重试";
+                    if(times <= 0){
+                        $(this).attr('disabled',false);
+                        that.value = "发送验证码";
+                        clearInterval(timer);
+                        times = 60;
+                    }
+                },1000);
+            });
+            $('#reg').click(function () {
+                send(1);
+            });
+            $('#log').click(function () {
+                send(0);
+            })
+        });
+    </script>
+</body>
+</html>

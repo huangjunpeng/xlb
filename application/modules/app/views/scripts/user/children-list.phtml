@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <title>服务魔方</title>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/scripts/jquery/css/jquery.alerts.css" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/styles/user/style.css" />
+    <style type="text/css">
+        .body {
+            background-color: #7b7b7b;
+            background-position: bottom left;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        .wp {
+            width: 960px;
+            margin: 0 auto;
+        }
+        .form {
+            position: relative;
+            height: auto;
+            background-color: #fff;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #36393f;
+        }
+        #login{
+            padding: 30px;
+        }
+        .button{
+            width: 77px;
+            height: 28px;
+            border-radius: 4px;
+            top: 3px;
+            position: absolute;
+            right: 0;
+            border: none;
+        }
+        .button:hover{
+            border: solid 1px dodgerblue;
+        }
+        .padding_bottom_20{padding-bottom: 20px}
+        .blod{font-weight: bold}
+        .register-button {
+            min-width: 100px;
+            height: 36px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #0d83c6;
+            border: 1px solid #0d83c6;
+            border-radius: 6px;
+        }
+    </style>
+<body class="body">
+<div class="wp">
+    <div class="form">
+        <form id="login">
+            <div class="padding_bottom_20">
+                <span>POST</span>
+                <span class="blod">请求</span>
+            </div>
+            <div class="form-group">
+                <input id="url" name="url" class="form-control" placeholder="地址" autofocus="" required="required" style="padding-right: 50px;" type="text" />
+            </div>
+            <div class="form-group" style="position: relative">
+                <input id="param" name="param" class="form-control" placeholder="参数" type="text"  style="height: 100px" />
+            </div>
+            <div class="form-group">
+                <textarea id="ret" name="ret" class="form-control" placeholder="" autofocus="" required="required" style="height: 500px" type="text" ></textarea>
+            </div>
+            <div style="text-align:center;margin-top: 42px;">
+                <button id="send" class="register-button" type="button">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/jQuery-2.2.0.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/json2.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/Common.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#send').click(function () {
+            var addr = $('#url').val();
+            var json = $('#param').val();
+            json = JSON.parse(json);
+            var str = "callTime="+ new Date().Format("yyyy-MM-dd HH:mm:ss") + "&callSource=IOS";
+
+            if (json.token) {
+                str += "&token="+json.token;
+            } else {
+                alert('token 不能为空');
+                return;
+            }
+            if (json.body) {
+                str += "&nickname=" + json.body.nickname + "&brithday=" + json.body.brithday + "&sex=" + json.body.sex;
+            }
+            myPostSync(url + addr, str, function(json) {
+                if (json.head.code == '1') {
+                    $('#ret').val(JSON.stringify(json));
+                } else if (json.head.code  != '1') {
+                    alert(json.head.message);
+                } else {
+                    alert('发送失败');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
