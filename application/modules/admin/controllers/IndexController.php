@@ -6,8 +6,13 @@ class Admin_IndexController extends Zend_Controller_Action
      */
     public function indexAction()
     {
-        /*$xcm = XlbCabinetModel::getInstance();
-        $this->view->tables = $xcm->getAllCabinet();*/
+
+    }
+
+    public function cabiListAction()
+    {
+        $xcm = XlbCabinetModel::getInstance();
+        $this->view->tables = $xcm->getAllCabinet();
     }
 
     /**
