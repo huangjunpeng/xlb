@@ -1,5 +1,5 @@
 <?php
-class Admin_IndexController extends Zend_Controller_Action
+class Admin_IndexController extends XlbController
 {
     /**
      * 柜子首页
