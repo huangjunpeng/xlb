@@ -15,6 +15,8 @@ class Admin_IndexController extends Zend_Controller_Action
         $this->view->tables = $xcm->getAllCabinet();
     }
 
+    public function indexListAction(){}
+
     /**
      * 添加柜子
      */

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <title>小萝卜</title>
+    <title>服务魔方</title>
     <meta charset="UTF-8">
     <title></title>
     <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0" />
@@ -22,10 +22,11 @@
                 <a href="#" class="sidebar-toggle1" data-toggle="offcanvas" role="button"></a>
             </nav>
         </header>
+        <div class="m_opacity"></div>
         <aside class="main-sidebar">
             <div id="stairhover" class="sidebar-menu">
                 <ul>
-                    <li data-href="/xlb/admin/index/index-list">
+                    <li data-href="/xlb/admin/index/index-list" class="active">
                         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 20 20" xml:space="preserve" width="16" height="16" style="width:16px;height:16px">
 	                        <polygon points="10,0 0,11.1 3.5,11.1 3.5,20 7.5,20 7.5,15.5 12.5,15.5 12.5,20 16.5,20 16.5,11.1 20,11.1 "></polygon>
 	                    </svg>
@@ -63,7 +64,7 @@
                         </svg>
                         <span>绘本</span>
                     </li>
-                    <li data-href="/xlb/admin/index/cabi-list" class="active">
+                    <li data-href="/xlb/admin/index/cabi-list" >
                         <svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve">
                             <g id="XMLID_9_">
                                 <path id="XMLID_12_" class="st1" d="M10.5,1.3L10.5,1.3C10.5,1.4,10.5,1.3,10.5,1.3C10.5,1.3,10.5,1.3,10.5,1.3L10.5,1.3L10.5,1.3z
@@ -117,7 +118,7 @@
                 <div class="fullscreenable">
                     <div id="min-height">
                         <div id="content">
-                            <iframe src="/xlb/admin/index/cabi-list" frameborder="0"></iframe>
+                            <iframe src="" frameborder="0"></iframe>
                         </div>
                     </div>
                 </div>
@@ -151,6 +152,7 @@
                 var pos = href.lastIndexOf('#');
                 var par = href.substr(pos);
                 $('#content iframe').attr('src',href);
+                sessionStorage.setItem('src', href);
                 if(par != curPar && curPos !=-1 && pos != -1){
                     document.getElementById('iframe').contentWindow.location.reload(true);
                 }
@@ -158,18 +160,24 @@
                 if($(this).parents('li').data('href') == undefined){
                     $('#stairhover').find('ul li').removeClass('active');
                     $(this).addClass('active');
-                    // $(this).siblings().removeClass('active');
                 }else{
                     $('#stairhover').find('ul li').removeClass('active');
                     $(this).parents('li').addClass('active');
-                    // $(this).parents('li').siblings().removeClass('active');
                 }
-               /* $('#stairhover').find('ul li').removeClass('active');
-                $(this).addClass('active');*/
+                $('.sidebar-mini').removeClass('sidebar-collapse');
             }
 
         });
     })
+    window.onload = function () {
+        var href = sessionStorage.getItem('src');
+        if (null != href) {
+            $('#content iframe').attr('src',href);
+        } else {
+            $('#content iframe').attr('src','/xlb/admin/index/index-list');
+        }
+
+    }
 </script>
 </body>
 </html>

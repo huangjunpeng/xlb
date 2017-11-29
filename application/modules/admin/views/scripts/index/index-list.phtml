@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <title>服务魔方</title>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/scripts/jquery/css/jquery.alerts.css" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/styles/admin/style.css" />
+    <style type="text/css">
+    </style>
+<body class="sidebar-mini">
+    <div style="height: 100%;">
+        <div class="xlb_number" style="color: #fff;">
+            <div class="xlb_static">
+                <div style="height: 140px;background-color: #46be8a;border-radius: 4px;position: relative;">
+                    <div style="position: absolute;left: 30px;top: 20px;font-size: 20px">用户</div>
+                    <div style="position: absolute;left: 30px;top: 80px;width: 40px;height: 40px">
+                        <img src="<?php echo $this->baseUrl();?>/public/images/canyu.png" a lt="">
+                    </div>
+                    <div style="position: absolute; right:30px; top:15px; font-size:40px; margin-top:-10px;color: #fff">
+                        <span >88</span>
+                        <span style="font-size: 20px;margin-left: -13px;">万</span>
+                    </div>
+                    <div style="position: absolute; right:30px; top:87px; font-size:15px;">
+                        <span style="margin-right: 10px">日活：12333</span>
+                        <span>月活：33333</span>
+                    </div>
+                </div>
+            </div>
+            <div class="xlb_static">
+                <div style="height: 140px;background-color: #c86285;border-radius: 4px;position: relative;">
+                    <div style="position: absolute;left: 30px;top: 20px;font-size: 20px">柜子</div>
+                    <div style="position: absolute;left: 30px;top: 80px;width: 40px;height: 40px">
+                        <img src="<?php echo $this->baseUrl();?>/public/images/chuangjian.png" a lt="">
+                    </div>
+                    <div style="position: absolute; right:30px; top:15px; font-size:40px; margin-top:-10px;color: #fff">
+                        <span >66</span>
+                        <span style="font-size: 20px;margin-left: -13px;">台</span>
+                    </div>
+                    <div style="position: absolute; right:30px; top:87px; font-size:15px;">
+                        <span>运营中：3</span>
+                    </div>
+                </div>
+            </div>
+            <div class="xlb_static">
+                <div style="height: 140px;background-color: #5b98bf;border-radius: 4px;position: relative;">
+                    <div style="position: absolute;left: 30px;top: 20px;font-size: 20px">绘本</div>
+                    <div style="position: absolute;left: 30px;top: 80px;width: 40px;height: 40px">
+                        <img src="<?php echo $this->baseUrl();?>/public/images/daiban.png" a lt="">
+                    </div>
+                    <div style="position: absolute; right:30px; top:15px; font-size:40px; margin-top:-10px;color: #fff">
+                        <span >99999</span>
+                        <span style="font-size: 20px;margin-left: -13px;">本</span>
+                    </div>
+                    <div style="position: absolute; right:30px; top:87px; font-size:15px;">
+                        <span>单日借出最高3万册</span>
+                    </div>
+                </div>
+            </div>
+            <div class="xlb_static">
+                <div style="height: 140px;background-color: #d8ab11;border-radius: 4px;position: relative;">
+                    <div style="position: absolute;left: 30px;top: 20px;font-size: 20px">活动</div>
+                    <div style="position: absolute;left: 30px;top: 80px;width: 40px;height: 40px">
+                        <img src="<?php echo $this->baseUrl();?>/public/images/white_27.png" alt="" width="40px" height="40px">
+                    </div>
+                    <div style="position: absolute; right:30px; top:15px; font-size:40px; margin-top:-10px;color: #fff">
+                        <span >111</span>
+                        <span style="font-size: 20px;margin-left: -13px;">个</span>
+                    </div>
+                    <div style="position: absolute; right:30px; top:87px; font-size:15px;">
+                        <span>运营中：3</span>
+                    </div>
+                </div>
+            </div>
+            <!--<table id="xlbstatics" style="width: 100%;color: #fff">
+                <tbody>
+                    <tr>
+                        <td style="width: calc(100% / 4);cursor: pointer">
+                            <div style="height: 140px;background-color: #46be8a;border-radius: 4px;position: relative;">
+
+                            </div>
+                        </td>
+                        <td style="width: calc(100% / 4);cursor: pointer">
+                            <div style="height: 140px;background-color: #c86285;border-radius: 4px;position: relative;">
+
+                            </div>
+                        </td>
+                        <td style="width: calc(100% / 4);cursor: pointer">
+                            <div style="height: 140px;background-color: #5b98bf;border-radius: 4px;position: relative;">
+
+                            </div>
+                        </td>
+                        <td style="width: calc(100% / 4);cursor: pointer">
+                            <div style="height: 140px;background-color: #ab8111;border-radius: 4px;position: relative;">
+
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>-->
+        </div>
+        <div class="xlb_picture clear" style="height: calc(100% - 150px);width: 100%;">
+            <div class="float-left" style="height: calc(100% - 200px);width: 60%;padding: 10px 5px 10px 2.5px;">
+                <div style="height:100%;width:100%;background-color: #fff;border-radius: 4px">
+                    <div class="xlb_title">
+                        <div class="float-left">
+                            <ul id="xlb_title_1">
+                                <li>已借出</li>
+                                <li>未借出</li>
+                                <li>全部</li>
+                            </ul>
+                        </div>
+                        <div class="float-right">
+                            <ul id="xlb_title_1">
+                                <li style="padding: 0 10px"><span class="glyphicon glyphicon-repeat"></span></li>
+                                <li style="padding: 0 10px"><span class="glyphicon glyphicon-cog"></span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div></div>
+                </div>
+            </div>
+            <div class="float-left" style="height: calc(100% - 200px);width: 40%;padding: 10px 2.5px 10px 5px;">
+                <div style="height:100%;width:100%;background-color: #fff;border-radius: 4px">
+                    <div class="xlb_title">
+                        <div class="float-left">
+                            <ul id="xlb_title_1">
+                                <li>绘本统计状态</li>
+                            </ul>
+                        </div>
+                        <div class="float-right">
+                            <ul id="xlb_title_1">
+                                <li style="padding: 0 10px"><span class="glyphicon glyphicon-repeat"></span></li>
+                                <li style="padding: 0 10px"><span class="glyphicon glyphicon-cog"></span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div></div>
+                </div>
+            </div>
+            <div class="float-left" style="height: 200px;width:100%;padding: 0px 2.5px">
+                <div style="height:100%;width:100%;background-color: #fff;border-radius: 4px">
+                    <div class="xlb_title">
+                        <div class="float-left">
+                            <ul id="xlb_title_1">
+                                <li>绘本借取排行榜</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/jQuery-2.2.0.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/json2.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/Common.js"></script>
+<script type="text/javascript">
+
+</script>
+</body>
+</html>

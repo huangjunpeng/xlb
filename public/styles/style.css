@@ -11,6 +11,11 @@ body {
     font-family: 微软雅黑, Arial;
     font-size: 12px;
     padding: 0px;
+    background-color: transparent;
+}
+
+td, th {
+    padding: 0 2.5px 5px 2.5px;
 }
 
 .padding_bottom_20{padding-bottom: 20px}
