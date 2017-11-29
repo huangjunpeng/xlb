@@ -24,8 +24,8 @@
                         <span style="font-size: 20px;margin-left: -13px;">万</span>
                     </div>
                     <div style="position: absolute; right:30px; top:87px; font-size:15px;">
-                        <span style="margin-right: 10px">日活：12333</span>
-                        <span>月活：33333</span>
+                        <span style="margin-right: 2px">日活：12</span>
+                        <span>月活：33</span>
                     </div>
                 </div>
             </div>
@@ -137,8 +137,8 @@
                             </ul>
                         </div>
                     </div>
-                    <div>
-                        <div id="container" style="min-width:400px;height:400px"></div>
+                    <div style="height: 100%">
+                        <div id="container" style="width: 100%;height: 100%"></div>
                     </div>
                 </div>
             </div>
@@ -162,8 +162,9 @@
 <script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/highcharts/highcharts.js"></script>
 <script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/Common.js"></script>
 <script type="text/javascript">
-    var chart = null;
     $(function () {
+        $('#container').css('height',$('#container').height()-60)
+        $('#container').css('width',$('#container').width())
         $('#container').highcharts({
             chart: {
                 borderColor: '#E5E8EB',//图表框颜色
@@ -172,7 +173,7 @@
                 plotBackgroundColor: null,//绘图区无颜色
                 plotBorderWidth: null,//绘图区边框宽度
                 plotShadow: false,//绘图区阴影效果
-                spacing: [100, 20, 100, 20]//图表内边距，上右下左
+                spacing: [0, 0, 0, 0]//图表内边距，上右下左
             },
             colors: [
                 '#EFE07C', '#89B5EB', '#F8AA9E', '#FFC7B8', '#F18686', '#EFC27C'
@@ -203,7 +204,7 @@
                 type: 'pie',
                 innerSize: '70%',// 圆环厚度百分比
                 name: '占比',//浮动框的文字提示
-                showInLegend: true,//显示图例
+                showInLegend: false,//显示图例
                 data: [
                     ['已借出绘本', 100.0],
                     ['未借取绘本', 100.8],
@@ -222,14 +223,6 @@
                 x: 20,
                 y: 0
             },
-        }, function (c) {
-            // 环形图圆心
-            var centerY = c.series[0].center[1],
-                titleHeight = parseInt(c.title.styles.fontSize);
-            c.setTitle({
-                y: centerY + titleHeight / 2
-            });
-            chart = c;
         });
     });
 </script>
