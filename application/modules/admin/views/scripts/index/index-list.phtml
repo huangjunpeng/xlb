@@ -137,7 +137,9 @@
                             </ul>
                         </div>
                     </div>
-                    <div></div>
+                    <div>
+                        <div id="container" style="min-width:400px;height:400px"></div>
+                    </div>
                 </div>
             </div>
             <div class="float-left" style="height: 200px;width:100%;padding: 0px 2.5px">
@@ -157,9 +159,79 @@
 <script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/jQuery-2.2.0.min.js"></script>
 <script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/json2.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/highcharts/highcharts.js"></script>
 <script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/Common.js"></script>
 <script type="text/javascript">
-
+    var chart = null;
+    $(function () {
+        $('#container').highcharts({
+            chart: {
+                borderColor: '#E5E8EB',//图表框颜色
+                borderWidth: 1,//图表框宽度
+                backgroundColor: '#fff',//图表背景色
+                plotBackgroundColor: null,//绘图区无颜色
+                plotBorderWidth: null,//绘图区边框宽度
+                plotShadow: false,//绘图区阴影效果
+                spacing: [100, 20, 100, 20]//图表内边距，上右下左
+            },
+            colors: [
+                '#EFE07C', '#89B5EB', '#F8AA9E', '#FFC7B8', '#F18686', '#EFC27C'
+            ],// colors是饼图或者环形图中每一块的颜色
+            credits: {
+                enabled: false//右下角的版权信息不显示
+            },
+            title: {
+                floating: true,
+                text: '',//环形图中心显示文字加图片
+                useHTML: true,//必须设置true才能加图片
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.2f}%</b>'
+            },//浮动的数据提示框
+            plotOptions: {
+                pie: {
+                    size:100,//环形图大小控制
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.2f} %'
+                    }
+                }
+            },
+            series: [{
+                type: 'pie',
+                innerSize: '70%',// 圆环厚度百分比
+                name: '占比',//浮动框的文字提示
+                showInLegend: true,//显示图例
+                data: [
+                    ['已借出绘本', 100.0],
+                    ['未借取绘本', 100.8],
+                    ['已损坏绘本', 100.2],
+                    ['新更新绘本', 100.2],
+                ]
+            }],
+            legend: {
+                layout: 'horizontal',//图例水平排放，超过宽度后换行
+                labelFormat: '{name} {percentage:.2f} %',
+                symbolHeight: 8,//图例小标志高度
+                symbolWidth: 8,
+                width: 220,//图例区宽度
+                symbolRadius: 0,// 图例形状为方形
+                verticalAlign: 'bottom',
+                x: 20,
+                y: 0
+            },
+        }, function (c) {
+            // 环形图圆心
+            var centerY = c.series[0].center[1],
+                titleHeight = parseInt(c.title.styles.fontSize);
+            c.setTitle({
+                y: centerY + titleHeight / 2
+            });
+            chart = c;
+        });
+    });
 </script>
 </body>
 </html>
