@@ -134,11 +134,12 @@
     $(function () {
         //点击最小化菜单
         $('.sidebar-toggle1').click(function(){
-            if ($('.sidebar-mini').hasClass('sidebar-collapse')) {
+            /*if ($('.sidebar-mini').hasClass('sidebar-collapse')) {
                 $('.sidebar-mini').removeClass('sidebar-collapse');
             } else {
                 $('.sidebar-mini').addClass('sidebar-collapse');
-            }
+            }*/
+            $('.sidebar-mini').toggleClass("sidebar-collapse");
         });
 
         //点击菜单跳转
