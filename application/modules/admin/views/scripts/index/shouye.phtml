@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bootstrap 实例</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style type="text/css">
+        .static{
+            height: 140px;
+            border-radius: 4px;
+            width: 100%;
+            position: relative
+        }
+        .static > div.left_1{
+            position: absolute;
+            left: 30px;
+            top: 20px;
+        }
+
+        .static > div.left_2{
+            position: absolute;
+            left: 30px;
+            top: 80px;
+            width: 40px;
+            height: 40px
+        }
+
+        .static > div.left_3{
+            position: absolute;
+            right:30px;
+            top:15px
+        }
+
+        .static > div.left_4{
+            position: absolute;
+            right:30px;
+            top:90px;
+        }
+
+        .static h2,.static h3,.static h5{
+            display: inline;
+        }
+
+        .padding_15_0_15_15{
+            padding-top: 15px;
+            padding-bottom: 15px;
+        }
+
+    </style>
+</head>
+<body style="background-color: #edeff4;">
+    <div class="container" style="width: 100%;padding: 0;color: #fff">
+        <div class="row">
+            <div class="col-md-3 col-lg-3 padding_15_0_15_15" style="padding-right: 0px">
+                <div class="static" style="background-color: #46be8a;">
+                    <div class="left_1"><h3>用户</h3></div>
+                    <div class="left_2">
+                        <img src="<?php echo $this->baseUrl();?>/public/images/canyu.png" a lt="">
+                    </div>
+                    <div class="left_3">
+                        <h2>88</h2>
+                        <h5>万</h5>
+                    </div>
+                    <div class="left_4">
+                        <h5>日活：12</h5>
+                        <h5>月活：33</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3  col-lg-3 padding_15_0_15_15" style="padding-right: 0px">
+                <div class="static" style="background-color: #c86285">
+                    <div class="left_1"><h3>柜子</h3></div>
+                    <div class="left_2">
+                        <img src="<?php echo $this->baseUrl();?>/public/images/chuangjian.png" a lt="">
+                    </div>
+                    <div class="left_3">
+                        <h2>66</h2>
+                        <h5>台</h5>
+                    </div>
+                    <div class="left_4">
+                        <h5>运营中：3</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-lg-3 padding_15_0_15_15" style="padding-right: 0px">
+                <div class="static" style="background-color: #5b98bf;">
+                    <div class="left_1"><h3>绘本</h3></div>
+                    <div class="left_2">
+                        <img src="<?php echo $this->baseUrl();?>/public/images/daiban.png" a lt="">
+                    </div>
+                    <div class="left_3">
+                        <h2>99999</h2>
+                        <h5>本</h5>
+                    </div>
+                    <div class="left_4">
+                        <h5>单日借出最高3万册</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-lg-3 padding_15_0_15_15">
+                <div class="static" style="background-color: #d8ab11">
+                    <div class="left_1"><h3>活动</h3></div>
+                    <div class="left_2">
+                        <img src="<?php echo $this->baseUrl();?>/public/images/white_27.png" alt="" width="40px" height="40px">
+                    </div>
+                    <div class="left_3">
+                        <h2>111</h2>
+                        <h5>个</h5>
+                    </div>
+                    <div class="left_4">
+                        <h5>运营中：3</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8  col-lg-8" >
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        Panel content
+                    </div>
+                    <div class="panel-footer">Panel footer</div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-4">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        Panel content
+                    </div>
+                    <div class="panel-footer">Panel footer</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        Panel content
+                    </div>
+                    <div class="panel-footer">Panel footer</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

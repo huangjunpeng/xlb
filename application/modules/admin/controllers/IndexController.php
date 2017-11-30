@@ -16,6 +16,7 @@ class Admin_IndexController extends XlbController
     }
 
     public function indexListAction(){}
+    public function shouyeAction(){}
 
     /**
      * 添加柜子
