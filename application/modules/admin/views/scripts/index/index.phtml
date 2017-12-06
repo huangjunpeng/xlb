@@ -92,7 +92,7 @@
 	                </svg>
                         <span>活动</span>
                     </li>
-                    <li data-href="/xlb/admin/index/shouye">
+                    <li data-href="/xlb/admin/role/index">
                         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve">
                             <g>
                                 <path class="st0" d="M0.6,0C0.3,0,0,0.2,0,0.6v14.9C0,15.8,0.3,16,0.6,16c0.3,0,0.6-0.2,0.6-0.6V0.6C1.2,0.2,0.9,0,0.6,0z"></path>
@@ -108,7 +108,18 @@
                                     C13.2,12.4,12.5,13.1,11.7,13.1z"></path>
                             </g>
 					    </svg>
-                        <span>权限</span>
+                        <span>用户权限</span>
+                        <i>
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 5 10" xml:space="preserve" style="width:5px;height:10px; fill:currentcolor">
+                                <path d="M0.5,0L5,5L0.5,10L0,9.5L4,5L0,0.5z"></path>
+                            </svg>
+                        </i>
+                        <ul>
+                            <li class="header">用户权限</li>
+                            <li data-href="/xlb/admin/role/index">管理员列表</li>
+                            <li data-href="/xlb/admin/role/role-manage">角色管理</li>
+                            <li data-href="/xlb/admin/role/cabi-user">柜子所属人</li>
+                        </ul>
                     </li>
                 </ul>
             </div>
@@ -134,11 +145,6 @@
     $(function () {
         //点击最小化菜单
         $('.sidebar-toggle1').click(function(){
-            /*if ($('.sidebar-mini').hasClass('sidebar-collapse')) {
-                $('.sidebar-mini').removeClass('sidebar-collapse');
-            } else {
-                $('.sidebar-mini').addClass('sidebar-collapse');
-            }*/
             $('.sidebar-mini').toggleClass("sidebar-collapse");
         });
 
@@ -167,7 +173,7 @@
                 }
                 $('.sidebar-mini').removeClass('sidebar-collapse');
             }
-
+            return false;
         });
     })
     window.onload = function () {

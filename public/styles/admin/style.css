@@ -109,6 +109,30 @@
     transition: transform .3s ease-in-out,width .3s ease-in-out;
 }
 
+.sidebar-menu > ul > li > i {
+    float: right;
+    font-size: 10px;
+    margin: 14px 12px 0 0;
+}
+
+.sidebar-menu > ul > li > ul {
+    display: none;
+    width: 200px;
+    position: absolute;
+    left: 100%;
+    background-color: #131f26;
+    list-style: none;
+    line-height: 40px;
+    padding: 0;
+    max-height: 380px;
+    overflow-y: auto;
+}
+.sidebar-menu > ul > li:hover > ul {display:block;}
+.sidebar-menu > ul > li > ul > li { padding: 0 0 0 20px !important; color:#b8d3e8;}
+.sidebar-menu > ul > li > ul > li.header { color:#fff; font-weight:bold; border-bottom: solid 1px #333333; display:none; cursor:default; }
+.sidebar-mini.sidebar-collapse .sidebar-menu > ul > li > ul > li.header { display:block !important; }
+.sidebar-menu > ul > li > ul > li:hover {background-color:#17242d;color:#fff !important;}
+
 .sidebar-mini.sidebar-collapse .main-sidebar {
     width: 60px !important;
 }
