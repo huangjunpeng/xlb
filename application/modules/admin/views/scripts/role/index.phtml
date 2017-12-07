@@ -186,7 +186,7 @@
                         密码：
                     </label>
                     <div class="col-sm-6">
-                        <input id="_password" class="form-control control-input" name="_password" type="password" required placeholder="请输入密码">
+                        <input id="_password" class="form-control control-input admin_password" name="_password" type="password" required placeholder="请输入密码">
                         <span class="xln_must_enter" >*</span>
                     </div>
                     <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
@@ -227,13 +227,13 @@
                     <h4 class="modal-title" id="myModalLabel">修改密码</h4>
                 </div>
                 <div class="modal-body">
-                    <form class="form-horizontal" id="modify_password" role="form">
+                    <form class="form-horizontal" role="form">
                         <div class="form-group">
                             <label class="control-label col-sm-2" for="_old" style="text-align:right;font-weight:normal;">
                                 旧密码：
                             </label>
                             <div class="col-sm-6" style="width: 80%;">
-                                <input id="_old" class="form-control control-input" name="_old" type="password" required placeholder="请输入密码">
+                                <input id="_old" class="form-control control-input admin_password" name="_old" type="password" required placeholder="请输入密码">
                                 <span class="xln_must_enter" >*</span>
                             </div>
                             <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
@@ -243,7 +243,7 @@
                                 新密码：
                             </label>
                             <div class="col-sm-6" style="width: 80%;">
-                                <input id="_new" class="form-control control-input" name="_new" type="password" required placeholder="请输入密码">
+                                <input id="_new" class="form-control control-input admin_password" name="_new" type="password" required placeholder="请输入密码">
                                 <span class="xln_must_enter" >*</span>
                             </div>
                             <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
@@ -252,7 +252,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary">提交更改</button>
+                    <button type="button" class="btn btn-primary" id="modify_password">提交更改</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->
@@ -266,16 +266,10 @@
     <script type="text/javascript">
         $(function () {
             $('#user_add').click(function () {
-                $('#admin_add #_id').val('');
-                $('#admin_add #_name').val('');
-                $('#admin_add #_english_name').val('');
-                $('#admin_add #_email').val('');
-                $('#admin_add #_mobile').val('');
-                $('#admin_add #_dept').val('');
-                $('#admin_add #_position').val('');
-                $('#admin_add #_password').val('');
+                $('#admin_add input').val('');
+                $('#_password').removeAttr('disabled');
                 $('#admin_add input[type="radio"]').removeAttr('checked');
-                $('#admin_add #optionsRadios1').prop('checked','checked');
+                $('#optionsRadios1').prop('checked','checked');
                 $('#admin_add .errMsg').addClass('display-none');
                 $('#admin_add_title').html('添加管理员');
                 $('#admin_add').toggleClass('display-none');
@@ -284,6 +278,19 @@
             $('#user_back').click(function () {
                 $('#admin_add').toggleClass('display-none');
                 $('#admin_list').toggleClass('display-none');
+            });
+            $('#modify_password').click(function () {
+                var id = $('#modify_password').data('adminid');
+                var _old = $('#_old').val();
+                var _new = $('#_new').val();
+                myPostSync(url+'/xlb/admin/role/modify-pass?id=' + id + '&_old=' + _old + '&_new=' + _new,function (json) {
+                    if (json.code == 0) {
+                        jAlert(json.message);
+                    } else {
+                        $('#myModal').modal('hide');
+                        jAlert("修改成功");
+                    }
+                })
             });
             $('.user_enable').click(function () {
                 var id = $(this).closest('tr').data('id');
@@ -299,7 +306,8 @@
             });
             $('.user_modifpass').click(function () {
                 var id = $(this).closest('tr').data('id');
-                $('#myModal').modal('show')
+                $('#modify_password').attr('data-adminid',id);
+                $('#myModal').modal('show');
             });
             $('.user_edit').click(function () {
                 /*var tr = $(this).closest('tr');*/
@@ -308,19 +316,20 @@
                     if (json.code == 0) {
                         jAlert(json.message);
                     } else {
-                        $('#admin_add #_id').val(json.data._id);
-                        $('#admin_add #_name').val(json.data._name);
-                        $('#admin_add #_english_name').val(json.data._english_name);
-                        $('#admin_add #_email').val(json.data._email);
-                        $('#admin_add #_mobile').val(json.data._mobile);
-                        $('#admin_add #_dept').val(json.data._dept);
-                        $('#admin_add #_position').val(json.data._position);
-                        $('#admin_add #_password').val(json.data._password);
+                        $('#_id').val(json.data._id);
+                        $('#_name').val(json.data._name);
+                        $('#_english_name').val(json.data._english_name);
+                        $('#_email').val(json.data._email);
+                        $('#_mobile').val(json.data._mobile);
+                        $('#_dept').val(json.data._dept);
+                        $('#_position').val(json.data._position);
+                        $('#_password').val(json.data._password);
+                        $('#_password').attr('disabled',true);
                         $('#admin_add input[type="radio"]').removeAttr('checked');
                         if (json.data.role_id == 1) {
-                            $('#admin_add #optionsRadios1').prop('checked','checked');
+                            $('#optionsRadios1').prop('checked','checked');
                         } else {
-                            $('#admin_add #optionsRadios2').prop('checked','checked');
+                            $('#optionsRadios2').prop('checked','checked');
                         }
                         $('#admin_add_title').html('编辑管理员');
                         $('#admin_add').toggleClass('display-none');
@@ -405,8 +414,8 @@
                     clearmsg(el);
                 }
             });
-            //英文名栏失去焦点
-            $("#add_user #_password").blur(function(){
+            //密码栏失去焦点
+            $(".admin_password").blur(function(){
                 var el = $(this).parent().next('.errMsg');
                 if( $(this).val()==""|| $(this).val()=="请输入你的密码")
                 {
