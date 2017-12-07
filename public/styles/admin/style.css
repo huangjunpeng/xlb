@@ -348,3 +348,39 @@ iframe{
 @media screen and (min-width: 1200px) {
 
 }
+
+.modalbtn
+{
+    display: inline-block;
+    line-height: 36px;
+    height: 36px;
+    min-width: 100px;
+    width:auto;
+    text-align:center;
+    background-color: transparent;
+    border: solid 1px #3a82c1 !important;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor:pointer;
+    padding:0 6px;
+    color: #333;
+}
+
+.modalbtn.ok {
+    background-color: #3a82c1 !important; color: #fff;
+}
+.modalbtn:disabled, .modalbtn.ok:disabled {
+    border: solid 1px #aaa !important;
+    background-color: #cccccc !important;
+    color: #666;
+    opacity: 1 !important;
+}
+.modalbtn.cancel {
+    border-color: transparent !important;
+}
+.modalbtn:hover, .modalbtn:active {
+    /*color: #fff;
+    background-color: #8594a9 !important;
+    border-color: #def5e7 !important;*/
+    opacity:0.7;
+}

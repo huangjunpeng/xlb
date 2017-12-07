@@ -14,6 +14,11 @@ class XlbSpModel extends Xlb
     protected  $_primary    = 'sp_id';
 
     /**
+     * @var string
+     */
+    protected $_key = 'sp_id';
+
+    /**
      * @var XlbSpModel
      */
     public static $_instance = null;
@@ -37,7 +42,7 @@ class XlbSpModel extends Xlb
     public function editData($id,$array)
     {
         $db = $this->getAdapter();
-        $where = $db->quoteInto($this->_primary."=?", $id);
+        $where = $db->quoteInto($this->_key."=?", $id);
         return $this->update($array, $where);
     }
 
@@ -57,6 +62,44 @@ class XlbSpModel extends Xlb
             ++$count;
         }
         return $this->fetchRow($where);
+    }
+
+    /**
+     * @return array
+     */
+    public function getAll() {
+        $all = $this->fetchAll()->toArray();
+        $ret = array();
+        foreach ($all as $value) {
+            $obj['_id'] = $value['sp_id'];
+            $obj['_name'] = $value['sp_name'];
+            $obj['_english_name'] = $value['sp_english_name'];
+            $obj['_dept'] = $value['sp_dept'];
+            $obj['_email'] = $value['sp_email'];
+            $obj['_mobile'] = $value['sp_mobile'];
+            $obj['role_id'] = $value['role_id'];
+            $obj['_status'] = $value['sp_status'];
+            $obj['_position'] = $value['sp_position'];
+            $obj['_password'] = $value['sp_password'];
+            $ret[] = $obj;
+        }
+        return $ret;
+    }
+
+    public function getOne($id){
+        $row = $this->getRowByID($id);
+        $value = $row->toArray()[0];
+        $obj['_id'] = $value['sp_id'];
+        $obj['_name'] = $value['sp_name'];
+        $obj['_english_name'] = $value['sp_english_name'];
+        $obj['_dept'] = $value['sp_dept'];
+        $obj['_email'] = $value['sp_email'];
+        $obj['_mobile'] = $value['sp_mobile'];
+        $obj['role_id'] = $value['role_id'];
+        $obj['_status'] = $value['sp_status'];
+        $obj['_position'] = $value['sp_position'];
+        $obj['_password'] = $value['sp_password'];
+        return $obj;
     }
 
 }
