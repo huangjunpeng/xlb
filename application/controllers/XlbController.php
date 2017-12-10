@@ -153,13 +153,14 @@ class XlbController extends Zend_Controller_Action
             return true;
         }
         if (XLB_ADMIN == $this->module) {
-            $token = $_COOKIE['xlbtoken'];
+            $token = @$_COOKIE['xlbtoken'];
         } else {
             $token = $this->getRequest()->getParam('token',null);
         }
         //验证token
         if(empty($token)) {
-            $this->xlb_ret(0, "验证失败,请重新登陆");
+            $this->_forward('login','Index','Admin');
+            return true;
         }
         $this->token  = $token;
         $token = Tools::getDecodeUidForToken($this->token);
