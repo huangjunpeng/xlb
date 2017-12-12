@@ -77,7 +77,7 @@ class XlbController extends Zend_Controller_Action
      * 返回数据
      * @param string $code
      * @param string $message
-     * @param array $body
+     * @param array $data
      * @param string $callback
      */
     public function xlb_ret($code = '1',$message = '',$data = array(), $callback = ''){
