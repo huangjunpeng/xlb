@@ -159,8 +159,7 @@ class XlbController extends Zend_Controller_Action
         }
         //验证token
         if(empty($token)) {
-            $this->_forward('login','Index','Admin');
-            return true;
+            $this->exitlogin();
         }
         $this->token  = $token;
         $token = Tools::getDecodeUidForToken($this->token);
@@ -180,8 +179,16 @@ class XlbController extends Zend_Controller_Action
     }
 
     /**
+     * 退出到登陆页面
+     */
+    public function exitlogin()  {
+        setcookie('xlbtoken', '', time()- 3600*24, '/');
+        echo require_once 'Error.php';
+        exit;
+    }
+
+    /**
      * 字符串加解密函数
-     *
      * @param string $string
      * @param string $operation
      * @param string $key
