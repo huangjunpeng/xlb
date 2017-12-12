@@ -6,7 +6,7 @@ class Admin_IndexController extends XlbController
      */
     public function indexAction()
     {
-
+        $this->view->menu = require_once 'XlbDefine.php';
     }
 
     public function cabiListAction()
