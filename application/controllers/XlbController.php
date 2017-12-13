@@ -158,8 +158,10 @@ class XlbController extends Zend_Controller_Action
             $token = $this->getRequest()->getParam('token',null);
         }
         //验证token
-        if(empty($token)) {
+        if(empty($token) && XLB_ADMIN == $this->module) {
             $this->exitlogin();
+        } elseif (empty($token) && XLB_APP == $this->module){
+            $this->xlb_ret(0, '验证失败,请重新登录');
         }
         $this->token  = $token;
         $token = Tools::getDecodeUidForToken($this->token);
