@@ -7,17 +7,9 @@ class BookController extends XlbController
     public function bookListAction()
     {
         //获取经度
-        $long       = (double)$this->_getParam('long');
-        if (empty($long)) {
-            $this->xlb_ret(0, '位置不能为空');
-        }
-
+        $long       = empty((double)$this->_getParam('long')) ? 0 : (double)$this->_getParam('long');
         //获取纬度
-        $lat        = (double)$this->_getParam('lat');
-        if (empty($lat)) {
-            $this->xlb_ret(0, '位置不能为空');
-        }
-
+        $lat        = empty((double)$this->_getParam('lat')) ? 0 : (double)$this->_getParam('lat');
         $bvm        = XlbBookViewModel::getInstance();
         $_bvm       = $bvm->listData(0, 0, 0, $long, $lat);
         $allBook    = $bvm->getAllBook(

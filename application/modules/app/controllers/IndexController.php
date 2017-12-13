@@ -29,6 +29,7 @@ class IndexController extends XlbController
             //查询数据库
             $userInfo = XlbUserInfoModel::getInstance();
             $row = $userInfo->fetchRow('u_mobile='.$mobile);
+            $u_picture = '';
             if(empty($row)){
                 $data['u_mobile']       = $mobile;
                 $data['u_creattime']    = time();
@@ -38,11 +39,12 @@ class IndexController extends XlbController
                 $user       = $row->toArray();
                 $this->uid  = $user['u_id'];
                 $firstlogin = false;
+                $u_picture  = null == $user['u_picture'] ? '' : $user['u_picture'];
             }
 
             //生成token
             $token = Tools::getEncodeUid(XLB_APP.';'.$this->uid);
-            $this->xlb_ret('1', '登录成功!',array('token'=>$token,'firstlogin'=>$firstlogin));
+            $this->xlb_ret('1', '登录成功!',array('token'=>$token,'firstlogin'=>$firstlogin,'logo'=>$u_picture));
         } elseif ($this->getRequest()->isGet()) {
 
         }

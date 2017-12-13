@@ -146,7 +146,7 @@ class XlbController extends Zend_Controller_Action
      */
     private function _checkAuth() {
         $act = array(
-            XLB_APP     => array('login','sendsms'),
+            XLB_APP     => array('login','sendsms','bookListAction','bookListAction',),
             XLB_ADMIN   => array('login')
         );
         if (in_array($this->action, $act[$this->module])) {
