@@ -1,5 +1,5 @@
 <?php
-class IndexController extends XlbController
+class IndexController extends PublicController
 {
     /**
      * 登陆接口
@@ -11,13 +11,13 @@ class IndexController extends XlbController
             $filter = new Zend_Filter_StripTags();
 
             //验证手机号
-            $mobile = $filter->filter($this->_getParam('userMobile',null));
+            $mobile = $filter->filter($this->getParam('userMobile',null));
             if (empty($mobile)) {
                 $this->xlb_ret('0', '手机号不能为空!');
             }
 
             //验证吗
-            $smsCode = trim($this->_getParam('smsCode'));
+            $smsCode = trim($this->getParam('smsCode'));
             $authCode = $this->authcode($_COOKIE['xlbcode'],'DECODE');
             if(strcmp($authCode , $smsCode)!=0 && $smsCode != '8888'){
                 $this->xlb_ret('0', '手机验证码错误!');
@@ -34,16 +34,16 @@ class IndexController extends XlbController
                 $data['u_mobile']       = $mobile;
                 $data['u_creattime']    = time();
                 $data['u_optime']       = time();
-                $this->uid              = $userInfo->insert($data);
+                $uid                    = $userInfo->insert($data);
             }else{
                 $user       = $row->toArray();
-                $this->uid  = $user['u_id'];
+                $uid        = $user['u_id'];
                 $firstlogin = false;
                 $u_picture  = null == $user['u_picture'] ? '' : $user['u_picture'];
             }
 
             //生成token
-            $token = Tools::getEncodeUid(XLB_APP.';'.$this->uid);
+            $token = Tools::getEncodeUid(XLB_APP.';'.$uid);
             $this->xlb_ret('1', '登录成功!',array('token'=>$token,'firstlogin'=>$firstlogin,'logo'=>$u_picture));
         } elseif ($this->getRequest()->isGet()) {
 
@@ -81,7 +81,7 @@ class IndexController extends XlbController
      */
     public function sendsmsAction()
     {
-        $userMobile = $this->_getParam('userMobile');
+        $userMobile = $this->getParam('userMobile');
         if(empty($userMobile)) {
             $this->xlb_ret(0, '手机号不能为空!');
         }

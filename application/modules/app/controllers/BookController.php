@@ -1,5 +1,5 @@
 <?php
-class BookController extends XlbController
+class BookController extends PublicController
 {
     /**
      * 图书列表
