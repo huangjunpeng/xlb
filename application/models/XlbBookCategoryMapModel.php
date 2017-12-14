@@ -37,4 +37,35 @@ class XlbBookCategoryMapModel extends Xlb
         }
         return $_xbcm;
     }
+
+    /**
+     * @param $bc_id
+     * @param null $page
+     * @param int $pagesize
+     * @return array
+     */
+    public function getBookByBcId($bc_id, $page = null, $pagesize = 20) {
+        $table_1 = XlbBookModel::getInstance()->getDbName();
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name),'count(*)')
+            ->join(array('t1'=>$table_1),'t.b_id=t1.b_id',
+                array('id'=>'b_id','name'=>'b_name','picture'=>'b_picture'))
+            ->where('t.bc_id=?',$bc_id);
+        $pages = $this->getAdapter()->fetchOne($select);
+        $pages = ceil($pages / $pagesize);
+        unset($select);
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name),array())
+            ->join(array('t1'=>$table_1),'t.b_id=t1.b_id',
+                array('id'=>'b_id','name'=>'b_name','picture'=>'b_picture'))
+            ->where('t.bc_id=?',$bc_id)
+            ->order('b_score DESC');
+        if ($page !== null) {
+            $select->limitPage($page, $pagesize);
+        }
+        $rows = $this->getAdapter()->fetchAll($select);
+        $ret['pages'] = $pages;
+        $ret['rows']  = $rows;
+        return $ret;
+    }
 }

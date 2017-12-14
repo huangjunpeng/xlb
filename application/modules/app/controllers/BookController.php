@@ -44,4 +44,41 @@ class BookController extends PublicController
         }
         $this->xlb_ret(1, '', $rets);
     }
+
+    /**
+     * 书分类
+     */
+    public function xbcAction(){
+        $xbc = XlbBookCategoryModel::getInstance();
+        $types = $xbc->getAllCategorys();
+        $this->xlb_ret(1, '', $types);
+    }
+
+    /**
+     * 书列表
+     */
+    public function xbAction(){
+        $bc_id = $this->getParam('bc_id', 0);
+        if ($bc_id <= 0){
+            $this->xlb_ret(0, '分类ID不能为空');
+        }
+        $page = $this->getParam('page', 0);
+        $rows = XlbBookCategoryMapModel::getInstance()
+            ->getBookByBcId($bc_id, $page);
+        $this->xlb_ret(1, '', $rows);
+    }
+
+    /**
+     * 搜索
+     */
+    public function xbsAction(){
+        $_name = $this->getParam('name');
+        if (empty($_name)) {
+            $this->xlb_ret(0, '请输入书名');
+        }
+        $page = $this->getParam('page', 0);
+        $rows = XlbBookModel::getInstance()
+            ->searchByName($_name, $page);
+        $this->xlb_ret(1, '', $rows);
+    }
 }

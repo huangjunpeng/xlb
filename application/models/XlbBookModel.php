@@ -27,4 +27,30 @@ class XlbBookModel extends Xlb
         }
         return self::$_instance;
     }
+
+    /**
+     * @param $_name
+     * @param $page
+     * @param int $pagesize
+     * @return array
+     */
+    public function searchByName($_name, $page = null, $pagesize = 20){
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name), 'count(*)')
+            ->where("t.b_name LIKE '%{$_name}%'");
+        $pages = $this->getAdapter()->fetchOne($select);
+        $pages = ceil($pages / $pagesize);
+        unset($select);
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name), array('id'=>'b_id','name'=>'b_name','picture'=>'b_picture'))
+            ->where("t.b_name LIKE '%{$_name}%'")
+            ->order('b_score DESC');
+        if ($page !== null) {
+            $select->limitPage($page, $pagesize);
+        }
+        $rows = $this->getAdapter()->fetchAll($select);
+        $ret['pages'] = $pages;
+        $ret['rows']  = $rows;
+        return $rows;
+    }
 }
