@@ -36,4 +36,11 @@ class Xlb extends Zend_Db_Table
     public function rollBack(){
         return $this->getAdapter()->rollBack();
     }
+
+    /**
+     * @return string
+     */
+    public function getDbName(){
+        return $this->_name;
+    }
 }

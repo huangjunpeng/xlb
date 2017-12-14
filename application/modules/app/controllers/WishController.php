@@ -9,10 +9,6 @@ class WishController extends XlbController
         if ($b_id <= 0){
             $this->xlb_ret(0, '绘本ID不能为空');
         }
-        $row = XlbBookModel::getInstance()->find($b_id);
-        if (empty($row)) {
-            $this->xlb_ret(0, '绘本不存在');
-        }
         $Xwl = XlbWishListModel::getInstance();
         $Xwl->beginTransaction();
         //插入心愿单
@@ -65,28 +61,30 @@ class WishController extends XlbController
         if ($b_id <= 0){
             $this->xlb_ret(0, '绘本ID不能为空');
         }
+        $Xwl = XlbWishListModel::getInstance();
+        $Xwl->beginTransaction();
+        $data['b_id']           = $b_id;
+        $row = $Xwl->getRowByWhere($data);
+        if (empty($row)) {
+            $Xwl->rollBack();
+            $this->xlb_ret(0, '获取心愿单失败');
+        }
+        $xwl = $row->toArray();
+        $wl_id = $xwl['wl_id'];
+
+        unset($data);
         $data['u_id']  = $this->uid;
-        $data['b_id']  = $b_id;
+        $data['wl_id']  = $wl_id;
         $Xmwl = XlbMeWishListModel::getInstance();
         $row = $Xmwl->getRowByWhere($data);
         if (empty($row)) {
             $this->xlb_ret(1, '删除心愿单成功');
         }
-        $Xmwl->beginTransaction();
         $ret = $Xmwl->delete($data);
         if ($ret <= 0){
             $this->xlb_ret(0, '删除心愿单失败');
         }
-        $Xwl = XlbWishListModel::getInstance();
-        unset($data);
-        $data['b_id']           = $b_id;
-        $row = $Xwl->getRowByWhere($data);
-        if (empty($row)) {
-            $Xmwl->rollBack();
-            $this->xlb_ret(0, '获取心愿单失败');
-        }
-        $xwl = $row->toArray();
-        $wl_id = $xwl['wl_id'];
+
         unset($data);
         $wl_now_num = (int)$xwl['wl_now_num'];
         if ($wl_now_num == (int)$xwl['wl_target_num']) {
@@ -94,13 +92,33 @@ class WishController extends XlbController
             $data['wl_endtime'] = 0;
         }
         $wl_now_num = ($wl_now_num - 1) < 0 ? 0 : ($wl_now_num - 1);
-        $data['wl_now_num'] = $wl_now_num;
-        $ret = $Xwl->editData($wl_id, $data);
-        if ($ret <= 0){
-            $Xmwl->rollBack();
-            $this->xlb_ret(0, '删除心愿单成功');
+        if ($wl_now_num == 0) {
+            $ret = $Xwl->delete(array('wl_id'=>$wl_id));
+            if ($ret <= 0){
+                $Xwl->rollBack();
+                $this->xlb_ret(0, '删除心愿单失败');
+            }
+        } else {
+            $data['wl_now_num'] = $wl_now_num;
+            $ret = $Xwl->editData($wl_id, $data);
+            if ($ret <= 0){
+                $Xwl->rollBack();
+                $this->xlb_ret(0, '删除心愿单失败');
+            }
         }
-        $Xmwl->commit();
+        $Xwl->commit();
         $this->xlb_ret(1, '删除心愿单成功');
+    }
+
+    /**
+     * 获取我的心愿单
+     */
+    public function getAction(){
+        $rows = XlbMeWishListModel::getInstance()
+            ->getWishListByUid($this->uid);
+        foreach ($rows as &$row) {
+            $row['percen'] = ceil(($row['wl_now_num'] / $row['wl_target_num']) * 100);
+        }
+        $this->xlb_ret(0, '',$rows);
     }
 }
