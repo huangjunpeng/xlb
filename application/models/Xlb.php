@@ -15,4 +15,25 @@ class Xlb extends Zend_Db_Table
 	public function getRowByID($id) {
 	    return $this->find($id);
     }
+
+    /**
+     * @return Zend_Db_Adapter_Abstract
+     */
+    public function beginTransaction(){
+        return $this->getAdapter()->beginTransaction();
+    }
+
+    /**
+     * @return Zend_Db_Adapter_Abstract
+     */
+    public function commit(){
+        return $this->getAdapter()->commit();
+    }
+
+    /**
+     * @return Zend_Db_Adapter_Abstract
+     */
+    public function rollBack(){
+        return $this->getAdapter()->rollBack();
+    }
 }
