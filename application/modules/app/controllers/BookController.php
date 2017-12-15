@@ -79,6 +79,22 @@ class BookController extends PublicController
         $page = $this->getParam('page', 0);
         $rows = XlbBookModel::getInstance()
             ->searchByName($_name, $page);
+        if (empty($rows)) {
+            $this->xlb_ret(1,'',array());
+        }
+        $b_ids = array();
+        foreach ($rows['rows'] as $row) {
+            $b_ids[] = $row['id'];
+        }
+        $types = XlbBookCategoryMapModel::getInstance()
+            ->getCategoryByBId($b_ids);
+        foreach ($rows['rows'] as &$row) {
+            if (isset($types[$row['id']])) {
+                $row['theme'] = $types[$row['id']];
+            } else {
+                $row['theme'] = array();
+            }
+        }
         $this->xlb_ret(1, '', $rows);
     }
 }

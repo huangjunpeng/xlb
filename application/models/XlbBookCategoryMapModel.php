@@ -68,4 +68,23 @@ class XlbBookCategoryMapModel extends Xlb
         $ret['rows']  = $rows;
         return $ret;
     }
+
+    /**
+     * @param $b_ids
+     * @return array
+     */
+    public function getCategoryByBId($b_ids) {
+        $table_1 = XlbBookCategoryModel::getInstance()->getDbName();
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name),array('b_id'))
+            ->join(array('t1'=>$table_1),'t.bc_id=t1.bc_id', array('bc_id','bc_name'))
+            ->orWhere('t.b_id IN(?)',$b_ids);
+        $rows = $this->getAdapter()->fetchAll($select);
+        $types = array();
+        foreach ($rows as &$row) {
+            $types[$row['b_id']][] = &$row;
+            unset($row['b_id']);
+        }
+        return $types;
+    }
 }
