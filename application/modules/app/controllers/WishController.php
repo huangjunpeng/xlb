@@ -17,6 +17,8 @@ class WishController extends XlbController
         if (empty($row)) {
             $data['wl_creattime']   = time();
             $wl_id = $Xwl->insert($data);
+            $xwl['wl_now_num']      = 0;
+            $xwl['wl_target_num']   = 20;
         } else {
             $xwl = $row->toArray();
             $wl_id = $xwl['wl_id'];
@@ -114,11 +116,13 @@ class WishController extends XlbController
      * 获取我的心愿单
      */
     public function getAction(){
+        $page       = $this->getParam('page', 1);
+        $pagenum    = $this->getParam('pagenum', 20);
         $rows = XlbMeWishListModel::getInstance()
-            ->getWishListByUid($this->uid);
-        foreach ($rows as &$row) {
+            ->getWishListByUid($this->uid, $page, $pagenum);
+        foreach ($rows['rows'] as &$row) {
             $row['percen'] = ceil(($row['wl_now_num'] / $row['wl_target_num']) * 100);
         }
-        $this->xlb_ret(0, '',$rows);
+        $this->xlb_ret(1, '',$rows);
     }
 }

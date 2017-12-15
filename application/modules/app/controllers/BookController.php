@@ -97,4 +97,35 @@ class BookController extends PublicController
         }
         $this->xlb_ret(1, '', $rows);
     }
+
+    /**
+     * 获取首页数据
+     */
+    public function xbiAction() {
+        $page       = $this->getParam('page', 1);
+        $pagenum    = $this->getParam('pagenum', 20);
+        $status     = $this->getParam('status', 1);
+        if (empty($status)) {
+            $this->xlb_ret(0, '状态不能为空');
+        }
+        $rows = XlbShareBookModel::getInstance()
+            ->getBookByStatus($status, $page, $pagenum);
+        $this->xlb_ret(1, '', $rows);
+    }
+
+    /**
+     * 获取绘本详情
+     */
+    public function getinfoAction(){
+        $b_id = (int)$this->getParam('id', 0);
+        if (empty($b_id)) {
+            $this->xlb_ret(0, '绘本ID不能为空');
+        }
+        $row = XlbBookModel::getInstance()
+            ->getInfoById($b_id);
+        if (empty($row)) {
+            $this->xlb_ret(0, '绘本未找到');
+        }
+        $this->xlb_ret(1, '', $row);
+    }
 }

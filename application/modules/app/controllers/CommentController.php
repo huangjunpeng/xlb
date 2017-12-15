@@ -47,8 +47,11 @@ class CommentController extends XlbController
         if ($b_id <= 0){
             $this->xlb_ret(0, '绘本ID不能为空');
         }
-        $rows = XlbCommentModel::getInstance()->getCommentByBookId($b_id);
-        foreach ($rows as &$row) {
+        $page       = $this->getParam('page', 1);
+        $pagenum    = $this->getParam('pagenum', 20);
+        $rows = XlbCommentModel::getInstance()
+            ->getCommentByBookId($b_id, $page, $pagenum);
+        foreach ($rows['rows'] as &$row) {
             $row['c_comment_time'] = date('Y年m月d日', (int)$row['c_comment_time']);
         }
         $this->xlb_ret(1, '', $rows);

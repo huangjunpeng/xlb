@@ -38,7 +38,12 @@ class XlbBookModel extends Xlb
         $select = $this->getAdapter()->select();
         $select->from(array('t'=>$this->_name), 'count(*)')
             ->where("t.b_name LIKE '%{$_name}%'");
-        $pages = $this->getAdapter()->fetchOne($select);
+        $pages = (int)$this->getAdapter()->fetchOne($select);
+        if ($pages == 0) {
+            $ret['pages'] = $pages;
+            $ret['rows']  = array();
+            return $ret;
+        }
         $pages = ceil($pages / $pagesize);
         unset($select);
         $fields = array(
@@ -58,5 +63,41 @@ class XlbBookModel extends Xlb
         $ret['pages'] = $pages;
         $ret['rows']  = $rows;
         return $ret;
+    }
+
+    /**
+     * 获取书详情
+     * @param $b_id
+     * @return mixed|null
+     */
+    public function getInfoById($b_id) {
+        $select = $this->getAdapter()->select();
+        $select->from($this->_name, array(
+                'id'=>'b_id',
+                'name'=>'b_name',
+                'age_reading'=>'b_age_reading',
+                'author'=>'b_author',
+                'press'=>'b_press',
+                'press_data'=>'b_press_data',
+                'languages'=>'b_languages',
+                'describe'=>'b_describe',
+                'picture'=>'b_picture',
+                'score'=>'b_score'))
+            ->where('b_id=?',$b_id);
+        $row = $this->getAdapter()->fetchRow($select);
+        if (empty($row)){
+            return null;
+        }
+        $types = XlbBookCategoryMapModel::getInstance()
+            ->getCategoryByBId(array($row['id']));
+        $row['theme'] = $types[$row['id']];
+        $comment = XlbCommentModel::getInstance()
+            ->getCommentByBookId($b_id, 1, 1);
+        if (count($comment['rows']) > 0) {
+            $row['comment'] = $comment['rows'][0];
+        } else {
+            $row['comment'] = null;
+        }
+        return $row;
     }
 }

@@ -48,8 +48,7 @@ class XlbBookCategoryMapModel extends Xlb
         $table_1 = XlbBookModel::getInstance()->getDbName();
         $select = $this->getAdapter()->select();
         $select->from(array('t'=>$this->_name),'count(*)')
-            ->join(array('t1'=>$table_1),'t.b_id=t1.b_id',
-                array('id'=>'b_id','name'=>'b_name','picture'=>'b_picture'))
+            ->join(array('t1'=>$table_1),'t.b_id=t1.b_id',array())
             ->where('t.bc_id=?',$bc_id);
         $pages = $this->getAdapter()->fetchOne($select);
         $pages = ceil($pages / $pagesize);

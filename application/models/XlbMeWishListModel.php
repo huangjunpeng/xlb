@@ -60,11 +60,24 @@ class XlbMeWishListModel extends Xlb
     /**
      * 获取我的心愿单
      * @param $uid
+     * @param int $page
+     * @param int $pagesize
      * @return array
      */
-    public function getWishListByUid($uid){
+    public function getWishListByUid($uid, $page = 1, $pagesize = 20){
         $table_1 = XlbWishListModel::getInstance()->getDbName();
         $table_2 = XlbBookModel::getInstance()->getDbName();
+        $select  =  $this->getAdapter()->select();
+        $select->from(array('xmwl'=>$this->_name),'count(*)')
+            ->where('xmwl.u_id=?',$uid);
+        $pages = $this->getAdapter()->fetchOne($select);
+        if ($pages == 0) {
+            $ret['pages'] = $pages;
+            $ret['rows']  = array();
+            return $ret;
+        }
+        $pages = ceil($pages / $pagesize);
+        unset($select);
         $select  =  $this->getAdapter()->select();
         $select->from(array('xmwl'=>$this->_name),'xmwl.mwl_id')
             ->join(
@@ -73,7 +86,12 @@ class XlbMeWishListModel extends Xlb
             ->join(
                 array('xb'=> $table_2),
                 'xb.b_id=xwl.b_id',array('b_id','b_name','b_picture'))
-            ->where('xmwl.u_id=?',$uid);
-        return $this->getAdapter()->fetchAll($select);
+            ->where('xmwl.u_id=?',$uid)
+            ->order('t_c.c_comment_time DESC')
+            ->limitPage($page, $pagesize);
+        $rows = $this->getAdapter()->fetchAll($select);
+        $ret['pages'] = $pages;
+        $ret['rows']  = $rows;
+        return $ret;
     }
 }
