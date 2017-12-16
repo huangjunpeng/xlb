@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>小萝卜</title>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/scripts/jquery/css/jquery.alerts.css" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/styles/admin/style.css" />
+    <style type="text/css">
+        li{
+            display: inline-block;
+            cursor: pointer;
+        }
+        a{
+            color: #838a90;
+        }
+        a:hover {
+            color: #4aacf3;
+            text-decoration: none;
+        }
+        #add_user button{
+            margin-right: 20px;
+        }
+
+        .display-none{
+            display: none;
+        }
+        .form-control{
+            width: 90%;
+            float: left;
+        }
+        .xln_must_enter {
+            color: #c00000;
+            font-size: 16px;
+            float: left;
+            padding-left: 10px;
+            height: 40px;
+            line-height: 40px;
+        }
+        form .errMsg{
+            color: #A94442;
+        }
+        .form-horizontal .form-group {
+            margin: 0px 0px 20px 0px;
+        }
+        .control-input {
+            min-height: 40px;
+            float: left;
+            color: #4d4d4d;
+        }
+        .form-horizontal .control-label {
+            font-size: 12px;
+            color: #121212;
+            font-weight: normal;
+            float: left;
+            height: 40px;
+            line-height: 40px;
+            padding: 0px;
+        }
+        .input-group-addon.search {
+            cursor: pointer;
+            width: 34px;
+            height: 34px;
+            border: none;
+            background: transparent url(/xlb/public/images/search.png) no-repeat scroll 10px 10px;
+        }
+        .span_user{
+            height: 40px;
+            width: 50px;
+            background: #2294e4;
+            float: left;
+            border: 1px solid #2294e4;
+            border-radius: 0px 4px 4px 0px;
+            padding: 0px;
+            cursor: pointer;
+        }
+        #xz_sp button{
+        }
+    </style>
+</head>
+<body style="height: 100%">
+<div class="container" style="border-radius: 4px;height: 100%;width: 100%;background-color: #fff;min-height: 700px;overflow-y: auto">
+    <div id="cabinet_list">
+        <div style="margin: 20px 20px 50px;">
+            <div style="width:100%;color:#74767c;font-size:18px;">用户列表</div>
+            <div style="padding-right: 20px;">
+                <div class="float-right">
+                    <form action="/xlb/admin/cabinet/index/page/1" style="float: left" id="form_search">
+                        <div id="searchdivice" class="input-group" style="border:1px solid #cccccc; width:200px; border-radius:3px; height:34px; float:left;background-color:#fff;margin-right: 20px">
+                            <div class="input-group-addon search" onclick="document.getElementById('form_search').submit()"></div>
+                            <input id="cabi_search" name="search" type="text" placeholder="请输入用户昵称" class="form-control input-sm" style="height: 100%;border: none;padding-left: 0px;box-shadow:none;" value="<?php echo $this->search?>">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive" style="padding: 10px 30px 0px 40px;font-size: 14px !important;">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>书柜编号</th>
+                    <th>柜格子数</th>
+                    <th>书柜名称</th>
+                    <th>书柜地点</th>
+                    <th>所属人</th>
+                    <th>经度</th>
+                    <th>纬度</th>
+                    <th style="text-align: center">操作</th>
+                </tr>
+                </thead>
+                <tbody style="font-size: 13px !important;">
+                <?php foreach ($this->rows['rows'] as $table){?>
+                    <?php echo "<tr data-id='{$table['_id']}'><td>{$table['_no']}</td>"?>
+                    <?php echo "<td >{$table['_space_num']}</td>"?>
+                    <?php echo "<td>{$table['_name']}</td>"?>
+                    <?php echo "<td>{$table['_desc']}</td>"?>
+                    <?php echo "<td>".($table['sp_name'] == null ? '' : $table['sp_name'])."</td>"?>
+                    <?php echo "<td>{$table['_long']}</td>"?>
+                    <?php echo "<td>{$table['_lat']}</td>"?>
+                    <?php echo "<td style='text-align: center'>
+                        <ul>
+                            <li><a data-id='{$table['_id']}' class=cabi_edit'>编辑</a></li>
+                            <li style='margin-left: 20px'><a data-status='{$table['_status']}' class=cabi_enable'>".($table['_status'] == 0 ? '启用' : '停用')."</a></li>
+                            <li style='margin-left: 20px'><a class='cabi_del'>删除</a></li>
+                        </ul></td></tr>"?>
+                <?php }?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="cabinet_add" class="display-none">
+        <div style="margin: 20px 20px 50px;">
+            <div id="admin_add_title" style="width:100%;color:#74767c;font-size:18px;">添加柜子</div>
+            <div style="padding-right: 20px;">
+                <div class="float-right">
+                    <button type="button" class="btn btn-primary user_back">
+                        <span class="glyphicon glyphicon-arrow-left" style="font-size: 1px;padding-right: 5px;"></span>
+                        返回
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div style="width:70%;float:left;padding-top:20px;">
+            <form class="form-horizontal" id="add_user" role="form">
+                <div class="form-group display-none">
+                    <input id="_id" class="form-control control-input" name="_id" type="text">
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_name" style="text-align:right;font-weight:normal;">
+                        书柜名称：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_name" class="form-control control-input" name="_name" type="text" placeholder="请输入书柜名称" required>
+                        <span class="xln_must_enter" >*</span>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2 display-none"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_long" style="text-align:right;font-weight:normal;">
+                        经度：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_long" class="form-control control-input" name="_long" type="text" required placeholder="请输入经度">
+                        <span class="xln_must_enter" >*</span>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_lat" style="text-align:right;font-weight:normal;">
+                        纬度：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_lat" class="form-control control-input" name="_lat" type="text" required placeholder="请输入纬度">
+                        <span class="xln_must_enter" >*</span>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_no" style="text-align:right;font-weight:normal;">
+                        书柜编号：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_no" class="form-control control-input" name="_no" type="text" required placeholder="请输入书柜编号">
+                        <span class="xln_must_enter" >*</span>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_space_num" style="text-align:right;font-weight:normal;">
+                        格子数：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_space_num" class="form-control control-input" name="_space_num" type="text" required placeholder="请输入格子数">
+                        <span class="xln_must_enter" >*</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="sp_id" style="text-align:right;font-weight:normal;">
+                        所属人：
+                    </label>
+                    <div class="col-sm-6">
+                        <div id="div_sp" class="form-control control-input" style="width: 274px;border-bottom-right-radius: 0;border-top-right-radius: 0;"></div>
+                        <span class="span_user" style="background:#2294e4 url('/xlb/public/images/position.png') no-repeat 10px 10px;display: inline-block;width: 40px;height: 40px;"></span>
+                        <input id="sp_id" class="form-control control-input display-none" name="sp_id" type="text" required placeholder="请输入所属人">
+                        <span class="xln_must_enter" >*</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_desc" style="text-align:right;font-weight:normal;">
+                        柜子描述：
+                    </label>
+                    <div class="col-sm-6">
+                        <textarea id="_desc" class="form-control control-input" name="_desc" style="height: 100px"></textarea>
+                        <span class="xln_must_enter" >*</span>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="" style="text-align:right;font-weight:normal;"></label>
+                    <div class="col-sm-6 control-input" style="margin-left:0px;">
+                        <button type="button" class="btn btn-default user_back">取消</button>
+                        <button type="button" class="btn btn-primary" id="save_cabi_continue">保存后继续添加</button>
+                        <button type="button" class="btn btn-primary" id="save_cabi">保存</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">选择服务商</h4>
+                </div>
+                <div class="modal-body" style="height: 400px;overflow-y: auto">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>姓名</th>
+                                <th>邮箱</th>
+                                <th>电话</th>
+                                <th>状态</th>
+                                <th style="text-align: center">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody id="xz_sp">
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</div>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/jQuery-2.2.0.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/json2.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/jquery.alerts.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/Common.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#cabi_add').click(function () {
+            $('#cabinet_add input').val('');
+            $('#div_sp').html('');
+            $('#sp_id').removeAttr('value');
+            $('#cabinet_add .errMsg').addClass('display-none');
+            $('#admin_add_title').html('添加柜子');
+            $('#cabinet_add').toggleClass('display-none');
+            $('#cabinet_list').toggleClass('display-none');
+        });
+        $('.user_back').click(function () {
+            $('#cabinet_add').toggleClass('display-none');
+            $('#cabinet_list').toggleClass('display-none');
+            window.location.reload();
+        });
+        $('.span_user').click(function () {
+            myPostSync(url+'/xlb/admin/role/xrs',function(json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    if (null != json.data && json.data.length > 0) {
+                        var str = '';
+                        var len = json.data.length;
+                        for (var i =0; i < len; ++i) {
+                            var sp = json.data[i];
+                            str += '<tr>' +
+                                '<td>' + sp._id + '</td>' +
+                                '<td>' + sp._name + '</td>' +
+                                '<td>' + sp._email + '</td>' +
+                                '<td>' + sp._mobile + '</td>' +
+                                '<td>' + (sp._status == 1 ? '激活' : '停用') + '</td>' +
+                                '<td style="text-align: center"><button data-name='+ sp._name +' data-id=' + sp._id + ' type="button" class="btn btn-primary btn-sm">选择</button></td></tr>'
+                        }
+                        $('#xz_sp').html(str);
+                    }
+                }
+            });
+            $('#myModal').modal('show');
+            $('#xz_sp button').click(function () {
+                $('#div_sp').html($(this).data('name'));
+                $('#sp_id').val($(this).data('id'));
+                $('#myModal').modal('hide');
+            })
+        });
+        $('#save_cabi').click(function () {
+            myPostSync(url+'/xlb/admin/cabinet/cabi-add',$("#add_user").serialize(),function (json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    jAlert(json.message);
+                    window.location.reload();
+                }
+            });
+        });
+        $('#save_cabi_continue').click(function () {
+            myPostSync(url+'/xlb/admin/cabinet/cabi-add',$("#add_user").serialize(),function (json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    jAlert(json.message);
+                    $('#cabinet_add input').val('');
+                    $('#cabinet_add textarea').val('');
+                    $('#div_sp').html('');
+                    $('#sp_id').removeAttr('value');
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

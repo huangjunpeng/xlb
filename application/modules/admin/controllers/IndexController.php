@@ -122,6 +122,14 @@ class Admin_IndexController extends XlbController
     }
 
     /**
+     * 退出后台登录
+     */
+    public function logoutAction(){
+        setcookie('xlbtoken', '', time()- 3600*24, '/');
+        $this->_forward('login');
+    }
+
+    /**
      * 上传文件
      */
     public function uploadAction()

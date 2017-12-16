@@ -14,6 +14,11 @@ class XlbUserInfoModel extends Xlb
     protected  $_primary    = 'u_id';
 
     /**
+     * @var string
+     */
+    protected  $_key        = 'u_id';
+
+    /**
      * @var XlbUserInfoModel
      */
     public static $_instance = null;
@@ -26,5 +31,35 @@ class XlbUserInfoModel extends Xlb
             self::$_instance = new static();
         }
         return self::$_instance;
+    }
+
+    /**
+     * 更新数据
+     * @param $id int
+     * @param $array array
+     * @return int
+     */
+    public function editData($id,$array) {
+        $db = $this->getAdapter();
+        $where = $db->quoteInto($this->_key."=?", $id);
+        return $this->update($array, $where);
+    }
+
+    /**
+     * @param $u_id
+     * @return mixed
+     */
+    public function getInfoById($u_id) {
+        $select = $this->getAdapter()->select();
+        $select->from($this->_name,
+            array(
+                'uid'=>'u_id',
+                'nickname'=>'u_nickname',
+                'mobile'=>'u_mobile',
+                'picture'=>'u_picture'
+            ))
+            ->where('u_id=?',$u_id);
+        $row = $this->getAdapter()->fetchRow($select);
+        return $row;
     }
 }

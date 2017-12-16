@@ -44,7 +44,7 @@ class XlbCabispaceModel extends Xlb
         $data['cabi_id']        = $cabi_id;
         $data['cs_creattime']   = time();
         for ($i = 0; $i < $cabi_space_num; ++$i) {
-            $data['cs_no'] = $cabi_no.'_'.$i;
+            $data['cs_no'] = $cabi_no.'0'.$i;
             $id = $this->insert($data);
             if ($id <= 0) {
                 throw new Exception('添加失败');

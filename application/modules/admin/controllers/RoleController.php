@@ -9,6 +9,11 @@ class Admin_RoleController extends XlbController
         $this->view->tables = XlbSpModel::getInstance()->getAll();
     }
 
+    public function xrsAction(){
+        $rows = XlbSpModel::getInstance()->getAll();;
+        $this->xlb_ret(1, '', $rows);
+    }
+
     public function roleManageAction()
     {
     }

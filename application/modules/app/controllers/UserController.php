@@ -138,4 +138,32 @@ class UserController extends XlbController
             $this->xlb_ret(1,'', $files);
         }
     }
+
+    /**
+     * 修改用户昵称
+     */
+    public function xumAction() {
+        $u_nickname =  $this->getParam('nickname', '');
+        if (empty($u_nickname)) {
+            $this->xlb_ret(0, '昵称不能为空');
+        }
+        if ($u_nickname == $this->user['u_nickname']){
+            $this->xlb_ret(1, '修改成功');
+        }
+        $ret = XlbUserInfoModel::getInstance()
+            ->editData($this->uid, array('u_nickname'=>$u_nickname));
+        if ($ret <=0 ){
+            $this->xlb_ret(0, '修改失败');
+        }
+        $this->xlb_ret(1, '修改成功');
+    }
+
+    /**
+     * 获取用户信息
+     */
+    public function getinfoAction() {
+        $row = XlbUserInfoModel::getInstance()
+            ->getInfoById($this->uid);
+        $this->xlb_ret(1, '', $row);
+    }
 }

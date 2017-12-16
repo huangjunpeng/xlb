@@ -89,7 +89,7 @@ class XlbController extends PublicController
      */
     private function _checkAuth() {
         $act = array(
-            XLB_APP     => array('login','sendsms','bookListAction','bookListAction',),
+            XLB_APP     => array('login','sendsms'),
             XLB_ADMIN   => array('login')
         );
         if (in_array($this->action, $act[$this->module])) {

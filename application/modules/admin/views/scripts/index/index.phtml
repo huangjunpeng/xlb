@@ -9,7 +9,12 @@
     <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/styles/admin/style.css" />
     <style type="text/css">
-
+        .userinfo:hover{
+            background-color: #dfdfdf;
+        }
+        .userinfo:hover .dropdown-menu{
+            display: block;
+        }
     </style>
 <body class="sidebar-mini">
     <div class="wrapper">
@@ -20,6 +25,26 @@
             </div>
             <nav class="navbar navbar-static-top" role="navigation">
                 <a href="#" class="sidebar-toggle1" data-toggle="offcanvas" role="button"></a>
+                <div class="header-text">小萝卜管理后台</div>
+                <div class="float-right">
+                    <ul class="nav navbar-nav">
+                        <li class="userinfo">
+                            <div style="padding: 10px 10px 6px 10px; text-align: right;">
+                                <span id="username">小萝卜</span>
+                                <span class="caret"></span>
+                                <img id="user_img" src="/xlb/public/book/img/reduce_Erd8iI.jpg" style="margin-left:6px;width:34px;height:34px;border-radius:50%;">
+                            </div>
+                            <ul class="dropdown-menu" style="width: 200px">
+                                <li>
+                                    <a href="/xlb/admin/index/logout">
+                                        <img src="/xlb/public/images/exit.png" style="">
+                                        <span>退出</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </nav>
         </header>
         <div class="m_opacity"></div>
@@ -36,7 +61,7 @@
                                         </li>';?>
                         <?php endif;?>
                         <?php if ($this->menu[1]['name'] == '用户'):?>
-                            <?php echo '<li data-href="/xlb/admin/index/user-list">
+                            <?php echo '<li data-href="/xlb/admin/user/index">
                                             <svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve">
                                                 <g id="XMLID_5_">
                                                     <path id="XMLID_6_" class="st1" d="M8,10.3c-2.9,0-5.2-2.3-5.2-5.2C2.8,2.3,5.1,0,8,0c2.9,0,5.2,2.3,5.2,5.2
@@ -88,7 +113,7 @@
                             <?php echo '</ul></li>';?>
                         <?php endif;?>
                         <?php if ($this->menu[3]['name'] == '柜子'){?>
-                            <?php echo '<li data-href="/xlb/admin/index/cabi-list" >
+                            <?php echo '<li data-href="/xlb/admin/cabinet/index" >
                                             <svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve">
                                                 <g id="XMLID_9_">
                                                     <path id="XMLID_12_" class="st1" d="M10.5,1.3L10.5,1.3C10.5,1.4,10.5,1.3,10.5,1.3C10.5,1.3,10.5,1.3,10.5,1.3L10.5,1.3L10.5,1.3z
@@ -216,7 +241,9 @@
     window.onload = function () {
         var href = sessionStorage.getItem('src');
         if (null != href) {
+            $('#stairhover').find('ul li').removeClass('active');
             $('#content iframe').attr('src',href);
+            $('li[data-href="'+ href +'"]').addClass('active');
         } else {
             $('#content iframe').attr('src','/xlb/admin/index/index-list');
         }

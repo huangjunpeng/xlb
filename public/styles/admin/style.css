@@ -80,7 +80,7 @@
     min-height: 50px;
     border-radius: 0;
     background-color: #fff;
-    float: left;
+    margin-left: 200px;
 }
 
 .sidebar-toggle1 {
@@ -190,6 +190,15 @@
 
 .sidebar-menu > ul > li:hover { background-color:#17242d;color:#fff; }
 
+.header-text {
+    float: left;
+    width: 250px;
+    height: 50px;
+    line-height: 50px;
+    padding-left: 30px;
+    font-size: 14px;
+    color: #838a90;
+}
 
 .content-wrapper {
     margin-top: 50px;
