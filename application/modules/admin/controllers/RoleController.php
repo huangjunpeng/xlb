@@ -14,13 +14,9 @@ class Admin_RoleController extends XlbController
         $this->xlb_ret(1, '', $rows);
     }
 
-    public function roleManageAction()
-    {
-    }
+    public function roleManageAction(){}
 
-    public function cabiUserAction()
-    {
-    }
+    public function cabiUserAction(){}
 
     /**
      * 添加更新管理员

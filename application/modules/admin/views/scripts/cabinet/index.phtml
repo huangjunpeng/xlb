@@ -125,8 +125,8 @@
                         <?php echo "<td>{$table['_lat']}</td>"?>
                         <?php echo "<td style='text-align: center'>
                         <ul>
-                            <li><a data-id='{$table['_id']}' class=cabi_edit'>编辑</a></li>
-                            <li style='margin-left: 20px'><a data-status='{$table['_status']}' class=cabi_enable'>".($table['_status'] == 0 ? '启用' : '停用')."</a></li>
+                            <li><a class='cabi_edit'>编辑</a></li>
+                            <li style='margin-left: 20px'><a class='cabi_enable'  data-status='{$table['_status']}'>".($table['_status'] == 0 ? '启用' : '停用')."</a></li>
                             <li style='margin-left: 20px'><a class='cabi_del'>删除</a></li>
                         </ul></td></tr>"?>
                     <?php }?>
@@ -239,7 +239,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">选择服务商</h4>
+                    <h4 class="modal-title" id="myModalLabel" style="font-size: 15px;font-weight: bold;">选择服务商</h4>
                 </div>
                 <div class="modal-body" style="height: 400px;overflow-y: auto">
                     <div class="table-responsive">
@@ -275,6 +275,7 @@
             $('#cabinet_add input').val('');
             $('#div_sp').html('');
             $('#sp_id').removeAttr('value');
+            $('#_space_num').removeAttr('disabled');
             $('#cabinet_add .errMsg').addClass('display-none');
             $('#admin_add_title').html('添加柜子');
             $('#cabinet_add').toggleClass('display-none');
@@ -286,7 +287,7 @@
             window.location.reload();
         });
         $('.span_user').click(function () {
-            myPostSync(url+'/xlb/admin/role/xrs',function(json) {
+            myGetSync(url+'/xlb/admin/role/xrs',function(json) {
                 if (json.code == 0) {
                     jAlert(json.message);
                 } else {
@@ -301,7 +302,13 @@
                             '<td>' + sp._email + '</td>' +
                             '<td>' + sp._mobile + '</td>' +
                             '<td>' + (sp._status == 1 ? '激活' : '停用') + '</td>' +
-                            '<td style="text-align: center"><button data-name='+ sp._name +' data-id=' + sp._id + ' type="button" class="btn btn-primary btn-sm">选择</button></td></tr>'
+                            '<td style="text-align: center">' +
+                                '<button data-name='+ sp._name +' data-id=' + sp._id + ' type="button" ' +
+                                'class="btn btn-primary btn-sm" ';
+                            if (sp._status == 0) {
+                                str += ' disabled="disabled"';
+                            }
+                            str += '>选择</button></td></tr>';
                         }
                         $('#xz_sp').html(str);
                     }
@@ -336,6 +343,52 @@
                     $('#sp_id').removeAttr('value');
                 }
             });
+        });
+        $('a.cabi_edit').click(function () {
+            var id = $(this).closest('tr').data('id');
+            myGetSync(url+'/xlb/admin/cabinet/get?id=' + id,function (json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    $('#_id').val(json.data._id);
+                    $('#_name').val(json.data._name);
+                    $('#_long').val(json.data._long);
+                    $('#_lat').val(json.data._lat);
+                    $('#_no').val(json.data._no);
+                    $('#_space_num').val(json.data._space_num);
+                    $('#_space_num').attr('disabled',true);
+                    $('#_desc').val(json.data._desc);
+                    $('#div_sp').html(json.data.sp_name);
+                    $('#sp_id').val(json.data.sp_id);
+
+                    $('#admin_add_title').html('编辑柜子');
+                    $('#cabinet_add').toggleClass('display-none');
+                    $('#cabinet_list').toggleClass('display-none');
+                }
+            })
+        });
+        $('a.cabi_enable').click(function () {
+            var id = $(this).closest('tr').data('id');
+            var status = $(this).data('status');
+            myPostSync(url+'/xlb/admin/cabinet/set-status?id=' + id + '&_status=' + status,function (json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    jAlert("修改成功");
+                    window.location.reload();
+                }
+            })
+        });
+        $('a.cabi_del').click(function () {
+            var id = $(this).closest('tr').data('id');
+            myPostSync(url+'/xlb/admin/cabinet/del?id=' + id,function (json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    jAlert("删除成功");
+                    window.location.reload();
+                }
+            })
         });
     });
 </script>

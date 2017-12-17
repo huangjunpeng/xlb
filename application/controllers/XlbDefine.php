@@ -12,13 +12,13 @@ $menu = array(
         'name' => '绘本',
         'sub'  => array(
             array(
-                'name' => '绘本列表',
+                'name' => '共享绘本',
             ),
             array(
                 'name' => '绘本标签',
             ),
             array(
-                'name' => '绘本设置',
+                'name' => '绘本大全',
             ),
         )
     ),

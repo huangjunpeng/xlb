@@ -14,6 +14,12 @@ class XlbCabinetModel extends Xlb
     protected  $_primary    = 'cabi_id';
 
     /**
+     * 主键
+     * @var string
+     */
+    protected  $_key        = 'cabi_id';
+
+    /**
      * @var XlbCabinetModel
      */
     public static $_instance = null;
@@ -75,5 +81,54 @@ class XlbCabinetModel extends Xlb
         $ret['pages'] = $pages;
         $ret['rows']  = $rows;
         return $ret;
+    }
+
+    /**
+     * 获取书柜信息
+     * @param $id
+     * @return mixed
+     */
+    public function getOneCabinetById($id) {
+        $table_1 = XlbSpModel::getInstance()->getDbName();
+        $fields = array(
+            '_id'=>'cabi_id',
+            '_no'=>'cabi_no',
+            '_space_num'=>'cabi_space_num',
+            '_name'=>'cabi_name',
+            '_desc'=>'cabi_desc',
+            '_long'=>'cabi_long',
+            '_lat'=>'cabi_lat',
+            '_status'=>'cabi_status',
+            'sp_id'
+        );
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name), $fields)
+            ->joinLeft(array('t1'=>$table_1), 't1.sp_id=t.sp_id',array('sp_name'))
+            ->where('cabi_id=?',$id);
+        $row = $this->getAdapter()->fetchRow($select);
+        return $row;
+    }
+
+    /**
+     * 更新数据
+     * @param $id int
+     * @param $array array
+     * @return int
+     */
+    public function editData($id,$array) {
+        $db = $this->getAdapter();
+        $where = $db->quoteInto($this->_key."=?", $id);
+        return $this->update($array, $where);
+    }
+
+    /**
+     * 删除数据
+     * @param $id int
+     * @return int
+     */
+    public function delCabinetById($id) {
+        $db = $this->getAdapter();
+        $where = $db->quoteInto($this->_key."=?", $id);
+        return $this->delete($where);
     }
 }

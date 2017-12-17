@@ -52,4 +52,15 @@ class XlbCabispaceModel extends Xlb
         }
         return true;
     }
+
+    /**
+     * 删除柜子格子
+     * @param $cabi_id
+     * @return int
+     */
+    public function delCabispaceByCabiId($cabi_id){
+        $db = $this->getAdapter();
+        $where = $db->quoteInto("cabi_id=?", $cabi_id);
+        return $this->delete($where);
+    }
 }

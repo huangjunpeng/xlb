@@ -12,6 +12,22 @@ class Admin_CabinetController extends XlbController
     }
 
     /**
+     * 获取柜子信息
+     */
+    public function getAction() {
+        $id = $this->getParam('id');
+        if (empty($id)) {
+            $this->xlb_ret(0, 'ID不能为空');
+        }
+        $row = XlbCabinetModel::getInstance()
+            ->getOneCabinetById($id);
+        if ($row) {
+            $this->xlb_ret(1, '', $row);
+        }
+        $this->xlb_ret(0, '获取柜子信息失败');
+    }
+
+    /**
      * 添加柜子
      */
     public function cabiAddAction()
@@ -72,14 +88,61 @@ class Admin_CabinetController extends XlbController
         }
         $cabi['sp_id'] = $_sp;
 
+        $_id = $this->getParam('_id', 0);
         //添加
         $xcm = XlbCabinetModel::getInstance();
-        $id = $xcm->insert($cabi);
-        if ($id <= 0) {
-            $this->xlb_ret(0, '添加失败');
+        if (empty($_id)) {
+
+            $id = $xcm->insert($cabi);
+            if ($id <= 0) {
+                $this->xlb_ret(0, '添加失败');
+            }
+            XlbCabispaceModel::getInstance()
+                ->addCabispace($id, $_no, $_space_num);
+            $this->xlb_ret(1,'添加成功', array('id'=>$id));
+        } else {
+            $xcm->editData($_id, $cabi);
+            $this->xlb_ret(1, '更新成功',array('id'=>$_id));
         }
-        XlbCabispaceModel::getInstance()
-            ->addCabispace($id, $_no, $_space_num);
-        $this->xlb_ret(1,'添加成功', array('id'=>$id));
+    }
+
+
+    /**
+     * 修改柜子状态
+     */
+    public function setStatusAction()
+    {
+        $status = $this->getParam('_status',0);
+        $status = $status == 0 ? 1 : 0;
+        $id = $this->getParam('id');
+        if (empty($id)) {
+            $this->xlb_ret(0, 'ID不能为空');
+        }
+        $xsp = XlbCabinetModel::getInstance();
+        if ($xsp->editData($id, array('cabi_status'=>$status)) > 0) {
+            $this->xlb_ret(1, '更新成功');
+        }
+        $this->xlb_ret(0, '更新失败');
+    }
+
+    /**
+     * 删除柜子
+     */
+    public function delAction(){
+        $id = $this->getParam('id');
+        if (empty($id)) {
+            $this->xlb_ret(0, 'ID不能为空');
+        }
+        $ret = XlbCabinetModel::getInstance()
+            ->delCabinetById($id);
+        if ($ret <= 0) {
+            $this->xlb_ret(0, '删除失败');
+        }
+        $ret = XlbCabispaceModel::getInstance()
+            ->delCabispaceByCabiId($id);
+        if ($ret <= 0) {
+            $this->xlb_ret(0, '删除失败');
+        }
+        $this->xlb_ret(1, '删除成功');
     }
 }

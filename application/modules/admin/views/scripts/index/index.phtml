@@ -76,7 +76,7 @@
                                         </li>';?>
                         <?php endif;?>
                         <?php if ($this->menu[2]['name'] == '绘本'):?>
-                            <?php echo '<li data-href="/xlb/admin/index/book-list">
+                            <?php echo '<li data-href="/xlb/admin/role/index">
                                             <svg version="1.1" id="图层_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 16 16" style="enable-background:new 0 0 16 16;" xml:space="preserve">
                                                 <g id="XMLID_2_">
                                                     <path id="XMLID_7_" class="st1" d="M6,5.3H2.6C2.3,5.3,2,5.5,2,5.8c0,0.3,0.2,0.5,0.5,0.5H6c0.3,0,0.5-0.2,0.5-0.5
@@ -101,14 +101,14 @@
                                             </i>
                                             <ul>
                                                 <li class="header">绘本</li>';?>
-                                    <?php if ($this->menu[2]['sub'][0]['name'] == '绘本列表'){?>
-                                        <?php echo '<li data-href="/xlb/admin/role/index">绘本列表</li>';?>
+                                    <?php if ($this->menu[2]['sub'][0]['name'] == '共享绘本'){?>
+                                        <?php echo '<li data-href="/xlb/admin/role/index">共享绘本</li>';?>
                                     <?php }?>
                                     <?php if ($this->menu[2]['sub'][1]['name'] == '绘本标签'){?>
                                         <?php echo '<li data-href="/xlb/admin/role/role-manage">绘本标签</li>';?>
                                     <?php }?>
-                                    <?php if ($this->menu[2]['sub'][2]['name'] == '绘本设置'){?>
-                                        <?php echo '<li data-href="/xlb/admin/role/cabi-user">绘本设置</li>';?>
+                                    <?php if ($this->menu[2]['sub'][2]['name'] == '绘本大全'){?>
+                                        <?php echo '<li data-href="/xlb/admin/role/cabi-user">绘本大全</li>';?>
                                     <?php }?>
                             <?php echo '</ul></li>';?>
                         <?php endif;?>
