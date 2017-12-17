@@ -26,7 +26,7 @@
             <nav class="navbar navbar-static-top" role="navigation">
                 <a href="#" class="sidebar-toggle1" data-toggle="offcanvas" role="button"></a>
                 <div class="header-text">小萝卜管理后台</div>
-                <div class="float-right">
+                <div style="position: fixed;right: 10px;">
                     <ul class="nav navbar-nav">
                         <li class="userinfo">
                             <div style="padding: 10px 10px 6px 10px; text-align: right;">
@@ -233,7 +233,7 @@
                     $('#stairhover').find('ul li').removeClass('active');
                     $(this).parents('li').addClass('active');
                 }
-                /*$('.sidebar-mini').removeClass('sidebar-collapse');*/
+                $('.sidebar-mini').removeClass('sidebar-collapse');
             }
             return false;
         });

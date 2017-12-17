@@ -80,7 +80,7 @@
     min-height: 50px;
     border-radius: 0;
     background-color: #fff;
-    margin-left: 200px;
+    float: left;
 }
 
 .sidebar-toggle1 {
