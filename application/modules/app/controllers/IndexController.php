@@ -121,5 +121,13 @@ class IndexController extends PublicController
             $this->xlb_ret('1', '发送成功');
         }
     }
+
+    /**
+     * 获取公司信息
+     */
+    public function gciAction(){
+        $company = new Zend_Config_Ini('./application/configs/company.ini','company',true);
+        $this->xlb_ret(1, '', $company->toArray());
+    }
 }
 
