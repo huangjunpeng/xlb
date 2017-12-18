@@ -66,6 +66,54 @@ class XlbBookModel extends Xlb
     }
 
     /**
+     * @param int $page
+     * @param int $pagesize
+     * @param string $search
+     * @return mixed
+     */
+    public function getBook($page = 1, $pagesize = 20, $search = '') {
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name), 'count(*)');
+        if (!empty($search)) {
+            $select->where("b_name LIKE '%{$search}%'");
+        }
+        $totalRows = (int)$this->getAdapter()->fetchOne($select);
+        if ($totalRows == 0) {
+            $ret['pages'] = 0;
+            $ret['rows']  = array();
+            return $ret;
+        }
+        $pages = ceil($totalRows / $pagesize);
+        unset($select);
+        $fields = array(
+            'id'=>'b_id',
+            'name'=>'b_name',
+            'picture'=>'b_picture',
+            'age_reading'=>'b_age_reading',
+            'author'=>'b_author',
+            'press'=>'b_press',
+            'press_data'=>'b_press_data',
+            'languages'=>'b_languages',
+            'describe'=>'b_describe',
+            'score'=>'b_score'
+        );
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name), $fields);
+        if (!empty($search)) {
+            $select->where("b_name LIKE '%{$search}%'");
+        }
+        $select->order('b_score DESC');
+        if ($page !== null) {
+            $select->limitPage($page, $pagesize);
+        }
+        $rows = $this->getAdapter()->fetchAll($select);
+        $ret['pages'] = $pages;
+        $ret['rows']  = $rows;
+        $ret['totalRows'] = $totalRows;
+        return $ret;
+    }
+
+    /**
      * 获取书详情
      * @param $b_id
      * @return mixed|null
