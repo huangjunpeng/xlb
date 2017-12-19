@@ -11,6 +11,19 @@ class Admin_BookController extends XlbController
         $search = $this->getParam('search', '');
         $rows = XlbBookModel::getInstance()
             ->getBook($page, $pagenum, $search);
+        foreach ($rows['rows'] as $row) {
+            $b_ids[] = $row['id'];
+        }
+        $types = XlbBookCategoryMapModel::getInstance()
+            ->getCategoryByBId($b_ids);
+        foreach ($rows['rows'] as &$row) {
+            if (isset($types[$row['id']])) {
+                $bc_names = array_column($types[$row['id']], 'bc_name');
+                $row['theme'] = implode(' ',$bc_names);
+            } else {
+                $row['theme'] = '';
+            }
+        }
         $this->view->rows = $rows;
         $this->view->search = $search;
         $page = new Page($rows['totalRows'], 10, $this->getRequest()->getParams());
