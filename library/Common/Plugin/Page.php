@@ -63,7 +63,7 @@ class Page{
      * @param $url
      */
     public function setUrl($url){
-        $this->url = $url;
+        $this->url = $url . '/pagenum/' . $this->listRows;
     }
 
     /**
@@ -134,14 +134,21 @@ class Page{
             array('%HEADER%', '%NOW_PAGE%', '%UP_PAGE%', '%DOWN_PAGE%', '%FIRST%', '%LINK_PAGE%', '%END%', '%TOTAL_ROW%', '%TOTAL_PAGE%'),
             array($this->config['header'], $this->nowPage, $up_page, $down_page, $the_first, $link_page, $the_end, $this->totalRows, $this->totalPages),
             $this->config['theme']);
-        $str = '<div style="display: flex;flex-flow: row nowrap;justify-content: flex-end;align-items: center">';
-        $str .= '<form action="/xlb/admin/book/index/page/'.$this->nowPage.'"  id="pagechange">';
-        $str .= '<select id="pagenum" name="pagenum" style="width: 50px;height: 31px;margin-right: 10px">';
-        if ($this->listRows == 10){
-            $str .= "<option value='10' selected='selected'>10</option><option value='20'>20</option>";
-        } elseif ($this->listRows == 20){
-            $str .= "<option value='10'>10</option><option value='20' selected='selected'>20</option>";
+        $len = strlen($page_str);
+        $form_str = '<div style="display: flex;flex-flow: row nowrap;justify-content: flex-end;align-items: center">';
+        if ($len !== 4) {
+            $form_str .= '<form action="' . $url . '/page/' . $this->nowPage . '" id="pagechange"><select onchange="xlb_select_pagenum()" id="pagenum" name="pagenum" style="width: 50px;height: 31px;margin-right: 10px">';
+            for($i = 10; $i <= 25; $i +=5){
+                if ($this->listRows == $i) {
+                    $form_str .= '<option value="' . $i . '" selected="selected">' . $i . '</option>';
+                } else {
+                    $form_str .= '<option value="' . $i . '">' . $i . '</option>';
+                }
+            }
+            $form_str .='</select></form>';
         }
-        return $str."</select></form><ul class='pagination' style='float: right;margin-right: 30px'>{$page_str}</ul></div>";
+        $form_str .= '<ul class="pagination" style="margin-right: 30px">' . $page_str . '</ul></div>';
+        $form_str .= '<script type="text/javascript">function xlb_select_pagenum() {document.getElementById("pagechange").submit()}</script>';
+        return $form_str;
     }
 }
