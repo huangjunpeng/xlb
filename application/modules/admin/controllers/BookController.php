@@ -26,8 +26,8 @@ class Admin_BookController extends XlbController
         }
         $this->view->rows = $rows;
         $this->view->search = $search;
-        $page = new Page($rows['totalRows'], 10, $this->getRequest()->getParams());
-        $url = '/xlb/admin/book/index';
+        $page = new Page($rows['totalRows'], $pagenum, $this->getRequest()->getParams());
+        $url = '/xlb/admin/book/index/pagenum/'.$pagenum;
         if (!empty($search)) {
             $url .= '/search/'.$search;
         }

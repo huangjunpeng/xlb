@@ -129,12 +129,19 @@ class Page{
                 }
             }
         }
-
         //替换分页内容
         $page_str = str_replace(
             array('%HEADER%', '%NOW_PAGE%', '%UP_PAGE%', '%DOWN_PAGE%', '%FIRST%', '%LINK_PAGE%', '%END%', '%TOTAL_ROW%', '%TOTAL_PAGE%'),
             array($this->config['header'], $this->nowPage, $up_page, $down_page, $the_first, $link_page, $the_end, $this->totalRows, $this->totalPages),
             $this->config['theme']);
-        return "<div><ul class='pagination' style='float: right;margin-right: 30px'>{$page_str}</ul></div>";
+        $str = '<div style="display: flex;flex-flow: row nowrap;justify-content: flex-end;align-items: center">';
+        $str .= '<form action="/xlb/admin/book/index/page/'.$this->nowPage.'"  id="pagechange">';
+        $str .= '<select id="pagenum" name="pagenum" style="width: 50px;height: 31px;margin-right: 10px">';
+        if ($this->listRows == 10){
+            $str .= "<option value='10' selected='selected'>10</option><option value='20'>20</option>";
+        } elseif ($this->listRows == 20){
+            $str .= "<option value='10'>10</option><option value='20' selected='selected'>20</option>";
+        }
+        return $str."</select></form><ul class='pagination' style='float: right;margin-right: 30px'>{$page_str}</ul></div>";
     }
 }
