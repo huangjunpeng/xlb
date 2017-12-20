@@ -64,4 +64,48 @@ class XlbShareBookModel extends Xlb
         $ret['rows']  = $rows;
         return $ret;
     }
+
+    /**
+     * @param int $page
+     * @param int $pagesize
+     * @param string $search
+     * @return mixed
+     */
+    public function getShareBook($page = 1, $pagesize = 20, $search = '') {
+        $table_1 = XlbBookModel::getInstance()->getDbName();
+        $table_2 = XlbCabispaceModel::getInstance()->getDbName();
+        $table_3 = XlbCabinetModel::getInstance()->getDbName();
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name), 'count(*)')
+            ->join(array('t1'=>$table_1),'t.b_id=t1.b_id', '');
+        if (!empty($search)) {
+            $select->where("t1.b_name LIKE '%{$search}%'");
+        }
+        $totalRows = (int)$this->getAdapter()->fetchOne($select);
+        if ($totalRows == 0) {
+            $ret['pages'] = 0;
+            $ret['rows']  = array();
+            return $ret;
+        }
+        $pages = ceil($totalRows / $pagesize);
+        unset($select);
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name),
+            array('sb_id','sb_number','sb_share_price','sb_status','sb_count'))
+            ->join(array('t1'=>$table_1),'t.b_id=t1.b_id', array('b_id','b_name','b_age_reading','b_languages'))
+            ->join(array('t2'=>$table_2),'t.sb_id=t2.sb_id', 'cs_no')
+            ->join(array('t3'=>$table_3),'t2.cabi_id=t3.cabi_id', 'cabi_no');
+        if (!empty($search)) {
+            $select->where("b_name LIKE '%{$search}%'");
+        }
+        $select->order('b_score DESC');
+        if ($page !== null) {
+            $select->limitPage($page, $pagesize);
+        }
+        $rows = $this->getAdapter()->fetchAll($select);
+        $ret['pages'] = $pages;
+        $ret['rows']  = $rows;
+        $ret['totalRows'] = $totalRows;
+        return $ret;
+    }
 }

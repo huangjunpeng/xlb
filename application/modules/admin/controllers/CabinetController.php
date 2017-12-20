@@ -145,4 +145,36 @@ class Admin_CabinetController extends XlbController
         }
         $this->xlb_ret(1, '删除成功');
     }
+
+    /**
+     * 获取柜子列表
+     */
+    public function getlistAction(){
+        $cabis = XlbCabinetModel::getInstance()->getAllCabinetList();
+        foreach ($cabis as $key => $cabi) {
+            if ((int)$cabi['casp'] <= 0) {
+                unset($cabis[$key]);
+            }
+        }
+        arsort($cabis);
+        $ret['cabis'] = $cabis;
+        if (count($cabis) > 0) {
+            $ret['casps'] = XlbCabispaceModel::getInstance()
+                ->getCabispaceByCabiId($cabis[0]['_id'],0);
+        }
+        $this->xlb_ret(1,'',$ret);
+    }
+
+    /**
+     * 获取格子
+     */
+    public function getcaspsAction(){
+        $id = $this->getParam('id');
+        if (empty($id)) {
+            $this->xlb_ret(0, 'ID不能为空');
+        }
+        $ret['casps'] = XlbCabispaceModel::getInstance()
+            ->getCabispaceByCabiId($id, 0);
+        $this->xlb_ret(1,'',$ret);
+    }
 }

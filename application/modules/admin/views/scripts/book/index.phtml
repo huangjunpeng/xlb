@@ -81,24 +81,23 @@
         }
         #xz_sp button{
         }
-        .book_info{
+        .right-left{
             position: absolute;
             right: 0px;
             top: 0px;
             overflow-y: auto;
             height: 100%;
+            width: 0px;
             z-index: 9999;
-            -webkit-transition:  width .83s ease-in-out;
-            -moz-transition: width .8s ease-in-out;
-            -o-transition: width .8s ease-in-out;
-            transition: width .8s ease-in-out;
+            -webkit-transition: -webkit-transform .3s ease-in-out,width .3s ease-in-out;
+            -moz-transition: -moz-transform .3s ease-in-out,width .3s ease-in-out;
+            -o-transition: -o-transform .3s ease-in-out,width .3s ease-in-out;
+            transition: transform .3s ease-in-out,width .3s ease-in-out;
             background-color: #fff;
-            display: none;
             box-shadow: 0px 0px 13px #9f9f9f;
         }
         .book_display{
             width: 70%;
-            display: block;
         }
         .book_info_flex{
             display: flex;
@@ -192,8 +191,8 @@
                         <?php echo "<td style='text-align: center'>
                             <ul>
                                 <li><a class='book_edit'>编辑</a></li>
-                                <li style='margin-left: 20px'><a class='cabi_enable'>共享</a></li>
-                                <li style='margin-left: 20px'><a class='cabi_del'>删除</a></li>
+                                <li style='margin-left: 20px'><a class='book_share'>共享</a></li>
+                                <li style='margin-left: 20px'><a class='book_del'>删除</a></li>
                             </ul></td></tr>"?>
                     <?php }?>
                 <?php }?>
@@ -202,7 +201,7 @@
         </div>
         <?php if (isset($this->page)) {echo $this->page;}?>
     </div>
-    <div class="book_info" style="">
+    <div class="book_info right-left" style="">
         <div style="margin: 20px 20px 50px;">
             <div id="book_info_title" style="width:100%;color:#74767c;font-size:18px;">绘本详情</div>
             <div style="padding-right: 20px;">
@@ -214,7 +213,7 @@
                 </div>
             </div>
         </div>
-        <div style="width: 700px;height: 100%;margin: 0 auto;">
+        <div style="width: 70%;height: 100%;margin: 0 auto;">
             <div class="book_info_flex">
                 <div class="book_info_img">
                     <img src="" alt="">
@@ -248,6 +247,86 @@
             </div>
         </div>
     </div>
+    <div class="share_book right-left">
+        <div style="margin: 20px 20px 50px;">
+            <div id="admin_add_title" style="width:100%;color:#74767c;font-size:18px;">共享绘本</div>
+            <div style="padding-right: 20px;">
+                <div class="float-right">
+                    <button type="button" class="btn btn-primary user_back">
+                        <span class="glyphicon glyphicon-arrow-left" style="font-size: 1px;padding-right: 5px;"></span>
+                        返回
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div style="width:70%;height: 100%;margin: 0 auto;">
+            <form class="form-horizontal" id="add_user" role="form">
+                <div class="form-group display-none">
+                    <input id="_id" class="form-control control-input" name="_id" type="text">
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_number" style="text-align:right;font-weight:normal;">
+                        共享绘本编号：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_number" class="form-control control-input" name="_number" type="text" placeholder="请输入共享绘本编号" required>
+                        <span class="xln_must_enter" >*</span>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2 display-none"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_share_price" style="text-align:right;font-weight:normal;">
+                        共享价格：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_share_price" class="form-control control-input" name="_share_price" type="text" required placeholder="请输入共享价格">
+                        <span class="xln_must_enter" >*</span>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="cabi_id" style="text-align:right;font-weight:normal;">
+                        共享书柜：
+                    </label>
+                    <div class="col-sm-6">
+                        <select  id="cabi_id" class="form-control control-input" name="cabi_id" >
+                        </select>
+                        <span class="xln_must_enter" >*</span>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="cs_id" style="text-align:right;font-weight:normal;">
+                        共享格子：
+                    </label>
+                    <div class="col-sm-6">
+                        <select  id="cs_id" class="form-control control-input" name="cs_id" >
+                        </select>
+                        <span class="xln_must_enter" >*</span>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
+                </div>
+                <!--<div class="form-group">
+                    <label class="control-label col-sm-2" for="_space_num" style="text-align:right;font-weight:normal;">
+                        共享绘本数：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_space_num" class="form-control control-input" name="_space_num" type="text" required placeholder="请输入共享绘本数">
+                        <span class="xln_must_enter" >*</span>
+                    </div>
+                </div>-->
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="" style="text-align:right;font-weight:normal;"></label>
+                    <div class="col-sm-6 control-input" style="margin-left:0px;">
+                        <button type="button" class="btn btn-default user_back">取消</button>
+                        <button type="button" class="btn btn-primary" id="save_book_continue">共享后继续</button>
+                        <button type="button" class="btn btn-primary" id="save_book">共享</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 <script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/jQuery-2.2.0.min.js"></script>
 <script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/js/bootstrap.min.js"></script>
@@ -256,6 +335,8 @@
 <script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/Common.js"></script>
 <script type="text/javascript">
     $(function () {
+
+        //绘本详情
         $('.book_name').click(function () {
             $('.book_info').addClass('book_display');
             $('tr[class="active"]').removeClass('active');
@@ -272,9 +353,92 @@
             $('.info_7').text(tr.find('td').eq(5).text());
             $('#home>p').text(tr.data('desc'));
         })
+
+        //绘本列表
         $('.user_back').click(function () {
             $('.book_info').removeClass('book_display');
+            $('.share_book').removeClass('book_display');
             $('tr[class="active"]').removeClass('active');
+        });
+
+        //共享绘本页
+        $('.book_share').click(function () {
+            var tr = $(this).closest('tr');
+            myGetSync(url+'/xlb/admin/cabinet/getlist',function(json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    var cabis = json.data.cabis;
+                    var casps = json.data.casps;
+                    var str = '';
+                    if (null != cabis && cabis.length > 0){
+                        str = '';
+                        var len = cabis.length;
+                        for(var i = 0; i < len; ++i) {
+                            str += '<option value="'+cabis[i]._id+'">'+cabis[i]._name+'</option>';
+                        }
+                        $('#cabi_id').html(str);
+                    }
+                    if (null != casps && casps.length > 0){
+                        str = '';
+                        var len = casps.length;
+                        for(var i = 0; i < len; ++i) {
+                            str += '<option value="'+casps[i].cs_id+'">'+casps[i].cs_no+'</option>';
+                        }
+                        $('#cs_id').html(str);
+                    }
+                }
+            });
+            $('.share_book').addClass('book_display');
+            $('tr[class="active"]').removeClass('active');
+            $('#_id').val(tr.data('id'))
+        });
+
+        //获取空格
+        $('#cabi_id').change(function () {
+            var id = $(this).val();
+            myGetSync(url+'/xlb/admin/cabinet/getcasps/id/' + id,function(json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    var casps = json.data.casps;
+                    var str = '';
+                    if (null != casps && casps.length > 0){
+                        str = '';
+                        var len = casps.length;
+                        for(var i = 0; i < len; ++i) {
+                            str += '<option value="'+casps[i].cs_id+'">'+casps[i].cs_no+'</option>';
+                        }
+                        $('#cs_id').html(str);
+                    }
+                }
+            });
+        });
+
+        //保存共享绘本
+        $('#save_book').click(function () {
+            myPostSync(url+'/xlb/admin/book/addshare',$("#add_user").serialize(),function (json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    jAlert(json.message);
+                    window.location.reload();
+                }
+            });
+        });
+
+        //保存共享绘本后继续
+        $('#save_book_continue').click(function () {
+            myPostSync(url+'/xlb/admin/book/addshare',$("#add_user").serialize(),function (json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    jAlert(json.message);
+                    $('#_number').val('');
+                    $('#_share_price').val('');
+                    $('#cabi_id').trigger('change');
+                }
+            });
         });
     })
 </script>

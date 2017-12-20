@@ -84,6 +84,25 @@ class XlbCabinetModel extends Xlb
     }
 
     /**
+     * @return array
+     */
+    public function getAllCabinetList() {
+        $table_1 = XlbCabispaceModel::getInstance()->getDbName();
+        $fields = array(
+            '_id'=>'cabi_id',
+            '_name'=>'cabi_name'
+        );
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name), $fields)
+            ->joinLeft(array('t1'=>$table_1), 't1.cabi_id=t.cabi_id',array('casp'=>'count(t1.cabi_id)'))
+            ->where('t1.cs_status=0')
+            ->group('t1.cabi_id')
+            ->order('cabi_creattime DESC');
+        $rows = $this->getAdapter()->fetchAll($select);
+        return $rows;
+    }
+
+    /**
      * 获取书柜信息
      * @param $id
      * @return mixed
