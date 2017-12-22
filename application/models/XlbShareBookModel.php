@@ -57,7 +57,6 @@ class XlbShareBookModel extends Xlb
         $select->from(array('t'=>$this->_name),array())
             ->join(array('t1'=>$table_1),'t.b_id=t1.b_id', $field)
             ->where('t.sb_status=?',$status)
-            ->order('b_score DESC')
             ->limitPage($page, $pagesize);
         $rows = $this->getAdapter()->fetchAll($select);
         $ret['pages'] = $pages;
