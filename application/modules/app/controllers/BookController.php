@@ -4,8 +4,7 @@ class BookController extends PublicController
     /**
      * 图书列表
      */
-    public function bookListAction()
-    {
+    public function bookListAction() {
         //获取经度
         $long       = empty((double)$this->_getParam('long')) ? 0 : (double)$this->_getParam('long');
         //获取纬度
@@ -127,5 +126,30 @@ class BookController extends PublicController
             $this->xlb_ret(0, '绘本未找到');
         }
         $this->xlb_ret(1, '', $row);
+    }
+
+    /**
+     * 获取柜子列表
+     */
+    public function xclAction(){
+        //获取经度
+        $_long = (double)$this->_getParam('long');
+        if (empty($_long)) {
+            $this->xlb_ret(0, '经度不能为空');
+        }
+
+        //获取纬度
+        $_lat  = (double)$this->_getParam('lat');
+        if (empty($_lat)) {
+            $this->xlb_ret(0, '纬度不能为空');
+        }
+
+        //获取绘本ID
+        $b_id = (int)$this->getParam('id', 0);
+        if (empty($b_id)) {
+            $this->xlb_ret(0, '绘本ID不能为空');
+        }
+        $rows = XlbShareBookModel::getInstance()->getCabiList($b_id, $_long, $_lat);
+        $this->xlb_ret(1, '', $rows);
     }
 }

@@ -107,4 +107,29 @@ class XlbShareBookModel extends Xlb
         $ret['totalRows'] = $totalRows;
         return $ret;
     }
+
+    /**
+     * 获取附件柜子列表
+     * @param $b_id
+     * @param $long
+     * @param $lat
+     * @return mixed
+     */
+    public function getCabiList($b_id, $long, $lat) {
+        $table_3 = XlbCabinetModel::getInstance()->getDbName();
+        $table_2 = XlbCabispaceModel::getInstance()->getDbName();
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name),array())
+            ->join(array('t2'=>$table_2), 't.sb_id=t2.sb_id', array())
+            ->join(array('t3'=>$table_3), 't2.cabi_id=t3.cabi_id',array(
+                '_id' => 't3.cabi_id',
+                '_name' => 't3.cabi_name',
+                '_desc' => 't3.cabi_desc',
+                '_distance' => 'getDistance(t3.cabi_long, t3.cabi_lat, "' . $long . '", "' . $lat . '")'
+            ))
+            ->where('t.b_id=?', $b_id)
+            ->order('_distance desc');
+        $row = $this->getAdapter()->fetchAll($select);
+        return $row;
+    }
 }
