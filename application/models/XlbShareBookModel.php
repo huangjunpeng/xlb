@@ -120,7 +120,9 @@ class XlbShareBookModel extends Xlb
         $table_2 = XlbCabispaceModel::getInstance()->getDbName();
         $select = $this->getAdapter()->select();
         $select->from(array('t'=>$this->_name),array())
-            ->join(array('t2'=>$table_2), 't.sb_id=t2.sb_id', array())
+            ->join(array('t2'=>$table_2), 't.sb_id=t2.sb_id', array(
+                'space_id'=>'t2.cs_id'
+            ))
             ->join(array('t3'=>$table_3), 't2.cabi_id=t3.cabi_id',array(
                 '_id' => 't3.cabi_id',
                 '_name' => 't3.cabi_name',
