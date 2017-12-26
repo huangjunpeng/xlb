@@ -39,13 +39,14 @@ class XlbCommentModel extends Xlb
         $select  =  $this->getAdapter()->select();
         $select->from(array('t_c'=>$this->_name),'count(*)')
             ->where('t_c.b_id=?',$b_id);
-        $pages = $this->getAdapter()->fetchOne($select);
-        if ($pages == 0) {
-            $ret['pages'] = $pages;
+        $count = $this->getAdapter()->fetchOne($select);
+        if ($count == 0) {
+            $ret['pages'] = $count;
             $ret['rows']  = array();
+            $ret['count'] = $count;
             return $ret;
         }
-        $pages = ceil($pages / $pagesize);
+        $pages = ceil($count / $pagesize);
         unset($select);
         $select  =  $this->getAdapter()->select();
         $select->from(array('t_c'=>$this->_name),array('c_id','c_comment_time','c_content'))
@@ -56,6 +57,7 @@ class XlbCommentModel extends Xlb
         $rows = $this->getAdapter()->fetchAll($select);
         $ret['pages'] = $pages;
         $ret['rows']  = $rows;
+        $ret['count'] = $count;
         return $ret;
     }
 }

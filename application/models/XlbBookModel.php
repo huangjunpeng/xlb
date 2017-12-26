@@ -116,11 +116,15 @@ class XlbBookModel extends Xlb
     /**
      * 获取书详情
      * @param $b_id
+     * @param $cs_id
      * @return mixed|null
      */
-    public function getInfoById($b_id) {
+    public function getInfoById($b_id, $cs_id) {
+        $table_1 = XlbShareBookModel::getInstance()->getDbName();
+        $table_2 = XlbCabispaceModel::getInstance()->getDbName();
+        $table_3 = XlbCabinetModel::getInstance()->getDbName();
         $select = $this->getAdapter()->select();
-        $select->from($this->_name, array(
+        $select->from(array('t'=>$this->_name), array(
                 'id'=>'b_id',
                 'name'=>'b_name',
                 'age_reading'=>'b_age_reading',
@@ -130,8 +134,17 @@ class XlbBookModel extends Xlb
                 'languages'=>'b_languages',
                 'describe'=>'b_describe',
                 'picture'=>'b_picture',
-                'score'=>'b_score'))
-            ->where('b_id=?',$b_id);
+                'score'=>'b_score'));
+        if (0 != $cs_id) {
+            $select->join(array('t1'=>$table_1),'t.b_id=t1.b_id', array())
+                ->join(array('t2'=>$table_2),'t2.sb_id=t1.sb_id', array())
+                ->join(array('t3'=>$table_3),'t3.cabi_id=t2.cabi_id', array(
+                    'cabi_desc',
+                    'cabi_name',
+                    'cabi_id'
+                ));
+        }
+        $select->where('t.b_id=?',$b_id);
         $row = $this->getAdapter()->fetchRow($select);
         if (empty($row)){
             return null;
@@ -146,6 +159,7 @@ class XlbBookModel extends Xlb
         } else {
             $row['comment'] = null;
         }
+        $row['coment_count'] = $comment['count'];
         return $row;
     }
 }

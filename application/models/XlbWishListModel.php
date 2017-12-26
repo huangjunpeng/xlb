@@ -57,10 +57,25 @@ class XlbWishListModel extends Xlb
      * @param $array array
      * @return int
      */
-    public function editData($id,$array)
-    {
+    public function editData($id,$array) {
         $db = $this->getAdapter();
         $where = $db->quoteInto($this->_key."=?", $id);
         return $this->update($array, $where);
+    }
+
+    /**
+     * 获取用户是否把某本书加入心愿单
+     * @param $uid
+     * @param $b_id
+     */
+    public function getRowByUidAndBId($uid, $b_id) {
+        $table_1 = XlbMeWishListModel::getInstance()->getDbName();
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name), '*')
+            ->join(array('t1'=>$table_1),'t.wl_id=t1.wl_id', '*')
+            ->where('t.b_id=?', $b_id)
+            ->where('t1.u_id=?', $uid);
+        $row = $this->getAdapter()->fetchRow($select);
+        return $row;
     }
 }

@@ -116,14 +116,32 @@ class BookController extends PublicController
      * 获取绘本详情
      */
     public function getinfoAction(){
+        //获取绘本ID
         $b_id = (int)$this->getParam('id', 0);
         if (empty($b_id)) {
             $this->xlb_ret(0, '绘本ID不能为空');
         }
+        //获取格子ID
+        $cs_id = (int)$this->getParam('space_id', 0);
+        //获取绘本详情
         $row = XlbBookModel::getInstance()
-            ->getInfoById($b_id);
+            ->getInfoById($b_id, $cs_id);
         if (empty($row)) {
             $this->xlb_ret(0, '绘本未找到');
+        }
+        //获取用户ID
+        $uid = 0;
+        $token = $this->getParam('token',null);
+        if (!empty($token)) {
+            $token = Tools::getDecodeUidForToken($token);
+            list($module, $uid) = explode(';',$token);
+        }
+        if ($uid == 0) {
+            $row['iswish'] = false;
+        } else {
+            $wish = XlbWishListModel::getInstance()
+                ->getRowByUidAndBId($uid, $b_id);
+            $row['iswish'] = empty($wish) ? false : true;
         }
         $this->xlb_ret(1, '', $row);
     }

@@ -36,6 +36,7 @@ class XlbShareBookModel extends Xlb
      */
     public function getBookByStatus($status, $page = 1, $pagesize = 20) {
         $table_1 = XlbBookModel::getInstance()->getDbName();
+        $table_2 = XlbCabispaceModel::getInstance()->getDbName();
         $select = $this->getAdapter()->select();
         $select->from(array('t'=>$this->_name),'count(*)')
             ->join(array('t1'=>$table_1),'t.b_id=t1.b_id',array())
@@ -55,7 +56,8 @@ class XlbShareBookModel extends Xlb
         );
         $select = $this->getAdapter()->select();
         $select->from(array('t'=>$this->_name),array())
-            ->join(array('t1'=>$table_1),'t.b_id=t1.b_id', $field)
+            ->join(array('t1'=>$table_1), 't.b_id=t1.b_id', $field)
+            ->join(array('t2'=>$table_2), 't2.sb_id=t.sb_id', array('space_id'=>'t2.cs_id'))
             ->where('t.sb_status=?',$status)
             ->limitPage($page, $pagesize);
         $rows = $this->getAdapter()->fetchAll($select);
