@@ -87,7 +87,6 @@ class XlbMeWishListModel extends Xlb
                 array('xb'=> $table_2),
                 'xb.b_id=xwl.b_id',array('b_id','b_name','b_picture'))
             ->where('xmwl.u_id=?',$uid)
-            ->order('t_c.c_comment_time DESC')
             ->limitPage($page, $pagesize);
         $rows = $this->getAdapter()->fetchAll($select);
         $ret['pages'] = $pages;
