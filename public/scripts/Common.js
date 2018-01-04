@@ -7,6 +7,23 @@ if (self.location.port!='')
 /*开启调试*/
 var isDebug = true;
 
+//这里加载框提示到top上去。
+if (typeof top.GetPostCount==='undefined') {
+	top.GetPostCount = 0;
+}
+function showWaitloading() {
+	top.GetPostCount++;
+	top.$('.waitforload').show();
+}
+
+function hideWaitloading() {
+	top.GetPostCount--;
+	if (top.GetPostCount<=0) {
+		top.GetPostCount = 0;
+		top.$('.waitforload').hide();
+	}
+}
+
 function myGet () {
 	showWaitloading();
 	var parms = ['GET', true];

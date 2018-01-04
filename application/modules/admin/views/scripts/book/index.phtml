@@ -364,7 +364,7 @@
         //共享绘本页
         $('.book_share').click(function () {
             var tr = $(this).closest('tr');
-            myGetSync(url+'/xlb/admin/cabinet/getlist',function(json) {
+            myGet(url+'/xlb/admin/cabinet/getlist',function(json) {
                 if (json.code == 0) {
                     jAlert(json.message);
                 } else {
@@ -397,7 +397,7 @@
         //获取空格
         $('#cabi_id').change(function () {
             var id = $(this).val();
-            myGetSync(url+'/xlb/admin/cabinet/getcasps/id/' + id,function(json) {
+            myGet(url+'/xlb/admin/cabinet/getcasps/id/' + id,function(json) {
                 if (json.code == 0) {
                     jAlert(json.message);
                 } else {
@@ -417,7 +417,7 @@
 
         //保存共享绘本
         $('#save_book').click(function () {
-            myPostSync(url+'/xlb/admin/book/addshare',$("#add_user").serialize(),function (json) {
+            myPost(url+'/xlb/admin/book/addshare',$("#add_user").serialize(),function (json) {
                 if (json.code == 0) {
                     jAlert(json.message);
                 } else {
@@ -429,7 +429,7 @@
 
         //保存共享绘本后继续
         $('#save_book_continue').click(function () {
-            myPostSync(url+'/xlb/admin/book/addshare',$("#add_user").serialize(),function (json) {
+            myPost(url+'/xlb/admin/book/addshare',$("#add_user").serialize(),function (json) {
                 if (json.code == 0) {
                     jAlert(json.message);
                 } else {

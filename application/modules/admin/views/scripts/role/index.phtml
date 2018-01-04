@@ -294,7 +294,7 @@
                 var id = $('#modify_password').data('adminid');
                 var _old = $('#_old').val();
                 var _new = $('#_new').val();
-                myPostSync(url+'/xlb/admin/role/modify-pass?id=' + id + '&_old=' + _old + '&_new=' + _new,function (json) {
+                myPost(url+'/xlb/admin/role/modify-pass?id=' + id + '&_old=' + _old + '&_new=' + _new,function (json) {
                     if (json.code == 0) {
                         jAlert(json.message);
                     } else {
@@ -306,7 +306,7 @@
             $('.user_enable').click(function () {
                 var id = $(this).closest('tr').data('id');
                 var status = $(this).data('status');
-                myPostSync(url+'/xlb/admin/role/set-status?id=' + id + '&_status=' + status,function (json) {
+                myPost(url+'/xlb/admin/role/set-status?id=' + id + '&_status=' + status,function (json) {
                     if (json.code == 0) {
                         jAlert(json.message);
                     } else {
@@ -323,7 +323,7 @@
             $('.user_edit').click(function () {
                 /*var tr = $(this).closest('tr');*/
                 var id = $(this).closest('tr').data('id');
-                myGetSync(url+'/xlb/admin/role/edit?id=' + id,function (json) {
+                myGet(url+'/xlb/admin/role/edit?id=' + id,function (json) {
                     if (json.code == 0) {
                         jAlert(json.message);
                     } else {
@@ -358,7 +358,7 @@
                 if (!$("#add_user #_email").parent().next('.errMsg').hasClass('display-none')){
                     return false;
                 }
-                myPostSync(url+'/xlb/admin/role/add',$("#add_user").serialize(),function (json) {
+                myPost(url+'/xlb/admin/role/add',$("#add_user").serialize(),function (json) {
                     if (json.code == 0) {
                         jAlert(json.message);
                     } else {

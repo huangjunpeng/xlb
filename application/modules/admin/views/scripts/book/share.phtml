@@ -263,7 +263,7 @@
             var tr = $(this).closest('tr');
             tr.addClass('active');
             var b_id = tr.data('bid');
-            myGetSync(url+'/xlb/admin/book/getinfo/id/' + b_id,function(json) {
+            myGet(url+'/xlb/admin/book/getinfo/id/' + b_id,function(json) {
                 if (json.code == 0) {
                     jAlert(json.message);
                 } else {

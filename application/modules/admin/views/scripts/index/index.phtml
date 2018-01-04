@@ -15,6 +15,21 @@
         .userinfo:hover .dropdown-menu{
             display: block;
         }
+        .overlay,.loading-img{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+        .overlay{
+            z-index: 2000;
+            background: rgba(255, 255, 255, 0.7);
+        }
+        .loading-img{
+            z-index: 2001;
+            background: transparent url("/xlb/public/images/loading.gif") center center no-repeat;
+        }
     </style>
 <body class="sidebar-mini">
     <div class="wrapper">
@@ -196,6 +211,8 @@
                 </div>
             </section>
         </div>
+        <div class="waitforload overlay" style="display: none"></div>
+        <div class="waitforload loading-img" style="display: none"></div>
     </div>
 </div>
 <script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/jQuery-2.2.0.min.js"></script>
