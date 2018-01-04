@@ -311,15 +311,15 @@
                             str += '>选择</button></td></tr>';
                         }
                         $('#xz_sp').html(str);
+                        $('#xz_sp button').click(function () {
+                            $('#div_sp').html($(this).data('name'));
+                            $('#sp_id').val($(this).data('id'));
+                            $('#myModal').modal('hide');
+                        })
+                        $('#myModal').modal('show');
                     }
                 }
             });
-            $('#myModal').modal('show');
-            $('#xz_sp button').click(function () {
-                $('#div_sp').html($(this).data('name'));
-                $('#sp_id').val($(this).data('id'));
-                $('#myModal').modal('hide');
-            })
         });
         $('#save_cabi').click(function () {
             myPost(url+'/xlb/admin/cabinet/cabi-add',$("#add_user").serialize(),function (json) {
