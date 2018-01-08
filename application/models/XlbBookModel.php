@@ -54,8 +54,7 @@ class XlbBookModel extends Xlb
             'author'=>'b_author');
         $select = $this->getAdapter()->select();
         $select->from(array('t'=>$this->_name), $fields)
-            ->where("t.b_name LIKE '%{$_name}%'")
-            ->order('b_score DESC');
+            ->where("t.b_name LIKE '%{$_name}%'");
         if ($page !== null) {
             $select->limitPage($page, $pagesize);
         }

@@ -57,8 +57,7 @@ class XlbBookCategoryMapModel extends Xlb
         $select->from(array('t'=>$this->_name),array())
             ->join(array('t1'=>$table_1),'t.b_id=t1.b_id',
                 array('id'=>'b_id','name'=>'b_name','picture'=>'b_picture'))
-            ->where('t.bc_id=?',$bc_id)
-            ->order('b_score DESC');
+            ->where('t.bc_id=?',$bc_id);
         if ($page !== null) {
             $select->limitPage($page, $pagesize);
         }

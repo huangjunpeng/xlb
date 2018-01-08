@@ -61,7 +61,7 @@ class Admin_BookController extends XlbController
     }
 
     /**
-     * 回去绘本详情
+     * 获取绘本详情
      */
     public function getinfoAction(){
         $b_id = (int)$this->getParam('id', 0);
