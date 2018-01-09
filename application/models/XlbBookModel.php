@@ -135,8 +135,8 @@ class XlbBookModel extends Xlb
                 'picture'=>'b_picture',
                 'score'=>'b_score'));
         if (0 != $cs_id) {
-            $select->join(array('t1'=>$table_1),'t.b_id=t1.b_id', array())
-                ->join(array('t2'=>$table_2),'t2.sb_id=t1.sb_id', array())
+            $select->join(array('t1'=>$table_1),'t.b_id=t1.b_id', array('sb_id'))
+                ->join(array('t2'=>$table_2),'t2.sb_id=t1.sb_id', array('cs_id'))
                 ->join(array('t3'=>$table_3),'t3.cabi_id=t2.cabi_id', array(
                     'cabi_desc',
                     'cabi_name',

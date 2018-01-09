@@ -14,6 +14,11 @@ class XlbShareBookModel extends Xlb
     protected $_primary = 'sb_id';
 
     /**
+     * @var string
+     */
+    protected $_key  = 'sb_id';
+
+    /**
      * @var XlbShareBookModel
      */
     public static $_instance = null;
@@ -135,5 +140,17 @@ class XlbShareBookModel extends Xlb
             ->order('_distance ASC');
         $row = $this->getAdapter()->fetchAll($select);
         return $row;
+    }
+
+    /**
+     * 更新数据
+     * @param $id int
+     * @param $array array
+     * @return int
+     */
+    public function editData($id,$array){
+        $db = $this->getAdapter();
+        $where = $db->quoteInto($this->_key."=?", $id);
+        return $this->update($array, $where);
     }
 }
