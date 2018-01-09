@@ -125,4 +125,13 @@ class PublicController extends Zend_Controller_Action
         $ip   = $long ? array($ip, $long) : array('0.0.0.0', 0);
         return $ip[$type];
     }
+
+    /**
+     * 写日志
+     * @param $text
+     * @return int
+     */
+    public function write_log($text) {
+        return file_put_contents (XLB_WEB_DATA.'/log/'.date('Y-m-d').'.log', date('Y-m-d H:i:s').'  '.$text."\r\n", FILE_APPEND);
+    }
 }

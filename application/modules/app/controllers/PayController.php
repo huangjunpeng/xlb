@@ -57,23 +57,27 @@ class PayController extends PublicController
         //获取商品
         $subject = $this->getParam('subject');
         if ("" == $subject) {
+            $this->write_log('subject不能为空');
             $this->xlb_ret(0, 'subject不能为空');
         }
         $data['subject'] = $subject;
         //获取金额
         $total_amount = $this->getParam('total_amount');
         if ("" == $total_amount) {
+            $this->write_log('金额不能为空');
             $this->xlb_ret(0, '金额不能为空');
         }
         $data['total_amount'] = $total_amount;
         //订单编号
         $order_no = $this->getParam('order_no');
         if("" == $order_no) {
+            $this->write_log('商户订单ID不能为空');
             $this->xlb_ret(0, '商户订单ID不能为空');
         }
         //订单类型
         $order_type = $this->getParam('order_type');
         if (empty($order_type)) {
+            $this->write_log('订单类型不能为空');
             $this->xlb_ret(0, '订单类型不能为空');
         }
         $data['body']['order_type'] = $order_type;
@@ -86,6 +90,7 @@ class PayController extends PublicController
         $request->setBizContent(json_encode($data));
         //这里和普通的接口调用不同，使用的是sdkExecute
         $response = $aop->sdkExecute($request);
+        $this->write_log($response);
         $this->xlb_ret(1,'', array('response'=>$response));
     }
 
@@ -97,16 +102,18 @@ class PayController extends PublicController
         $aop = new AopClient;
         $aop->alipayrsaPublicKey = $this->config['alipay_public_key'];
         $result = $aop->rsaCheckV1(@$_POST, NULL, $this->config['sign_type']);
+        $this->write_log(var_export(@$_POST,true));
+        $this->write_log(var_export(@$_GET,true));
         if($result) {
             echo "success";
         }else {
-            echo build_order_no();
             echo "fail";
         }
         exit;
     }
 
     public function returnAction() {
-
+        $this->write_log(var_export(@$_POST,true));
+        $this->write_log(var_export(@$_GET,true));
     }
 }

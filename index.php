@@ -24,7 +24,9 @@ define('XLB_ADMIN','admin');
 //web根目录
 define('XLB_WEB_ROOT',dirname(__FILE__));
 //系统附件路径
-define('XLB_UPLOAD','/public/upload/');
+define('XLB_UPLOAD',dirname(__FILE__).'/public/upload');
+//data目录
+define('XLB_WEB_DATA',dirname(__FILE__).'/data');
 
 //设置Zend Framework 自动载入类文件,for 1.12
 require_once "Zend/Loader/Autoloader.php";
