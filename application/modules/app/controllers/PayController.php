@@ -27,7 +27,7 @@ class PayController extends PublicController
         'json'=>'json',
 
         //签名方式
-        'sign_type'=>"RSA2",
+        'sign_type'=>"RSA",
 
         //支付宝网关
         'gatewayUrl' => "https://openapi.alipay.com/gateway.do",
@@ -80,7 +80,7 @@ class PayController extends PublicController
             $this->write_log('订单类型不能为空');
             $this->xlb_ret(0, '订单类型不能为空');
         }
-        $data['body']['order_type'] = $order_type;
+        $data['body']               = $order_type;
         $data['out_trade_no']       = $order_no;
         $data['timeout_express']    = "30m";
         $data['product_code']       = "QUICK_MSECURITY_PAY";
@@ -103,17 +103,31 @@ class PayController extends PublicController
         $aop->alipayrsaPublicKey = $this->config['alipay_public_key'];
         $result = $aop->rsaCheckV1(@$_POST, NULL, $this->config['sign_type']);
         $this->write_log(var_export(@$_POST,true));
-        $this->write_log(var_export(@$_GET,true));
         if($result) {
+            $this->write_log('校验成功');
+            if("TRADE_SUCCESS" != @$_POST['trade_status']){
+                $this->write_log("支付失败");
+                exit;
+            }
+            //获取订单编号
+            $order_no = @$_POST['out_trade_no'];
+            //获取订单类型
+            $order_type = @$_POST['body'];
+            //order_type: 1:借书、2充值
+            if ($order_type == 1) {
+
+            } else {
+
+            }
             echo "success";
         }else {
+            $this->write_log('校验失败');
             echo "fail";
         }
         exit;
     }
 
     public function returnAction() {
-        $this->write_log(var_export(@$_POST,true));
         $this->write_log(var_export(@$_GET,true));
     }
 }

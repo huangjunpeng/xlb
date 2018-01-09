@@ -1,14 +1,14 @@
 <?php
-$config_ = array (
+$config = array (
 		//应用ID,您的APPID。
 		'app_id' => "",
 
 		//商户私钥
 		'merchant_private_key' => "",
-		
+
 		//异步通知地址
 		'notify_url' => "http://外网可访问网关地址/alipay.trade.page.pay-PHP-UTF-8/notify_url.php",
-		
+
 		//同步跳转
 		'return_url' => "http://外网可访问网关地址/alipay.trade.page.pay-PHP-UTF-8/return_url.php",
 

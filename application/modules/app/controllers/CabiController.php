@@ -9,9 +9,9 @@ class CabiController extends XlbController {
     }
 
     /**
-     * 开柜子，借书
+     * 借书
      */
-    public function openAction() {
+    public function borrowAction() {
         //获取格子ID
         $cs_id = $this->getParam('cs_id');
         if (empty($cs_id)) {
@@ -52,7 +52,7 @@ class CabiController extends XlbController {
         }
 
         //开柜子
-        $ret = $this->openCabi($xom, $order_no, $bookinfo);
+        $ret = $this->openAction((int)$bookinfo['cabi_id'], (int)$cs_id);
         if ($ret === false) {
             //更新订单详情
             XlbOrderBookDetailModel::getInstance()
@@ -148,7 +148,7 @@ class CabiController extends XlbController {
      * @param $order_no
      * @param $bookinfo
      */
-    protected function openCabi(XlbOrderModel $xom, $order_no, $bookinfo) {
+    public function openAction($cabi_id, $cs_id) {
 
     }
 }
