@@ -149,6 +149,53 @@ class CabiController extends XlbController {
      * @param $bookinfo
      */
     public function openAction($cabi_id, $cs_id) {
+        //判断大端、小端
+        define('BIG_ENDIAN', pack('L', 1) === pack('N', 1));
 
+        //make cmd pack
+        $cmd['distID'] = 2;
+        $cmd['serviceId'] = md5(uniqid());
+        $cmd['cabinet'] = $cabi_id;
+        $cmd['lattice'] = $cs_id;
+        $cmd['ctrl'] = 1;
+
+        //make cmd json str
+        $cmdstr = json_encode($cmd);
+        $cmdlen = strlen($cmdstr);
+        $pack = pack('s', $cmdlen);
+        $pack .= $cmdstr;
+
+        //get server address
+        $config = Zend_Registry::get('config');
+        $tcpserver = $config->tcp->tcpserver;
+        $tcpport = $config->tcp->tcpport;
+
+        //connect server
+        $socket = @socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        $con = @socket_connect($socket, $tcpserver, $tcpport);
+        if(!$con) {
+            @socket_close($socket);
+            return false;
+        }
+        //send pack
+        $nret = @socket_write($socket, $pack);
+        if ($nret <= 0) {
+            return false;
+        }
+        //recv pack
+        $buf = @socket_read($socket, 2, PHP_NORMAL_READ);
+        $int = unpack('s', $buf);
+        $short = $int[1];
+        $ushort = ($short & 0xff) << 8 | ($short >> 8) & 0xff;
+        $buff = @socket_read($socket, $ushort, PHP_NORMAL_READ);
+        $res = json_decode($buff, true);
+        $cabinet = $res['cabinet'];
+        $lattice = $res['lattice'];
+        $status  = $res['status'];
+        $bookId  = $res['bookId'];
+        if ($cabi_id == $cabinet && $cs_id == $lattice && $status == 2) {
+            return $bookId;
+        }
+        return false;
     }
 }
