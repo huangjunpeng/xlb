@@ -52,7 +52,7 @@ class CabiController extends XlbController {
         }
 
         //开柜子
-        $ret = $this->openAction((int)$bookinfo['cabi_id'], (int)$cs_id);
+        $ret = $this->openCabi((int)$bookinfo['cabi_id'], (int)$cs_id);
         if ($ret === false) {
             //更新订单详情
             XlbOrderBookDetailModel::getInstance()
@@ -148,7 +148,7 @@ class CabiController extends XlbController {
      * @param $order_no
      * @param $bookinfo
      */
-    public function openAction($cabi_id, $cs_id) {
+    protected function openCabi($cabi_id, $cs_id) {
         //判断大端、小端
         define('BIG_ENDIAN', pack('L', 1) === pack('N', 1));
 
@@ -197,5 +197,17 @@ class CabiController extends XlbController {
             return $bookId;
         }
         return false;
+    }
+
+    /**
+     * 开柜
+     * @param $cabi_id
+     * @param $cs_id
+     */
+    public function openAction($cabi_id, $cs_id) {
+        if (false === $this->openCabi($cabi_id, $cs_id)) {
+            $this->xlb_ret(0, '打开柜子失败');
+        }
+        $this->xlb_ret(1, '打开成功');
     }
 }
