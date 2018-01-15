@@ -210,6 +210,10 @@ class UserController extends XlbController
             $this->xlb_ret(0, '获取失败');
         }
         $row = $row->toArray();
+        $row = $row[0];
+        if (empty($row)) {
+            $this->xlb_ret(0, '获取失败');
+        }
         $wallet['deposit'] = $row['u_deposit'];
         $wallet['balance'] = $row['u_balance'];
         $this->xlb_ret(1, '', $wallet);

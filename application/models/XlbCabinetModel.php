@@ -150,4 +150,23 @@ class XlbCabinetModel extends Xlb
         $where = $db->quoteInto($this->_key."=?", $id);
         return $this->delete($where);
     }
+
+    /**
+     * 获取附件柜子列表
+     * @param $b_id
+     * @param $long
+     * @param $lat
+     * @return mixed
+     */
+    public function getCabiList($long, $lat) {
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name),array(
+            '_id' => 't.cabi_id',
+            '_name' => 't.cabi_name',
+            '_desc' => 't.cabi_desc',
+            '_distance' => 'getDistance(t.cabi_long, t.cabi_lat, "' . $long . '", "' . $lat . '")'
+        ))->order('_distance ASC');
+        $row = $this->getAdapter()->fetchAll($select);
+        return $row;
+    }
 }

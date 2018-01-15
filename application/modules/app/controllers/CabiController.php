@@ -223,4 +223,24 @@ class CabiController extends XlbController {
             ->getCabispaceByCabiId($_id, 0);
         $this->xlb_ret(1,'',$ret);
     }
+
+    /**
+     * 获取附件柜子列表
+     */
+    public function gclAction() {
+        //获取经度
+        $_long = (double)$this->_getParam('long');
+        if (empty($_long)) {
+            $this->xlb_ret(0, '经度不能为空');
+        }
+
+        //获取纬度
+        $_lat  = (double)$this->_getParam('lat');
+        if (empty($_lat)) {
+            $this->xlb_ret(0, '纬度不能为空');
+        }
+        $rows = XlbCabinetModel::getInstance()
+            ->getCabiList($_long, $_lat);
+        $this->xlb_ret(1, '', $rows);
+    }
 }
