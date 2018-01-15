@@ -210,4 +210,17 @@ class CabiController extends XlbController {
         }
         $this->xlb_ret(1, '打开成功');
     }
+
+    /**
+     * 获取空格子列表
+     */
+    public function gecAction() {
+        $_id = $this->getParam('id');
+        if (empty($_id)) {
+            $this->xlb_ret(0, '柜子ID不能为空');
+        }
+        $ret['casps'] = XlbCabispaceModel::getInstance()
+            ->getCabispaceByCabiId($_id, 0);
+        $this->xlb_ret(1,'',$ret);
+    }
 }

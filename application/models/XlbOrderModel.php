@@ -27,4 +27,17 @@ class XlbOrderModel extends Xlb
         }
         return self::$_instance;
     }
+
+    /**
+     * 获取用户借阅数
+     * @param $uid
+     * @return int
+     */
+    public function getCountByUid($uid) {
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name), 'count(*)')
+            ->where('u_id=?',$uid)
+            ->where('order_type=1');
+        return (int)$this->getAdapter()->fetchOne($select);
+    }
 }

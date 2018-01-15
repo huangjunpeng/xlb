@@ -62,4 +62,23 @@ class XlbUserInfoModel extends Xlb
         $row = $this->getAdapter()->fetchRow($select);
         return $row;
     }
+
+    /**
+     * @param $u_id
+     * @return mixed
+     */
+    public function getUserCount($u_id) {
+        //获取借阅数
+        $count['borrow'] = XlbOrderModel::getInstance()
+            ->getCountByUid($u_id);
+
+        //想看数
+        $count['love']  = XlbMeWishListModel::getInstance()
+            ->getCountByUid($u_id);
+
+        //评论数
+        $count['comment'] = XlbCommentModel::getInstance()
+            ->getCountByUid($u_id);
+        return $count;
+    }
 }

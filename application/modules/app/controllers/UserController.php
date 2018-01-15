@@ -159,11 +159,68 @@ class UserController extends XlbController
     }
 
     /**
+     * 修改用户头像
+     */
+    public function xupAction() {
+        $upload = new Upload();
+        /*设置附件上传根目录*/
+        $upload->rootPath = XLB_WEB_ROOT;
+        /*设置附件上传子目录*/
+        $upload->savePath = XLB_UPLOAD.DIRECTORY_SEPARATOR.'user';
+        /*子目录创建方式屏蔽*/
+        $upload->subName = array();
+        $info =  $upload->upload();
+        if (empty($info)) {
+            $this->xlb_ret(0,'上传失败: '.$upload->getError());
+        }
+        $file = $info[0];
+        if (empty($file)) {
+            $this->xlb_ret(0,'上传失败');
+        }
+        $savepath = $this->view->baseUrl().$file['savepath'].$file['savename'];
+        $ret = XlbUserInfoModel::getInstance()
+            ->editData($this->uid, array('u_picture'=>$savepath));
+        if ($ret <=0 ){
+            $this->xlb_ret(0, '修改失败');
+        }
+        $pic['type'] = $file['type'];
+        $pic['name'] = $file['name'];
+        $pic['size'] = $file['size'];
+        $pic['path'] = $savepath;
+        $this->xlb_ret(1,'', $pic);
+    }
+
+    /**
      * 获取用户信息
      */
     public function getinfoAction() {
         $row = XlbUserInfoModel::getInstance()
             ->getInfoById($this->uid);
         $this->xlb_ret(1, '', $row);
+    }
+
+
+    /**
+     * 获取用户钱包
+     */
+    public function getwalletAction() {
+        $row = XlbUserInfoModel::getInstance()
+            ->getRowByID($this->uid);
+        if (empty($row)) {
+            $this->xlb_ret(0, '获取失败');
+        }
+        $row = $row->toArray();
+        $wallet['deposit'] = $row['u_deposit'];
+        $wallet['balance'] = $row['u_balance'];
+        $this->xlb_ret(1, '', $wallet);
+    }
+
+    /**
+     * 获取用户统计
+     */
+    public function xulAction() {
+        $count = XlbUserInfoModel::getInstance()
+            ->getUserCount($this->uid);
+        $this->xlb_ret(1, '', $count);
     }
 }

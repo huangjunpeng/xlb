@@ -93,4 +93,16 @@ class XlbMeWishListModel extends Xlb
         $ret['rows']  = $rows;
         return $ret;
     }
+
+    /**
+     * 获取用户想看数
+     * @param $uid
+     * @return int
+     */
+    public function getCountByUid($uid) {
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name), 'count(*)')
+            ->where('u_id=?',$uid);
+        return (int)$this->getAdapter()->fetchOne($select);
+    }
 }
