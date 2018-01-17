@@ -164,7 +164,9 @@ class XlbCabinetModel extends Xlb
             '_id' => 't.cabi_id',
             '_name' => 't.cabi_name',
             '_desc' => 't.cabi_desc',
-            '_distance' => 'getDistance(t.cabi_long, t.cabi_lat, "' . $long . '", "' . $lat . '")'
+            '_distance' => 'getDistance(t.cabi_long, t.cabi_lat, "' . $long . '", "' . $lat . '")',
+            '_long' => 't.cabi_long',
+            '_lat' => 't.cabi_lat'
         ))->order('_distance ASC');
         $row = $this->getAdapter()->fetchAll($select);
         return $row;
