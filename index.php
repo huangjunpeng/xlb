@@ -74,7 +74,13 @@ try {
     $frontController->setDefaultModule('app');
     $frontController->dispatch();
 } catch (Zend_Exception $e) {
-    exit($e->getMessage());
+    $res['code']        = 0;
+    $res['message']     = '请求失败';
+    $res['error']       = $e->getMessage();
+    ob_end_clean();
+    header('Content-Type:application/json; charset=utf-8');
+    echo json_encode($res);
+    exit;
 }
 ?>
 
