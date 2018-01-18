@@ -78,7 +78,7 @@ class BookController extends PublicController
         $page = $this->getParam('page', 0);
         $rows = XlbBookModel::getInstance()
             ->searchByName($_name, $page);
-        if (empty($rows)) {
+        if ($rows['pages'] == 0 || count($rows['rows']) == 0) {
             $this->xlb_ret(1,'',array());
         }
         $b_ids = array();
