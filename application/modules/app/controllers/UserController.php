@@ -120,7 +120,7 @@ class UserController extends XlbController
             /*设置附件上传根目录*/
             $upload->rootPath = XLB_WEB_ROOT;
             /*设置附件上传子目录*/
-            $upload->savePath = XLB_UPLOAD;
+            $upload->savePath = XLB_UPLOAD.DIRECTORY_SEPARATOR;
             /*子目录创建方式屏蔽*/
             $upload->subName = array();
             $info =  $upload->upload();
@@ -166,14 +166,18 @@ class UserController extends XlbController
         /*设置附件上传根目录*/
         $upload->rootPath = XLB_WEB_ROOT;
         /*设置附件上传子目录*/
-        $upload->savePath = XLB_UPLOAD.DIRECTORY_SEPARATOR.'user';
+        $upload->savePath = XLB_UPLOAD.DIRECTORY_SEPARATOR.'user'.DIRECTORY_SEPARATOR;
         /*子目录创建方式屏蔽*/
         $upload->subName = array();
-        $info =  $upload->upload();
-        if (empty($info)) {
+        $infos =  $upload->upload();
+        if (empty($infos)) {
             $this->xlb_ret(0,'上传失败: '.$upload->getError());
         }
-        $file = $info[0];
+        $file = array();
+        foreach ($infos as $key => $info) {
+            $file = $info;
+            break;
+        }
         if (empty($file)) {
             $this->xlb_ret(0,'上传失败');
         }
