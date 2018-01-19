@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>小萝卜</title>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/scripts/jquery/css/jquery.alerts.css" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/styles/admin/style.css" />
+    <style type="text/css">
+        li{
+            display: inline-block;
+            cursor: pointer;
+        }
+        a{
+            color: #838a90;
+        }
+        a:hover {
+            color: #4aacf3;
+            text-decoration: none;
+        }
+
+        .display-none{
+            display: none;
+        }
+        .form-control{
+            width: 90%;
+            float: left;
+        }
+        .xln_must_enter {
+            color: #c00000;
+            font-size: 16px;
+            float: left;
+            padding-left: 10px;
+            height: 40px;
+            line-height: 40px;
+        }
+        form .errMsg{
+            color: #A94442;
+        }
+        .form-horizontal .form-group {
+            margin: 0px 0px 20px 0px;
+        }
+        .control-input {
+            min-height: 40px;
+            float: left;
+            color: #4d4d4d;
+        }
+        .form-horizontal .control-label {
+            font-size: 12px;
+            color: #121212;
+            font-weight: normal;
+            float: left;
+            height: 40px;
+            line-height: 40px;
+            padding: 0px;
+        }
+    </style>
+</head>
+<body style="height: 100%">
+<div class="container" style="border-radius: 4px;height: 100%;width: 100%;background-color: #fff;overflow-y: auto">
+    <div id="admin_list">
+        <div style="margin: 20px 20px 50px;">
+            <div style="width:100%;color:#74767c;font-size:18px;">活动列表</div>
+            <div style="padding-right: 20px;">
+                <div class="float-right">
+                    <button type="button" class="btn btn-primary" id="user_add">
+                        <span class="glyphicon glyphicon-plus" style="font-size: 1px;padding-right: 5px;"></span>
+                        添加活动
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive" style="padding: 10px 30px 0px 40px;font-size: 14px !important;">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>活动名</th>
+                        <th>位置</th>
+                        <th>链接</th>
+                        <th>图片</th>
+                        <th>开始时间</th>
+                        <th>结束时间</th>
+                        <th>状态</th>
+                        <th style="text-align: center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody style="font-size: 13px !important;">
+                    <?php if ($this->tables){?>
+                        <?php foreach ($this->tables as $table){?>
+                            <?php echo "<tr data-id='{$table['a_id']}'><td>{$table['a_id']}</td>"?>
+                            <?php echo "<td>{$table['a_name']}</td>"?>
+                            <?php echo "<td>{$table['a_position']}</td>"?>
+                            <?php echo "<td>{$table['a_link']}</td>"?>
+                            <?php echo "<td>{$table['a_picture']}</td>"?>
+                            <?php echo "<td>{$table['a_begintime']}</td>"?>
+                            <?php echo "<td>{$table['a_endtime']}</td>"?>
+                            <?php echo "<td>".($table['a_status'] == 0 ? '已停用' : '已激活')."</td>"?>
+                            <?php echo "<td style='text-align: center'>
+                                    <ul>
+                                        <li style='margin-left: 20px'><a data-id='{$table['a_id']}' class='user_edit'>编辑</a></li>
+                                        <li><a data-status='{$table['a_status']}' class='user_enable'>".($table['a_status'] == 0 ? '启用' : '停用')."</a></li>
+                                        <li style='margin-left: 20px'><a class='user_modifpass'>删除</a></li>
+                                    </ul></td></tr>"?>
+                        <?php }?>
+                    <?php }?>
+                    </tbody>
+                </table>
+        </div>
+    </div>
+    <div id="admin_add" class="display-none">
+        <div style="margin: 20px 20px 50px;">
+            <div id="admin_add_title" style="width:100%;color:#74767c;font-size:18px;">添加活动</div>
+            <div style="padding-right: 20px;">
+                <div class="float-right">
+                    <button type="button" class="btn btn-primary" id="user_back">
+                        <span class="glyphicon glyphicon-arrow-left" style="font-size: 1px;padding-right: 5px;"></span>
+                        返回
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div style="width:70%;float:left;padding-top:60px;">
+            <form class="form-horizontal" id="add_user" role="form">
+                <div class="form-group display-none">
+                    <input id="_id" class="form-control control-input" name="_id" type="text">
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_name" style="text-align:right;font-weight:normal;">
+                        活动名：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_name" class="form-control control-input" name="_name" type="text" placeholder="活动名" required>
+                        <span class="xln_must_enter" >*</span>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2 display-none"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_english_name" style="text-align:right;font-weight:normal;">
+                        位置：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_english_name" class="form-control control-input" name="_english_name" type="text" required placeholder="请输入英文名">
+                        <span class="xln_must_enter" >*</span>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_email" style="text-align:right;font-weight:normal;">
+                        开始时间：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_email" class="form-control control-input" name="_email" type="email" required placeholder="请输入邮箱">
+                        <span class="xln_must_enter" >*</span>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_mobile" style="text-align:right;font-weight:normal;">
+                        结束时间：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_mobile" class="form-control control-input" name="_mobile" type="text" required placeholder="请输入手机号">
+                        <span class="xln_must_enter" >*</span>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_dept" style="text-align:right;font-weight:normal;">
+                        活动链接：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_dept" class="form-control control-input" name="_dept" type="text" placeholder="请输入部门">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_position" style="text-align:right;font-weight:normal;">
+                        上传图片：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_position" class="form-control control-input" name="_position" type="text" placeholder="请输入职位">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="" style="text-align:right;font-weight:normal;"></label>
+                    <div class="col-sm-6 control-input" style="margin-left:0px;">
+                        <button type="button" class="btn btn-primary" id="save_user">保存</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">修改密码</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="_old" style="text-align:right;font-weight:normal;">
+                                旧密码：
+                            </label>
+                            <div class="col-sm-6" style="width: 80%;">
+                                <input id="_old" class="form-control control-input admin_password" name="_old" type="password" required placeholder="请输入密码">
+                                <span class="xln_must_enter" >*</span>
+                            </div>
+                            <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="_new" style="text-align:right;font-weight:normal;">
+                                新密码：
+                            </label>
+                            <div class="col-sm-6" style="width: 80%;">
+                                <input id="_new" class="form-control control-input admin_password" name="_new" type="password" required placeholder="请输入密码">
+                                <span class="xln_must_enter" >*</span>
+                            </div>
+                            <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="modify_password">提交更改</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</div>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/jQuery-2.2.0.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/json2.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/jquery.alerts.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/Common.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#user_add').click(function () {
+            $('#admin_add input').val('');
+            $('#_password').removeAttr('disabled');
+            $('#admin_add input[type="radio"]').removeAttr('checked');
+            $('#optionsRadios1').prop('checked','checked');
+            $('#admin_add .errMsg').addClass('display-none');
+            $('#admin_add_title').html('添加角色');
+            $('#admin_add').toggleClass('display-none');
+            $('#admin_list').toggleClass('display-none');
+        });
+        $('#user_back').click(function () {
+            $('#admin_add').toggleClass('display-none');
+            $('#admin_list').toggleClass('display-none');
+        });
+        $('#modify_password').click(function () {
+            var id = $('#modify_password').data('adminid');
+            var _old = $('#_old').val();
+            var _new = $('#_new').val();
+            myPostSync(url+'/xlb/admin/role/modify-pass?id=' + id + '&_old=' + _old + '&_new=' + _new,function (json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    $('#myModal').modal('hide');
+                    jAlert("修改成功");
+                }
+            })
+        });
+        $('.user_enable').click(function () {
+            var id = $(this).closest('tr').data('id');
+            var status = $(this).data('status');
+            myPostSync(url+'/xlb/admin/role/set-status?id=' + id + '&_status=' + status,function (json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    jAlert("修改成功");
+                    window.location.reload();
+                }
+            })
+        });
+        $('.user_modifpass').click(function () {
+            var id = $(this).closest('tr').data('id');
+            $('#modify_password').attr('data-adminid',id);
+            $('#myModal').modal('show');
+        });
+        $('.user_edit').click(function () {
+            /*var tr = $(this).closest('tr');*/
+            var id = $(this).closest('tr').data('id');
+            myGetSync(url+'/xlb/admin/role/edit?id=' + id,function (json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    $('#_id').val(json.data._id);
+                    $('#_name').val(json.data._name);
+                    $('#_english_name').val(json.data._english_name);
+                    $('#_email').val(json.data._email);
+                    $('#_mobile').val(json.data._mobile);
+                    $('#_dept').val(json.data._dept);
+                    $('#_position').val(json.data._position);
+                    $('#_password').val(json.data._password);
+                    $('#_password').attr('disabled',true);
+                    $('#admin_add input[type="radio"]').removeAttr('checked');
+                    if (json.data.role_id == 1) {
+                        $('#optionsRadios1').prop('checked','checked');
+                    } else {
+                        $('#optionsRadios2').prop('checked','checked');
+                    }
+                    $('#admin_add_title').html('编辑角色');
+                    $('#admin_add').toggleClass('display-none');
+                    $('#admin_list').toggleClass('display-none');
+                }
+            })
+
+        });
+
+        //添加管理员
+        $('#save_user').click(function () {
+            if (!$("#add_user #_mobile").parent().next('.errMsg').hasClass('display-none')){
+                return false;
+            }
+            if (!$("#add_user #_email").parent().next('.errMsg').hasClass('display-none')){
+                return false;
+            }
+            myPostSync(url+'/xlb/admin/role/add',$("#add_user").serialize(),function (json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    jAlert(json.message);
+                    window.location.reload();
+                }
+            })
+        })
+
+        //手机号栏失去焦点
+        $("#add_user #_mobile").blur(function(){
+            var reg=/^1[3|4|5|7|8][0-9]\d{4,8}$/i;//验证手机正则(输入前7位至11位)
+            var el = $(this).parent().next('.errMsg');
+            if( $(this).val()==""|| $(this).val()=="请输入您的手机号")
+            {
+                errmsg(el,"请输入您的手机号");
+            }
+            else if($(this).val().length<11)
+            {
+                errmsg(el,"手机号长度有误");
+            }
+            else if(!reg.test($(this).val()))
+            {
+                errmsg(el,"手机号不存在");
+            }
+            else
+            {
+                clearmsg(el);
+            }
+        });
+
+        //邮箱栏失去焦点
+        $("#add_user #_email").blur(function(){
+            var reg=/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;//验证邮箱
+            var el = $(this).parent().next('.errMsg');
+            if( $(this).val()==""|| $(this).val()=="请输入您的邮箱号")
+            {
+                errmsg(el,"请输入您的邮箱号");
+            }
+            else if(!reg.test($(this).val()))
+            {
+                errmsg(el,"请输入正确的邮箱号");
+            }
+            else
+            {
+                clearmsg(el);
+            }
+        });
+
+        //英文名栏失去焦点
+        $("#add_user #_english_name").blur(function(){
+            var reg=/^[A-Za-z]+$/;//验证英文
+            var el = $(this).parent().next('.errMsg');
+            if( $(this).val()==""|| $(this).val()=="请输入您的英文名")
+            {
+                errmsg(el,"请输入您的英文名");
+            }
+            else if(!reg.test($(this).val()))
+            {
+                errmsg(el,"请输入正确的英文名");
+            }
+            else
+            {
+                clearmsg(el);
+            }
+        });
+        //密码栏失去焦点
+        $(".admin_password").blur(function(){
+            var el = $(this).parent().next('.errMsg');
+            if( $(this).val()==""|| $(this).val()=="请输入你的密码")
+            {
+                errmsg(el,"请输入你的密码");
+            }
+            else
+            {
+                clearmsg(el);
+            }
+        });
+    });
+    function errmsg(el, msg) {
+        el.html(msg);
+        el.removeClass('display-none');
+    };
+    function clearmsg(el) {
+        el.addClass("display-none");
+        el.empty();
+    }
+</script>
+</body>
+</html>
