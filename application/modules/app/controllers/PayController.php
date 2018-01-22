@@ -7,7 +7,7 @@ class PayController extends PublicController
      * 支付配置
      * @var array
      */
-    protected $config =  array (
+    static public $config =  array (
         //应用ID,您的APPID。
         'app_id' => "2017081608219300",
 
@@ -40,18 +40,6 @@ class PayController extends PublicController
      * 获取支付信息
      */
     public function payAction() {
-        //初始化
-        $aop = new AopClient;
-        $aop->gatewayUrl            = $this->config['gatewayUrl'];
-        $aop->appId                 = $this->config['app_id'];
-        $aop->rsaPrivateKey         = $this->config['merchant_private_key'];
-        $aop->format                = $this->config['json'];
-        $aop->charset               = $this->config['charset'];
-        $aop->signType              = $this->config['sign_type'];
-        $aop->alipayrsaPublicKey    = $this->config['alipay_public_key'];
-
-        //实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.app.pay
-        $request = new AlipayTradeAppPayRequest();
         //初始化数组
         $data = array();
         //获取商品
@@ -82,16 +70,39 @@ class PayController extends PublicController
         }
         $data['body']               = $order_type;
         $data['out_trade_no']       = $order_no;
+
+        //返回签名
+        $this->xlb_ret(1,'', array('response'=>self::sign($data)));
+    }
+
+    /**
+     * 生成签名
+     * @param $data
+     * @return string
+     */
+    static public function sign($data) {
+        //填充数据
         $data['timeout_express']    = "30m";
         $data['product_code']       = "QUICK_MSECURITY_PAY";
+        //初始化
+        $aop = new AopClient;
+        $aop->gatewayUrl            = self::$config['gatewayUrl'];
+        $aop->appId                 = self::$config['app_id'];
+        $aop->rsaPrivateKey         = self::$config['merchant_private_key'];
+        $aop->format                = self::$config['json'];
+        $aop->charset               = self::$config['charset'];
+        $aop->signType              = self::$config['sign_type'];
+        $aop->alipayrsaPublicKey    = self::$config['alipay_public_key'];
+        //实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.app.pay
+        $request = new AlipayTradeAppPayRequest();
         //设置异步通知
-        $request->setNotifyUrl($this->config['notify_url']);
+        $request->setNotifyUrl(self::$config['notify_url']);
         //设置内容
         $request->setBizContent(json_encode($data));
         //这里和普通的接口调用不同，使用的是sdkExecute
         $response = $aop->sdkExecute($request);
-        $this->write_log($response);
-        $this->xlb_ret(1,'', array('response'=>$response));
+        self::write_log($response);
+        return $response;
     }
 
     /**
@@ -111,14 +122,32 @@ class PayController extends PublicController
             }
             //获取订单编号
             $order_no = @$_POST['out_trade_no'];
-            //获取订单类型
-            $order_type = @$_POST['body'];
-            //order_type: 1:借书、2充值
-            if ($order_type == 1) {
-
-            } else {
-
+            //获取订单信息
+            $order = XlbOrderModel::getInstance()->getOrderByOrderNo($order_no);
+            if (empty($order)) {
+                self::write_log("获取用户订单失败");
             }
+            //获取订单类型
+            $order_type = (int)@$_POST['body'];
+            //order_type: 1:借书、2充值
+            if ($order_type == 2) {
+                self::write_log('获取用户信息');
+                $user = XlbUserInfoModel::getInstance()->getRowByID((int)$order['u_id']);
+                if (empty($user)) {
+                    self::write_log("获取用户信息失败");
+                }
+                self::write_log('修改用户余额');
+                $u_balance = bcadd((double)$user['u_balance'], (double)$order['order_amount_total'], 2);
+                self::write_log($u_balance);
+                $ret = XlbUserInfoModel::getInstance()
+                    ->editData((int)$order['u_id'], array('u_balance'=>$u_balance));
+                self::write_log($ret);
+            }
+            self::write_log('修改订单状态');
+            $m_order['order_paytime'] = time();
+            $m_order['order_status']  = 1;
+            $ret = XlbOrderModel::getInstance()->editData((int)$order['order_id'], $m_order);
+            self::write_log($ret);
             echo "success";
         }else {
             $this->write_log('校验失败');
