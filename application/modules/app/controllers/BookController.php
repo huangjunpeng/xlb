@@ -138,12 +138,7 @@ class BookController extends PublicController
             $this->xlb_ret(0, '绘本未找到');
         }
         //获取用户ID
-        $uid = 0;
-        $token = $this->getParam('token',null);
-        if (!empty($token)) {
-            $token = Tools::getDecodeUidForToken($token);
-            list($module, $uid) = explode(';',$token);
-        }
+        $uid = $this->getUid();
         if ($uid == 0) {
             $row['iswish'] = false;
         } else {
@@ -151,6 +146,15 @@ class BookController extends PublicController
                 ->getRowByUidAndBId($uid, $b_id);
             $row['iswish'] = empty($wish) ? false : true;
         }
+
+        //获取可能喜欢
+        $themes = array();
+        if (!empty($row['theme'])) {
+            $themes = array_column($row['theme'], 'bc_id');
+        }
+        $row['like'] = XlbBookModel::getInstance()
+            ->getLikeBook($themes);
+
         $this->xlb_ret(1, '', $row);
     }
 

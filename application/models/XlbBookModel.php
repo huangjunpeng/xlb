@@ -161,4 +161,26 @@ class XlbBookModel extends Xlb
         $row['coment_count'] = $comment['count'];
         return $row;
     }
+
+    public function getLikeBook($themes) {
+        $table_0 = XlbBookCategoryMapModel::getInstance()->getDbName();
+        $table_2 = XlbOrderBookDetailModel::getInstance()->getDbName();
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name),array(
+            'id'=>'b_id',
+            'name'=>'b_name',
+            'picture'=>'b_picture'));
+        if (!empty($themes)) {
+            $ins = implode(',', $themes);
+            $ins = rtrim($ins, ',');
+            $select->from(array('t0'=>$table_0), array());
+            $select->where('t.b_id=t0.b_id AND t0.bc_id in('.$ins.')');
+        }
+        $select->joinLeft(array('t2'=>$table_2), 't2.b_id=t.b_id', array('number'=>'count(t2.obd_id)'))
+            ->group('t.b_id')
+            ->order('number DESC')
+            ->limitPage(1, 10);
+        $rows = $this->getAdapter()->fetchAll($select);
+        return $rows;
+    }
 }

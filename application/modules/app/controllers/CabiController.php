@@ -101,6 +101,8 @@ class CabiController extends XlbController {
         $obd = array();
         //订单编号
         $obd['order_no'] = $order_no;
+        //绘本ID
+        $obd['b_id'] = $bookinfo['b_id'];
         //共享绘本ID
         $obd['sb_id'] = $bookinfo['sb_id'];
         //格子ID
