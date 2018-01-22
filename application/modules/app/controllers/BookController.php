@@ -75,6 +75,14 @@ class BookController extends PublicController
         if (empty($_name)) {
             $this->xlb_ret(0, '请输入书名');
         }
+
+        //记录搜索关键字
+        $uid = $this->getUid();
+        $search['sn_name'] = $_name;
+        $search['u_id'] = $uid;
+        XlbSearchNameModel::getInstance()
+            ->insert($search);
+
         $page = $this->getParam('page', 0);
         $rows = XlbBookModel::getInstance()
             ->searchByName($_name, $page);
@@ -202,5 +210,14 @@ class BookController extends PublicController
         $rows = XlbCabinetModel::getInstance()
             ->getCabiList($_long, $_lat);
         $this->xlb_ret(1, '', $rows);
+    }
+
+    /**
+     * 获取热搜列表
+     */
+    public function ghsAction() {
+        $hots = XlbSearchNameModel::getInstance()
+            ->getHotSearch();
+        $this->xlb_ret(1, '', $hots);
     }
 }

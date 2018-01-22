@@ -134,4 +134,20 @@ class PublicController extends Zend_Controller_Action
     public function write_log($text) {
         return file_put_contents (XLB_WEB_DATA.'/log/'.date('Y-m-d').'.log', date('Y-m-d H:i:s').'  '.$text."\r\n", FILE_APPEND);
     }
+
+    /**
+     * 获取用户ID
+     * @return int
+     */
+    public function getUid() {
+        //获取用户ID
+        $uid = 0;
+        $token = $this->getParam('token',null);
+        if (!empty($token)) {
+            $token = Tools::getDecodeUidForToken($token);
+            $list = explode(';',$token);
+            $uid = $list[1];
+        }
+        return $uid;
+    }
 }
