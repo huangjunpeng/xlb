@@ -36,11 +36,11 @@ class XlbSearchNameModel extends Xlb
         $fields = array(
             'sn_id',
             'sn_name',
+            'number'=>'count(*)'
         );
         $select = $this->getAdapter()->select();
         $select->from(array('t'=>$this->_name), $fields)
-            ->joinLeft(array('t1'=>$this->_name), 't1.sn_name=t.sn_name',array('number'=>'count(t1.sn_id)'))
-            ->group('t1.sn_id')
+            ->group('t.sn_name')
             ->order('number DESC')
             ->limitPage(1, $pagesize);
         $rows = $this->getAdapter()->fetchAll($select);
