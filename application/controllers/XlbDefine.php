@@ -6,7 +6,14 @@ $menu = array(
     ),
     array(
         'name' => '用户',
-        'sub'  => null
+        'sub'  => array(
+            array(
+                'name' => '用户列表',
+            ),
+            array(
+                'name' => '购买时长',
+            )
+        )
     ),
     array(
         'name' => '绘本',

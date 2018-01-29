@@ -14,6 +14,11 @@ class XlbActiveModel extends Xlb
     protected $_primary = 'a_id';
 
     /**
+     * @var string
+     */
+    protected $_key     = 'a_id';
+
+    /**
      * @var XlbActiveModel
      */
     public static $_instance = null;
@@ -40,5 +45,52 @@ class XlbActiveModel extends Xlb
             }
         }
         return $all;
+    }
+
+    /**
+     * 更新数据
+     * @param $id int
+     * @param $array array
+     * @return int
+     */
+    public function editData($id,$array)
+    {
+        $db = $this->getAdapter();
+        $where = $db->quoteInto($this->_key."=?", $id);
+        return $this->update($array, $where);
+    }
+
+    /**
+     * 删除数据
+     * @param $id int
+     * @return int
+     */
+    public function delById($id) {
+        $db = $this->getAdapter();
+        $where = $db->quoteInto($this->_key."=?", $id);
+        return $this->delete($where);
+    }
+
+    /**
+     * 获取书柜信息
+     * @param $id
+     * @return mixed
+     */
+    public function getById($id) {
+        $fields = array(
+            '_id'=>'a_id',
+            '_name'=>'a_name',
+            '_link'=>'a_link',
+            '_picture'=>'a_picture',
+            '_begintime'=>'a_begintime',
+            '_endtime'=>'a_endtime',
+            '_status'=>'a_status',
+            '_position'=>'a_position'
+        );
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name), $fields)
+            ->where('a_id=?',$id);
+        $row = $this->getAdapter()->fetchRow($select);
+        return $row;
     }
 }

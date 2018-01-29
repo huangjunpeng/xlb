@@ -139,7 +139,7 @@ class Admin_IndexController extends XlbController
             /*设置附件上传根目录*/
             $upload->rootPath = XLB_WEB_ROOT;
             /*设置附件上传子目录*/
-            $upload->savePath = XLB_UPLOAD;
+            $upload->savePath = XLB_UPLOAD.'/active/';
             /*子目录创建方式屏蔽*/
             $upload->subName = array();
             $info =  $upload->upload();

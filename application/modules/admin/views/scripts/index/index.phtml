@@ -87,7 +87,20 @@
                                                 </g>
                                             </svg>
                                             <span>用户</span>
-                                        </li>';?>
+                                            <i>
+                                                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 5 10" xml:space="preserve" style="width:5px;height:10px; fill:currentcolor">
+                                                    <path d="M0.5,0L5,5L0.5,10L0,9.5L4,5L0,0.5z"></path>
+                                                </svg>
+                                            </i>
+                                        <ul>
+                                                <li class="header">绘本</li>';?>
+                                    <?php if ($this->menu[1]['sub'][0]['name'] == '用户列表'){?>
+                                        <?php echo '<li data-href="/xlb/admin/user/index">用户列表</li>';?>
+                                    <?php }?>
+                                    <?php if ($this->menu[1]['sub'][1]['name'] == '购买时长'){?>
+                                        <?php echo '<li data-href="/xlb/admin/member/index">购买时长</li>';?>
+                                    <?php }?>
+                            <?php echo '</ul></li>';?>
                         <?php endif;?>
                         <?php if ($this->menu[2]['name'] == '绘本'):?>
                             <?php echo '<li data-href="/xlb/admin/book/index">

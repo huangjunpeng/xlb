@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>小萝卜</title>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/css/bootstrap-datetimepicker.min.css" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/scripts/jquery/css/jquery.alerts.css" />
+    <link rel="stylesheet" href="<?php echo $this->baseUrl();?>/public/styles/admin/style.css" />
+    <style type="text/css">
+        li{
+            display: inline-block;
+            cursor: pointer;
+        }
+        a{
+            color: #838a90;
+        }
+        a:hover {
+            color: #4aacf3;
+            text-decoration: none;
+        }
+
+        .display-none{
+            display: none;
+        }
+        .form-control{
+            width: 90%;
+            float: left;
+        }
+        .xln_must_enter {
+            color: #c00000;
+            font-size: 16px;
+            float: left;
+            padding-left: 10px;
+            height: 40px;
+            line-height: 40px;
+        }
+        form .errMsg{
+            color: #A94442;
+        }
+        .form-horizontal .form-group {
+            margin: 0px 0px 20px 0px;
+        }
+        .control-input {
+            min-height: 40px;
+            float: left;
+            color: #4d4d4d;
+        }
+        .form-horizontal .control-label {
+            font-size: 12px;
+            color: #121212;
+            font-weight: normal;
+            float: left;
+            height: 40px;
+            line-height: 40px;
+            padding: 0px;
+        }
+        .upload_input{
+            margin-right: 9px;
+            margin-bottom: 9px;
+            width: 77px;
+            height: 77px;
+            border: 1px dashed #d9d9d9;
+            position: relative;
+        }
+        #_picture{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            height: 100%;
+            width: 100%;
+            opacity: 0;
+        }
+        .upload_input:after,.upload_input:before{
+            content: " ";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            background-color: #acacac;
+        }
+        .upload_input:before{
+            width: 2px;
+            height: 39.5px;
+        }
+        .upload_input:after{
+            width: 39.5px;
+            height: 2px;
+        }
+    </style>
+</head>
+<body style="height: 100%">
+<div class="container" style="border-radius: 4px;height: 100%;width: 100%;background-color: #fff;overflow-y: auto">
+    <div id="admin_list">
+        <div style="margin: 20px 20px 50px;">
+            <div style="width:100%;color:#74767c;font-size:18px;">购买时长列表</div>
+            <div style="padding-right: 20px;">
+                <div class="float-right">
+                    <button type="button" class="btn btn-primary" id="user_add">
+                        <span class="glyphicon glyphicon-plus" style="font-size: 1px;padding-right: 5px;"></span>
+                        添加时长
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive" style="padding: 10px 30px 0px 40px;font-size: 14px !important;">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>类型</th>
+                        <th>现价</th>
+                        <th>原价</th>
+                        <th>有效天</th>
+                        <th>是否显示限时活动</th>
+                        <th>状态</th>
+                        <th style="text-align: center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody style="font-size: 13px !important;">
+                    <?php if ($this->tables){?>
+                        <?php foreach ($this->tables as $table){?>
+                            <?php echo "<tr data-id='{$table['mc_id']}'><td>{$table['mc_id']}</td>"?>
+                            <?php echo "<td>{$table['mc_name']}</td>"?>
+                            <?php echo "<td>{$table['mc_actual_price']}</td>"?>
+                            <?php echo "<td>{$table['mc_price']}</td>"?>
+                            <?php echo "<td>{$table['mc_effective_time']}</td>"?>
+                            <?php echo "<td>".($table['mc_display'] == 0 ? '不显示' : '显示')."</td>"?>
+                            <?php echo "<td>".($table['mc_status'] == 0 ? '已停用' : '已激活')."</td>"?>
+                            <?php echo "<td style='text-align: center'>
+                                    <ul>
+                                        <li><a data-status='{$table['mc_status']}' class='user_enable'>".($table['mc_status'] == 0 ? '启用' : '停用')."</a></li>
+                                        <li style='margin-left: 20px'><a data-id='{$table['mc_id']}' class='user_edit'>编辑</a></li>
+                                    </ul></td></tr>"?>
+                        <?php }?>
+                    <?php }?>
+                    </tbody>
+                </table>
+        </div>
+    </div>
+    <div id="admin_add" class="display-none">
+        <div style="margin: 20px 20px 50px;">
+            <div id="admin_add_title" style="width:100%;color:#74767c;font-size:18px;">添加时长</div>
+            <div style="padding-right: 20px;">
+                <div class="float-right">
+                    <button type="button" class="btn btn-primary" id="user_back">
+                        <span class="glyphicon glyphicon-arrow-left" style="font-size: 1px;padding-right: 5px;"></span>
+                        返回
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div style="width:70%;float:left;padding-top:60px;">
+            <form class="form-horizontal" id="add_user" role="form">
+                <div class="form-group display-none">
+                    <input id="_id" class="form-control control-input" name="_id" type="text">
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_name" style="text-align:right;font-weight:normal;">
+                        类型名称：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_name" class="form-control control-input" name="_name" type="text" placeholder="类型名称" required>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2 display-none"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_actual_price" style="text-align:right;font-weight:normal;">
+                        现价（元）：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_actual_price" class="form-control control-input" name="_actual_price" type="text" placeholder="现价（元）" required>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_price" style="text-align:right;font-weight:normal;">
+                        原价（元）：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_price" class="form-control control-input" name="_price" type="text" placeholder="原价（元）" required>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_effective_time" style="text-align:right;font-weight:normal;">
+                        有效天数：
+                    </label>
+                    <div class="col-sm-6">
+                        <input id="_effective_time" class="form-control control-input" name="_effective_time" type="text" placeholder="有效天数" required>
+                    </div>
+                    <div class="errMsg col-sm-10 col-sm-offset-2  display-none"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="_display" style="text-align:right;font-weight:normal;">
+                        是否显示限时活动：
+                    </label>
+                    <div class="col-sm-6">
+                        <select class="form-control control-input" id="_display" name="_display">
+                            <option value="1">显示</option>
+                            <option value="0">不显示</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="" style="text-align:right;font-weight:normal;"></label>
+                    <div class="col-sm-6 control-input" style="margin-left:0px;">
+                        <button type="button" class="btn btn-primary" id="save_user">保存</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/jQuery-2.2.0.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/bootstrap/js/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/json2.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/jquery/js/jquery.alerts.js"></script>
+<script type="text/javascript" src="<?php echo $this->baseUrl();?>/public/scripts/Common.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('#user_add').click(function () {
+            $('#admin_add input').val('');
+            $('#_password').removeAttr('disabled');
+            $('#admin_add input[type="radio"]').removeAttr('checked');
+            $('#optionsRadios1').prop('checked','checked');
+            $('#admin_add .errMsg').addClass('display-none');
+            $('#admin_add_title').html('添加时长');
+            $('#admin_add').toggleClass('display-none');
+            $('#admin_list').toggleClass('display-none');
+        });
+
+        $('#user_back').click(function () {
+            $('#admin_add').toggleClass('display-none');
+            $('#admin_list').toggleClass('display-none');
+        });
+
+        $('.user_enable').click(function () {
+            var id = $(this).closest('tr').data('id');
+            var status = $(this).data('status');
+            myPostSync(url+'/xlb/admin/member/set-status?id=' + id + '&_status=' + status,function (json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    jAlert("修改成功");
+                    window.location.reload();
+                }
+            })
+        });
+
+        $('.user_del').click(function () {
+            var id = $(this).closest('tr').data('id');
+            myGetSync(url+'/xlb/admin/member/del?id=' + id,function (json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    jAlert("删除成功");
+                    window.location.reload();
+                }
+            });
+        });
+
+        $('.user_edit').click(function () {
+            /*var tr = $(this).closest('tr');*/
+            var id = $(this).closest('tr').data('id');
+            myGetSync(url+'/xlb/admin/member/get?id=' + id,function (json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    $('#_id').val(json.data._id);
+                    $('#_name').val(json.data._name);
+                    $('#_actual_price').val(json.data._actual_price);
+                    $('#_price').val(json.data._price);
+                    $('#_effective_time').val(json.data._effective_time);
+                    $('#_display').val(json.data._display);
+
+                    $('#imghead').attr("src",json.data._picture);
+                    $('#admin_add_title').html('编辑时长');
+                    $('#admin_add').toggleClass('display-none');
+                    $('#admin_list').toggleClass('display-none');
+                }
+            })
+
+        });
+
+        //添加活动
+        $('#save_user').click(function () {
+            myPostSync(url+'/xlb/admin/member/save',$("#add_user").serialize(),function (json) {
+                if (json.code == 0) {
+                    jAlert(json.message);
+                } else {
+                    jAlert(json.message);
+                    window.location.reload();
+                }
+            })
+        })
+    });
+</script>
+</body>
+</html>
