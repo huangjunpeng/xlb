@@ -4,50 +4,45 @@ class IndexController extends PublicController
     /**
      * 登陆接口
      */
-    public function loginAction() 
-	{
-        if ($this->getRequest()->isPost()) {
-            //登陆验证
-            $filter = new Zend_Filter_StripTags();
+    public function loginAction() {
+        //登陆验证
+        $filter = new Zend_Filter_StripTags();
 
-            //验证手机号
-            $mobile = $filter->filter($this->getParam('userMobile',null));
-            if (empty($mobile)) {
-                $this->xlb_ret('0', '手机号不能为空!');
-            }
-
-            //验证吗
-            $smsCode = trim($this->getParam('smsCode'));
-            $authCode = $this->authcode($_COOKIE['xlbcode'],'DECODE');
-            if(strcmp($authCode , $smsCode)!=0 && $smsCode != '8888'){
-                $this->xlb_ret('0', '手机验证码错误!');
-            }
-
-            //第一次登陆
-            $firstlogin = true;
-
-            //查询数据库
-            $userInfo = XlbUserInfoModel::getInstance();
-            $row = $userInfo->fetchRow('u_mobile='.$mobile);
-            $u_picture = '';
-            if(empty($row)){
-                $data['u_mobile']       = $mobile;
-                $data['u_creattime']    = time();
-                $data['u_optime']       = time();
-                $uid                    = $userInfo->insert($data);
-            }else{
-                $user       = $row->toArray();
-                $uid        = $user['u_id'];
-                $firstlogin = false;
-                $u_picture  = null == $user['u_picture'] ? '' : $user['u_picture'];
-            }
-
-            //生成token
-            $token = Tools::getEncodeUid(XLB_APP.';'.$uid);
-            $this->xlb_ret('1', '登录成功!',array('token'=>$token,'firstlogin'=>$firstlogin,'logo'=>$u_picture));
-        } elseif ($this->getRequest()->isGet()) {
-
+        //验证手机号
+        $mobile = $filter->filter($this->getParam('userMobile',null));
+        if (empty($mobile)) {
+            $this->xlb_ret('0', '手机号不能为空!');
         }
+
+        //验证吗
+        $smsCode = trim($this->getParam('smsCode'));
+        $authCode = $this->authcode($_COOKIE['xlbcode'],'DECODE');
+        if(strcmp($authCode , $smsCode)!=0 && $smsCode != '8888'){
+            $this->xlb_ret('0', '手机验证码错误!');
+        }
+
+        //第一次登陆
+        $firstlogin = true;
+
+        //查询数据库
+        $userInfo = XlbUserInfoModel::getInstance();
+        $row = $userInfo->fetchRow('u_mobile='.$mobile);
+        $u_picture = '';
+        if(empty($row)){
+            $data['u_mobile']       = $mobile;
+            $data['u_creattime']    = time();
+            $data['u_optime']       = time();
+            $uid                    = $userInfo->insert($data);
+        }else{
+            $user       = $row->toArray();
+            $uid        = $user['u_id'];
+            $firstlogin = false;
+            $u_picture  = null == $user['u_picture'] ? '' : $user['u_picture'];
+        }
+
+        //生成token
+        $token = Tools::getEncodeUid(XLB_APP.';'.$uid);
+        $this->xlb_ret('1', '登录成功!',array('token'=>$token,'firstlogin'=>$firstlogin,'logo'=>$u_picture));
     }
 
     /**

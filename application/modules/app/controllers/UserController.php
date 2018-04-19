@@ -4,73 +4,62 @@ class UserController extends XlbController
     /**
      * 获取孩子接口列表
      */
-    public function childrenListAction()
-    {
-        if ($this->getRequest()->isPost()) {
-            $list = XlbUserChildrenModel::getInstance()->getChildrenListByUid($this->uid);
-            foreach ($list as &$value) {
-                $time = strtotime($value['brithday']);
-                $time = time() - $time;
-                $year = floor($time / 60 / 60 / 24 / 365);
-                $time -= $year * 60 * 60 * 24 * 365;
-                $month = floor($time / 60 / 60 / 24 / 30);
-                $value['age'] = $year.'岁'.$month.'个月';
-            }
-            $this->xlb_ret(1,'',$list);
-        }else {
-
+    public function childrenListAction() {
+        $list = XlbUserChildrenModel::getInstance()->getChildrenListByUid($this->uid);
+        foreach ($list as &$value) {
+            $time = strtotime($value['brithday']);
+            $time = time() - $time;
+            $year = floor($time / 60 / 60 / 24 / 365);
+            $time -= $year * 60 * 60 * 24 * 365;
+            $month = floor($time / 60 / 60 / 24 / 30);
+            $value['age'] = $year.'岁'.$month.'个月';
         }
+        $this->xlb_ret(1,'',$list);
     }
 
     /**
      * 添加编辑孩子接口
      */
-    public function childrenAddAction()
-    {
-        if ($this->getRequest()->isPost()) {
-            $children = array();
-            $nickname = $this->_getParam('nickname');
-            if (!empty($nickname)) {
-                $children['uc_nickname'] = $nickname;
+    public function childrenAddAction() {
+        $children = array();
+        $nickname = $this->_getParam('nickname');
+        if (!empty($nickname)) {
+            $children['uc_nickname'] = $nickname;
+        } else {
+            $this->xlb_ret(0,'昵称不能为空');
+        }
+        $brithday = $this->_getParam('brithday');
+        if (!empty($brithday)) {
+            $children['uc_brithday'] = $brithday;
+        }
+        $sex = (int)$this->_getParam('sex');
+        if (!empty($sex)) {
+            $children['uc_sex'] = $sex;
+        }
+        $xlbm = XlbUserChildrenModel::getInstance();
+        $id = $this->_getParam('id');
+        if (empty($id)) {
+            $children['u_id'] = $this->uid;
+            $id = (int)$xlbm->addData($children);
+            if ($id > 0) {
+                $this->xlb_ret(1,'添加成功',['id' => $id]);
             } else {
-                $this->xlb_ret(0,'昵称不能为空');
+                $this->xlb_ret(0,'添加失败');
             }
-            $brithday = $this->_getParam('brithday');
-            if (!empty($brithday)) {
-                $children['uc_brithday'] = $brithday;
+        } else {
+            $ret = (int)$xlbm->editData($id,$children);
+            if ($ret > 0) {
+                $this->xlb_ret(1,'更新成功',['id' => $id]);
+            } else {
+                $this->xlb_ret(0,'更新失败');
             }
-            $sex = (int)$this->_getParam('sex');
-            if (!empty($sex)) {
-                $children['uc_sex'] = $sex;
-            }
-			$xlbm = XlbUserChildrenModel::getInstance();
-            $id = $this->_getParam('id');
-			if (empty($id)) {
-				$children['u_id'] = $this->uid;
-				$id = (int)$xlbm->addData($children);
-				if ($id > 0) {
-					$this->xlb_ret(1,'添加成功',['id' => $id]);
-				} else {
-					$this->xlb_ret(0,'添加失败');
-				}
-			} else {
-				$ret = (int)$xlbm->editData($id,$children);
-				if ($ret > 0) {
-					$this->xlb_ret(1,'更新成功',['id' => $id]);
-				} else {
-					$this->xlb_ret(0,'更新失败');
-				}
-			}
-        }else {
-            $this->xlb_ret(0);
         }
     }
 
     /**
      * 删除孩子
      */
-    public function childrenDelAction()
-    {
+    public function childrenDelAction() {
         $id = $this->_getParam('id');
         if (empty($id)) {
             $this->xlb_ret(0, '孩子ID不能为空');

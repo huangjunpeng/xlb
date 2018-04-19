@@ -9,10 +9,10 @@ class PayController extends PublicController
      */
     static public $config =  array (
         //应用ID,您的APPID。
-        'app_id' => "2017081608219300",
+        'app_id' => "2018020102126413",
 
         //商户私钥
-        'merchant_private_key' => "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALUwVOKMwxrakXPrkHcgkm/PQU57fhcHrm8Bpk40P0rt5MeIxKZALxq0DoPjo/LVS5O4rSz9JyYX0za3OJ7oahtFPZi6rPR3Q01cl+fmMBP73jnrTfICqnwL63+0FBAcqlH78bldb41gzBXI15RlieOtR863LyJyYbywYSgmEr67AgMBAAECgYB3THZnoIUKFmV07OJ2/XRNuCno0fjokv8wSebFUTNnU5GyK4RHbrVVIL756hXV2sjjX9Jub9SqCT/ho+vc/Wx2oo/2cbR5hylTgwEvRcNMwByQBcSKiLsMprxqcJGZyzqGDpp2IK68awXY46En+QzpTY5XTMwJhplwuOkigFc1SQJBANqw5gY6WiHKyACQ33pr2dHGFIvD1uZrVVphU/HsUzs02N4/mf9YJdCOxmXJOr9Woj4zk6vYVSz+RwkEqtxvqKUCQQDUGZAgGiPBDe5M3YtQPdTr1c5mBUEQ28PZz2jvoPgvPXMIxjA4q0Z/CgXXyWW1hmNG5LFxBE/yJEZf1QVNhMvfAkEAyobq77eYgxT9tfB01jYNSgVMP8eFPG0IZaQfDruStRETCngSUPQ8SPIAcIE0Y8CCjmJLjujQsNNny8VDytOpdQJAU/d+yEaw6uex9HosgerIlUjCej8QQDVQdrUWzO8D8ee417tmMbkUoox8Pa48dr2qJdG5sY1MfQcBWUUC4Wp2LwJACOB3tagm71PxClO2uTiLVB4aRo9v+TT8unle9Y2SxG/6cARMqxdbLPSyRt75BIQGskJueH1uyosb4oUDb2cuhA==",
+        'merchant_private_key' => "MIIEowIBAAKCAQEAyx+KEW95/VliCwn6eUq/PmD0M5l0QeaRDuJqi7qLS/hNipobpAVsy9f9z6/7hFvJ2jhL0hLDnjchRjHk2SporCmE1Bh0AXaB0gc3bhDzA0WXbIcv/oS67Lz7Ueo54kbH3d9Lz0mSoLugEqzO3ROG3jfrnoju/zIyeGacasVg6cAlGpDf++2RA2atDpgQfZ1okxLi9Cd1x5VbNFFAsqz7w3UQ3j+cm7cas0O1fzzQnAmu82T1RTaWNEJL/mPTb98lYnCEsRkNsadJlAnA3LLWcvqj4I14R9TDICR/cZSMVx27r/oukDaYDSWyA+5ZcKitHpMBAh6AWRpJgI3bmmi03QIDAQABAoIBAGtfEanjxpVgsU3qiWeiVnOP5qZ8AJNxYM6AaxfPlSCkccDJc8EBSSB73WPyv76Ykpvy1EmIt7UjqUgkybbuDwSqsdc30eKQFVHDlM5u0Tayi7fHwlwFJ5ZK04LakJyHE9G53qYFWyfx5kzY4kTEtK802i0kb0mg7ELu4tIh4ffNM8RrVdm2L3j/pmSRGcocVqXeJAwnBubJcE6oMWJzTO0AnxaelcJr4ctROBWNVDMT/IL8EU48vjtGD5wyCo6RFCbPaUTTBooq2OW5lRMOir5UjqO9anI18nv6iIagrKwZPcV5pMcrks9vWAVeWbauzZBJ+93V3YhaTbTi6KLMyJUCgYEA7c6gceFO/8B6cL37hAGJeNZoxqlZa742qUIOuemnwodAQuaabRn8wSZIXVryhPw1fknCZeeN+PiyH+baATt2iTu2kyjEDEAQTrnMvEEENDwyXJkwyscrkVzSecNwEJvhDT3nFIZ0ar+sqwRyyWbx6UXpaRHk4Y9EyRGS0ZyODNcCgYEA2qmjqhA26UsHQbcSqZdLBVIVwZ5wwlYK4YFmumeXDkT7LAOHvgu9aFQcY01FLRwCv3uZvBBLwngTLzN7MuTYy2MFlV3xWncsacJ6H+S3jfANvdBpBkUa0ArrLxc41Q1I+pGPE3/owEpQ9Qz1auPO/Ivoz5db59OCHce37+LXgWsCgYEA1XAAF1YWtntGKcyKYxeSEE+4aJ30sTxfCRlN6FUrifAkoCcjcUrCzYUTrB6FzxAi3v9KqHXkuhJUpUdoYXTCVjevDXOoSipxuIcQl+Ju6Ici2HNyFH4gv24lRr4/5dhSbLUjowtuj6ULT89FSzjHZQynivNRj5UsMp9APDwcTq8CgYBttOkBXSs/tz4H0YNShS7Fl56EyyqFxkelRpg0895M8X0XYxoK1rcMDg9EHzOS41fZnHjQa1inVDlD2E96hGjk+mSFwWFjYyFsWn+NWuJhG0y5rEPVOnyuXpwKv1rrQcQYu0kOnoE3YNHncL39CBkEimmfJbCdyneg22BEwgofywKBgAVKYE0wp5zZfi8/GpC5lvpif4epq/HtKxwTriWDOsDuxZq0uMqITADizAU6IYMyimy8Ry4N7XvrsLI+RgvHqn7V0XBvkdxURWBWjj1yhrtBix8a79YhW7/MNYLjxlUKk+8kXpPra0+zf6KBPnQwFwBZFO1IB7q4TywaHViEV/Pl",
 
         //异步通知地址
         'notify_url' => "http://www.ixiaoluobo.com/xlb/pay/notify",
@@ -27,14 +27,14 @@ class PayController extends PublicController
         'json'=>'json',
 
         //签名方式
-        'sign_type'=>"RSA",
+        'sign_type'=>"RSA2",
 
         //支付宝网关
         'gatewayUrl' => "https://openapi.alipay.com/gateway.do",
 
         //支付宝公钥,查看地址：https://openhome.alipay.com/platform/keyManage.htm 对应APPID下的支付宝公钥。
-        'alipay_public_key' => "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDI6d306Q8fIfCOaTXyiUeJHkrIvYISRcc73s3vF1ZT7XN8RNPwJxo8pWaJMmvyTn9N4HQ632qJBVHf8sxHi/fEsraprwCtzvzQETrNRwVxLO5jVmRGi60j8Ue1efIlzPXV9je9mkjzOmdssymZkh2QhUrCmZYI/FCEa3/cNMW0QIDAQAB",
-    );
+        'alipay_public_key' => "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyx+KEW95/VliCwn6eUq/PmD0M5l0QeaRDuJqi7qLS/hNipobpAVsy9f9z6/7hFvJ2jhL0hLDnjchRjHk2SporCmE1Bh0AXaB0gc3bhDzA0WXbIcv/oS67Lz7Ueo54kbH3d9Lz0mSoLugEqzO3ROG3jfrnoju/zIyeGacasVg6cAlGpDf++2RA2atDpgQfZ1okxLi9Cd1x5VbNFFAsqz7w3UQ3j+cm7cas0O1fzzQnAmu82T1RTaWNEJL/mPTb98lYnCEsRkNsadJlAnA3LLWcvqj4I14R9TDICR/cZSMVx27r/oukDaYDSWyA+5ZcKitHpMBAh6AWRpJgI3bmmi03QIDAQAB",
+);
 
     /**
      * 获取支付信息
