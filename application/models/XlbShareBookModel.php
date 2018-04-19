@@ -135,8 +135,8 @@ class XlbShareBookModel extends Xlb
                 '_name' => 't3.cabi_name',
                 '_desc' => 't3.cabi_desc',
                 '_distance' => 'getDistance(t3.cabi_long, t3.cabi_lat, "' . $long . '", "' . $lat . '")',
-                '_long' => 't.cabi_long',
-                '_lat' => 't.cabi_lat'
+                '_long' => 't3.cabi_long',
+                '_lat' => 't3.cabi_lat'
             ))
             ->where('t.b_id=?', $b_id)
             ->order('_distance ASC');
