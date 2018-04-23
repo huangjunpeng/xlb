@@ -28,21 +28,34 @@ class IndexController extends PublicController
         $userInfo = XlbUserInfoModel::getInstance();
         $row = $userInfo->fetchRow('u_mobile='.$mobile);
         $u_picture = '';
+        $u_type = 1;
+        $u_nickname = '';
         if(empty($row)){
             $data['u_mobile']       = $mobile;
             $data['u_creattime']    = time();
             $data['u_optime']       = time();
+            $data['u_nickname']     = $mobile;
             $uid                    = $userInfo->insert($data);
+            $u_nickname             = $mobile;
         }else{
             $user       = $row->toArray();
             $uid        = $user['u_id'];
             $firstlogin = false;
             $u_picture  = null == $user['u_picture'] ? '' : $user['u_picture'];
+            $u_type     = $user['u_type'];
+            $u_nickname = $user['u_nickname'];
         }
 
         //生成token
         $token = Tools::getEncodeUid(XLB_APP.';'.$uid);
-        $this->xlb_ret('1', '登录成功!',array('token'=>$token,'firstlogin'=>$firstlogin,'logo'=>$u_picture));
+        $ret = array(
+            'token'         =>  $token,
+            'firstlogin'    =>  $firstlogin,
+            'logo'          =>  $u_picture,
+            'u_type'        =>  $u_type,
+            'u_nickname'    =>  $u_nickname
+        );
+        $this->xlb_ret('1', '登录成功!', $ret);
     }
 
     /**

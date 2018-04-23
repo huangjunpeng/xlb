@@ -137,6 +137,16 @@ class BookController extends PublicController
         if (empty($row)) {
             $this->xlb_ret(0, '绘本未找到');
         }
+
+        //柜子列表
+        $cabis = XlbShareBookModel::getInstance()->getList($b_id, $cs_id);
+        if (empty($cabis)) {
+            $row['cabis'] = null;
+        } else {
+            $row['cabis'] = $cabis;
+        }
+
+
         //获取用户ID
         $uid = $this->getUid();
         if ($uid == 0) {

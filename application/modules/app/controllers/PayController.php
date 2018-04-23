@@ -33,7 +33,7 @@ class PayController extends PublicController
         'gatewayUrl' => "https://openapi.alipay.com/gateway.do",
 
         //支付宝公钥,查看地址：https://openhome.alipay.com/platform/keyManage.htm 对应APPID下的支付宝公钥。
-        'alipay_public_key' => "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyx+KEW95/VliCwn6eUq/PmD0M5l0QeaRDuJqi7qLS/hNipobpAVsy9f9z6/7hFvJ2jhL0hLDnjchRjHk2SporCmE1Bh0AXaB0gc3bhDzA0WXbIcv/oS67Lz7Ueo54kbH3d9Lz0mSoLugEqzO3ROG3jfrnoju/zIyeGacasVg6cAlGpDf++2RA2atDpgQfZ1okxLi9Cd1x5VbNFFAsqz7w3UQ3j+cm7cas0O1fzzQnAmu82T1RTaWNEJL/mPTb98lYnCEsRkNsadJlAnA3LLWcvqj4I14R9TDICR/cZSMVx27r/oukDaYDSWyA+5ZcKitHpMBAh6AWRpJgI3bmmi03QIDAQAB",
+        'alipay_public_key' => "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA260+B9xzZi0p09UGWPULpCKeWq6/ZwGGxcMrNEKLLYZEAner2dAjCRY1vV/bf4MCdtpWmC0H0zChFTKu9O6BRZDGE54a7G5GaozlKh9bDJf095q3M1aR8HOUAS+hIShNtPiulPG9tain9ri0avQwrlBdWAg5QJnodaogMzl3u5t3xLH4iC+tWXbHHg/ihab611C77UgjcUrL6m647s0+JfhUvO2yymRKe7/7EdfaEf6JMPa7Q5oQxkD2M7/mgiRNxB1rbJt/HMtWFBANCxg6CIqCrT1rffXpQ/dWLJ3enxBVt4olUVungT/E2039GU/KmaS5HSo0cuemOgO6ldVhvwIDAQAB",
 );
 
     /**
@@ -110,15 +110,16 @@ class PayController extends PublicController
      */
     public function notifyAction() {
         //初始化
-        $aop = new AopClient;
-        $aop->alipayrsaPublicKey = $this->config['alipay_public_key'];
-        $result = $aop->rsaCheckV1(@$_POST, NULL, $this->config['sign_type']);
+        $aop = new AopClient();
+        $arr = @$_POST;
+        $aop->alipayrsaPublicKey = self::$config['alipay_public_key'];
+        $result = $aop->rsaCheckV1($arr, self::$config['alipay_public_key'], self::$config['sign_type']);
         $this->write_log(var_export(@$_POST,true));
         if($result) {
             $this->write_log('校验成功');
             if("TRADE_SUCCESS" != @$_POST['trade_status']){
                 $this->write_log("支付失败");
-                exit;
+                goto payend;
             }
             //获取订单编号
             $order_no = @$_POST['out_trade_no'];
@@ -126,6 +127,7 @@ class PayController extends PublicController
             $order = XlbOrderModel::getInstance()->getOrderByOrderNo($order_no);
             if (empty($order)) {
                 self::write_log("获取用户订单失败");
+                goto payend;
             }
             //获取订单类型
             $order_type = (int)@$_POST['body'];
@@ -135,6 +137,7 @@ class PayController extends PublicController
                 $user = XlbUserInfoModel::getInstance()->getRowByID((int)$order['u_id']);
                 if (empty($user)) {
                     self::write_log("获取用户信息失败");
+                    goto payend;
                 }
                 self::write_log('修改用户余额');
                 $u_balance = bcadd((double)$user['u_balance'], (double)$order['order_amount_total'], 2);
@@ -148,6 +151,7 @@ class PayController extends PublicController
             $m_order['order_status']  = 1;
             $ret = XlbOrderModel::getInstance()->editData((int)$order['order_id'], $m_order);
             self::write_log($ret);
+payend:
             echo "success";
         }else {
             $this->write_log('校验失败');

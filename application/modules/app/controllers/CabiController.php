@@ -146,26 +146,27 @@ class CabiController extends XlbController {
 
     /**
      * 开柜子操作
-     * @param XlbOrderModel $xom
-     * @param $order_no
-     * @param $bookinfo
+     * @param $cabi_id
+     * @param $cs_id
+     * @return bool
      */
     protected function openCabi($cabi_id, $cs_id) {
         //判断大端、小端
         define('BIG_ENDIAN', pack('L', 1) === pack('N', 1));
 
         //make cmd pack
-        $cmd['distID'] = 2;
-        $cmd['serviceId'] = md5(uniqid());
-        $cmd['cabinet'] = $cabi_id;
-        $cmd['lattice'] = $cs_id;
-        $cmd['ctrl'] = 1;
+        $cmd['distID']      = 2;
+        $cmd['serviceId']   = md5(uniqid());
+        $cmd['cabinet']     = $cabi_id;
+        $cmd['lattice']     = $cs_id;
+        $cmd['ctrl']        = 1;
 
         //make cmd json str
         $cmdstr = json_encode($cmd);
-        $cmdlen = strlen($cmdstr);
+        /*$cmdlen = strlen($cmdstr);
         $pack = pack('s', $cmdlen);
-        $pack .= $cmdstr;
+        $pack .= $cmdstr;*/
+        $pack  = $cmdstr;
 
         //get server address
         $config = Zend_Registry::get('config');
@@ -185,12 +186,12 @@ class CabiController extends XlbController {
             return false;
         }
         //recv pack
-        $buf = @socket_read($socket, 2, PHP_NORMAL_READ);
-        $int = unpack('s', $buf);
+        $buf = @socket_read($socket, 1024);
+        /*$int = unpack('s', $buf);
         $short = $int[1];
         $ushort = ($short & 0xff) << 8 | ($short >> 8) & 0xff;
-        $buff = @socket_read($socket, $ushort, PHP_NORMAL_READ);
-        $res = json_decode($buff, true);
+        $buff = @socket_read($socket, $ushort, PHP_NORMAL_READ);*/
+        $res = json_decode($buf, true);
         $cabinet = $res['cabinet'];
         $lattice = $res['lattice'];
         $status  = $res['status'];
@@ -227,7 +228,7 @@ class CabiController extends XlbController {
     }
 
     /**
-     * 获取附件柜子列表
+     * 获取近柜子列表
      */
     public function gclAction() {
         //获取经度

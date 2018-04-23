@@ -116,12 +116,12 @@ class XlbShareBookModel extends Xlb
     }
 
     /**
-     * 获取附件柜子列表
-     * @param $b_id
-     * @param $long
-     * @param $lat
-     * @return mixed
-     */
+ * 获取附件柜子列表
+ * @param $b_id
+ * @param $long
+ * @param $lat
+ * @return mixed
+ */
     public function getCabiList($b_id, $long, $lat) {
         $table_3 = XlbCabinetModel::getInstance()->getDbName();
         $table_2 = XlbCabispaceModel::getInstance()->getDbName();
@@ -140,6 +140,35 @@ class XlbShareBookModel extends Xlb
             ))
             ->where('t.b_id=?', $b_id)
             ->order('_distance ASC');
+        $row = $this->getAdapter()->fetchAll($select);
+        return $row;
+    }
+
+    /**
+     * 获取附近柜子列表
+     * @param $b_id
+     * @param int $cs_id
+     * @return array
+     */
+    public function getList($b_id, $cs_id = 0) {
+        $table_3 = XlbCabinetModel::getInstance()->getDbName();
+        $table_2 = XlbCabispaceModel::getInstance()->getDbName();
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name),array())
+            ->join(array('t2'=>$table_2), 't.sb_id=t2.sb_id', array(
+                'space_id'=>'t2.cs_id'
+            ))
+            ->join(array('t3'=>$table_3), 't2.cabi_id=t3.cabi_id',array(
+                '_id' => 't3.cabi_id',
+                '_name' => 't3.cabi_name',
+                '_desc' => 't3.cabi_desc',
+                '_long' => 't3.cabi_long',
+                '_lat' => 't3.cabi_lat'
+            ))
+            ->where('t.b_id=?', $b_id);
+        if ($cs_id != 0) {
+            $select->where('t2.cs_id=?', $cs_id);
+        }
         $row = $this->getAdapter()->fetchAll($select);
         return $row;
     }

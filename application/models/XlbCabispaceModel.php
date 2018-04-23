@@ -72,7 +72,8 @@ class XlbCabispaceModel extends Xlb
     /**
      * 获取格子
      * @param $cabid_id
-     * @param int $cs_status
+     * @param null $cs_status
+     * @return array
      */
     public function getCabispaceByCabiId($cabid_id, $cs_status=null){
         $fields = array(
