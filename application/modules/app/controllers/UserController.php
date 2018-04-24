@@ -222,44 +222,69 @@ class UserController extends XlbController
     }
 
     /**
-     * 用户充值
+     * 消费、充值、押金、会员生成签名
      */
-    public function xucAction() {
-        //订单
-        $order = array(
-            'order_type' => 2,
-            'order_createtime' => time(),
-            'u_id' => $this->uid,
-            'order_subject' => '小萝卜充值'
+    public function signAction() {
+        //订单类型
+        $order_type = (int)$this->getParam('order_type', 0);
+        if ($order_type === 0) {
+            $this->xlb_ret(0, '订单类型不能为空');
+        }
+        $str_type = array(
+            1 => '小萝卜消费支付',
+            2 => '小萝卜充值支付',
+            3 => '小萝卜押金支付',
+            4 => '下萝卜会员支付'
         );
 
-        //签名
-        $sign_order = array(
-            'body' => 2,
-            'subject' => '小萝卜充值'
-        );
+        if (!isset($str_type[$order_type])) {
+            $this->xlb_ret(0, '订单类型错误');
+        }
 
         //金额
         $amount = (double)$this->getParam('amount');
         if (empty($amount)) {
             $this->xlb_ret(0, '充值金额不能为空');
         }
-        $order['order_amount_total'] = $amount;
-        $sign_order['total_amount']  = $amount;
 
-        //订单编号
-        $order_no = CabiController::build_order_no();
-        $order['order_no'] = $order_no;
-        $sign_order['out_trade_no'] = $order_no;
+        if ($order_type == 1) {
+            $order_no = $this->getParam('order_no');
+            if (empty($order_no)) {
+                $this->xlb_ret(0, '订单编号不能为空');
+            }
+        } else {
+            //充值、押金、会员生成订单
+            $order_no = CabiController::build_order_no();
+            $order = array(
+                'order_type' => $order_type,
+                'order_createtime' => time(),
+                'u_id' => $this->uid,
+                'order_subject' => $str_type[$order_type],
+                'order_no' => $order_no,
+                'order_amount_total' => $amount
+            );
 
-        //插入数据库
-        $id = XlbOrderModel::getInstance()->insert($order);
-        if ($id <=0 || empty($id) || $id === false) {
-            $this->xlb_ret(0, '创建订单失败');
+            //插入数据库
+            $id = XlbOrderModel::getInstance()->insert($order);
+            if ($id <=0 || empty($id) || $id === false) {
+                $this->xlb_ret(0, '创建订单失败');
+            }
         }
 
+        //签名数组
+        $sign_order = array(
+            'body' => $order_type,
+            'subject' => $str_type[$order_type],
+            'total_amount' => $amount,
+            'out_trade_no' => $order_no,
+
+        );
         //生成签名
-        $this->xlb_ret(1,'', array('response'=>PayController::sign($sign_order)));
+        $this->xlb_ret(1,'',
+            array(
+                'sign' => PayController::sign($sign_order)
+            )
+        );
     }
 
     /**
@@ -279,7 +304,7 @@ class UserController extends XlbController
         }
 
         //获取订单信息
-        $order = XlbOrderModel::getInstance()->getOrderByOrderNo($order_no);
+        $order = XlbOrderModel::getInstance()->getOrderByOrderNo($order_no, 1);
         if (empty($order)) {
             $this->xlb_ret(0, '获取用户订单失败');
         }
@@ -291,8 +316,7 @@ class UserController extends XlbController
         }
         $u_balance = bcsub($u_balance, $amount, 2);
         $m_user['u_balance'] = $u_balance;
-        $ret = XlbUserInfoModel::getInstance()
-            ->editData($this->uid, $m_user);
+        $ret = XlbUserInfoModel::getInstance()->editData($this->uid, $m_user);
         if ($ret != 1) {
             $this->xlb_ret(0, '支付失败');
         }

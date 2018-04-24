@@ -50,13 +50,15 @@ class XlbOrderModel extends Xlb
     /**
      * 获取订单信息
      * @param $order_no
+     * @param $order_type
      * @return mixed
      */
-    public function getOrderByOrderNo($order_no) {
+    public function getOrderByOrderNo($order_no, $order_type) {
         $table_1 = XlbOrderBookDetailModel::getInstance()->getDbName();
         $select = $this->getAdapter()->select();
-        $select->from(array('t'=>$this->_name), 't.*')
-            ->joinLeft(array('t1'=>$table_1), 't.order_no=t1.order_no',array(
+        $select->from(array('t'=>$this->_name), 't.*');
+        if ($order_type == 1) {
+            $select->joinLeft(array('t1'=>$table_1), 't.order_no=t1.order_no',array(
                 'obd_id',
                 'obd_returntime',
                 'obd_status',
@@ -65,8 +67,10 @@ class XlbOrderModel extends Xlb
                 'obd_discount_amount',
                 'sb_share_price',
                 'b_id'
-            ))
-            ->where('t.order_no=?',$order_no);
+            ));
+        }
+        $select->where('t.order_no=?', $order_no)
+            ->where('t.order_type=?', $order_type);
         $row = $this->getAdapter()->fetchRow($select);
         return $row;
     }

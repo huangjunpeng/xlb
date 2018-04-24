@@ -90,7 +90,7 @@ class PayController extends PublicController
         $aop->appId                 = self::$config['app_id'];
         $aop->rsaPrivateKey         = self::$config['merchant_private_key'];
         $aop->format                = self::$config['json'];
-        $aop->charset               = self::$config['charset'];
+        $aop->postCharset           = self::$config['charset'];
         $aop->signType              = self::$config['sign_type'];
         $aop->alipayrsaPublicKey    = self::$config['alipay_public_key'];
         //实例化具体API对应的request类,类名称和接口名称对应,当前调用接口名称：alipay.trade.app.pay
@@ -117,40 +117,84 @@ class PayController extends PublicController
         $this->write_log(var_export(@$_POST,true));
         if($result) {
             $this->write_log('校验成功');
-            if("TRADE_SUCCESS" != @$_POST['trade_status']){
-                $this->write_log("支付失败");
-                goto payend;
-            }
+
+            //order_type: 1:支付、2：充值、3：押金、4：会员卡
+            //获取订单类型
+            $order_type = (int)@$_POST['body'];
+
             //获取订单编号
             $order_no = @$_POST['out_trade_no'];
+
             //获取订单信息
-            $order = XlbOrderModel::getInstance()->getOrderByOrderNo($order_no);
+            $order = XlbOrderModel::getInstance()->getOrderByOrderNo($order_no, $order_type);
             if (empty($order)) {
                 self::write_log("获取用户订单失败");
                 goto payend;
             }
-            //获取订单类型
-            $order_type = (int)@$_POST['body'];
-            //order_type: 1:借书、2充值
-            if ($order_type == 2) {
-                self::write_log('获取用户信息');
-                $user = XlbUserInfoModel::getInstance()->getRowByID((int)$order['u_id']);
-                if (empty($user)) {
-                    self::write_log("获取用户信息失败");
-                    goto payend;
-                }
-                self::write_log('修改用户余额');
-                $u_balance = bcadd((double)$user['u_balance'], (double)$order['order_amount_total'], 2);
-                self::write_log($u_balance);
-                $ret = XlbUserInfoModel::getInstance()
-                    ->editData((int)$order['u_id'], array('u_balance'=>$u_balance));
+
+            //获取支付状态
+            if("TRADE_SUCCESS" != @$_POST['trade_status']){
+                $this->write_log("支付失败");
+                $m_order['order_status']  = 2;
+                $ret = XlbOrderModel::getInstance()->editData((int)$order['order_id'], $m_order);
                 self::write_log($ret);
+                goto payend;
             }
+
+            //修改订单状态
             self::write_log('修改订单状态');
             $m_order['order_paytime'] = time();
             $m_order['order_status']  = 1;
             $ret = XlbOrderModel::getInstance()->editData((int)$order['order_id'], $m_order);
             self::write_log($ret);
+
+            //获取用户信息
+            self::write_log('获取用户信息');
+            $user = XlbUserInfoModel::getInstance()->getRowByID((int)$order['u_id']);
+            if (empty($user)) {
+                self::write_log("获取用户信息失败");
+                goto payend;
+            }
+            $user = $user->toArray();
+
+            switch ($order_type)
+            {
+                case 1:
+                    //支付成功
+                    break;
+                case 2:
+                    //充值成功，修改用户余额
+                    {
+                        self::write_log('修改用户余额');
+                        $u_balance = bcadd((double)$user['u_balance'], (double)$order['order_amount_total'], 2);
+                        self::write_log($u_balance);
+                        $ret = XlbUserInfoModel::getInstance()->editData(
+                            (int)$order['u_id'],
+                            array('u_balance'=>$u_balance)
+                        );
+                        self::write_log($ret);
+                    }
+                    break;
+                case 3:
+                    //押金成功，修改用户押金
+                    {
+                        self::write_log('修改用户押金');
+                        $u_deposit = (double)$order['order_amount_total'];
+                        self::write_log($u_deposit);
+                        $ret = XlbUserInfoModel::getInstance()->editData(
+                            (int)$order['u_id'],
+                            array('u_deposit'=>$u_deposit)
+                        );
+                        self::write_log($ret);
+                    }
+                    break;
+                case 4:
+                    //会员成功，修改用户会员到期时间，修改订单状态
+                    {
+                        self::write_log('修改用户会员到期时间');
+                    }
+                    break;
+            }
 payend:
             echo "success";
         }else {

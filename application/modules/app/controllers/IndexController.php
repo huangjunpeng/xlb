@@ -29,12 +29,12 @@ class IndexController extends PublicController
         $row = $userInfo->fetchRow('u_mobile='.$mobile);
         $u_picture = '';
         $u_type = 1;
-        $u_nickname = '';
         if(empty($row)){
             $data['u_mobile']       = $mobile;
             $data['u_creattime']    = time();
             $data['u_optime']       = time();
             $data['u_nickname']     = $mobile;
+            $data['u_balance']      = 2;//默认2元
             $uid                    = $userInfo->insert($data);
             $u_nickname             = $mobile;
         }else{
