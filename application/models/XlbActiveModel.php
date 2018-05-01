@@ -93,4 +93,44 @@ class XlbActiveModel extends Xlb
         $row = $this->getAdapter()->fetchRow($select);
         return $row;
     }
+
+    /**
+     * 获取活动列表
+     * @param $_status
+     * @return array
+     */
+    public function getListByStaus($page, $pagesize,$_status = 1) {
+        $select = $this->getAdapter()->select();
+        $select->from(array('t'=>$this->_name),'count(*)')
+            ->where('a_status=?',$_status);
+        $pages = $this->getAdapter()->fetchOne($select);
+        if ($pages == 0) {
+            $ret['pages'] = $pages;
+            $ret['rows']  = array();
+            return $ret;
+        }
+        $pages = ceil($pages / $pagesize);
+        unset($select);
+        $select = $this->getAdapter()->select();
+        $select->from(
+                array('t'=>$this->_name),
+                array(
+                    '_id'=>'a_id',
+                    '_name'=>'a_name',
+                    '_link'=>'a_link',
+                    '_picture'=>'a_picture',
+                    '_begintime'=>'a_begintime',
+                    '_endtime'=>'a_endtime',
+                    '_status'=>'a_status',
+                    '_position'=>'a_position'
+                )
+            )
+            ->where('a_status=?',$_status)
+            ->order("a_id desc")
+            ->limitPage($page, $pagesize);
+        $rows = $this->getAdapter()->fetchAll($select);
+        $ret['pages'] = $pages;
+        $ret['rows']  = $rows;
+        return $ret;
+    }
 }

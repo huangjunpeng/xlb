@@ -112,11 +112,13 @@ class BookController extends PublicController
         $page       = $this->getParam('page', 1);
         $pagenum    = $this->getParam('pagenum', 20);
         $status     = $this->getParam('status', 1);
+        $long       = empty((double)$this->_getParam('long')) ? 0 : (double)$this->_getParam('long');
+        $lat        = empty((double)$this->_getParam('lat')) ? 0 : (double)$this->_getParam('lat');
         if (empty($status)) {
             $this->xlb_ret(0, '状态不能为空');
         }
         $rows = XlbShareBookModel::getInstance()
-            ->getBookByStatus($status, $page, $pagenum);
+            ->getBookByStatus($status, $page, $pagenum, $long, $lat);
         $this->xlb_ret(1, '', $rows);
     }
 

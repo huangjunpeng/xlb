@@ -52,8 +52,8 @@ class IndexController extends PublicController
             'token'         =>  $token,
             'firstlogin'    =>  $firstlogin,
             'logo'          =>  $u_picture,
-            'u_type'        =>  $u_type,
-            'u_nickname'    =>  $u_nickname
+            'type'        =>  $u_type,
+            'nickname'    =>  $u_nickname
         );
         $this->xlb_ret('1', '登录成功!', $ret);
     }

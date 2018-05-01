@@ -234,7 +234,7 @@ class UserController extends XlbController
             1 => '小萝卜消费支付',
             2 => '小萝卜充值支付',
             3 => '小萝卜押金支付',
-            4 => '下萝卜会员支付'
+            4 => '小萝卜会员支付'
         );
 
         if (!isset($str_type[$order_type])) {
@@ -330,13 +330,94 @@ class UserController extends XlbController
             $this->xlb_ret(0, '支付失败');
         }
 
-        $this->xlb_ret($ret, '', $m_user);
+        $this->xlb_ret(1, '', $m_user);
     }
 
     /**
      * 获取订单列表接口
      */
     public function xolAction() {
-        $state = $this->getParam('state', 0);
+        $_status    = $this->getParam('status', 0);
+        if ($_status == 0) {
+            $this->xlb_ret(0, '订单状态不能为空');
+        }
+        $page       = $this->getParam('page', 1);
+        $pagenum    = $this->getParam('pagenum', 20);
+        $rows       = XlbOrderModel::getInstance()
+            ->getOrderListByStatus($page, $pagenum, $_status, $this->uid);
+        foreach ($rows['rows'] as &$row) {
+            $_time = $row['order_createtime'];
+            $row['order_createtime'] = date('Y-m-d H:i:s', $_time);
+        }
+        $this->xlb_ret(1, '', $rows);
+
+    }
+
+    /**
+     * 我的会员卡列表
+     */
+    public function xmlAction() {
+        $rows = XlbUserMemberCard::getInstance()->getMemberByUid(1);
+        foreach ($rows as &$row) {
+            $_time = $row['umc_begintime'];
+            $row['umc_begintime'] = date('Y-m-d H:i:s', $_time);
+            $_time = $row['umc_endtime'];
+            $row['umc_endtime'] = date('Y-m-d H:i:s', $_time);
+        }
+        $this->xlb_ret(1, '', $rows);
+    }
+
+    /**
+     * 退押金
+     */
+    public function xrmAction() {
+        //获取用户押金
+        $u_deposit = (double)$this->user['u_deposit'];
+        if ($u_deposit <= 0) {
+            $this->xlb_ret(0, '未交押金');
+        }
+        $order = XlbOrderModel::getInstance()->getDepositOrderByUid($this->uid);
+        if (empty($order)) {
+            $this->xlb_ret(0, '获取押金订单失败');
+        }
+        $order_no = $order['order_no'];
+        $data['order_no'] = $order_no;
+        //退款流程
+
+        $this->xlb_ret(1, '退款成功', $data);
+    }
+
+    /**
+     * 交易明细
+     */
+    public function xplAction() {
+        $page       = $this->getParam('page', 1);
+        $pagenum    = $this->getParam('pagenum', 20);
+        $rows       = XlbUserPayrecoryModel::getInstance()
+            ->getPayList($page, $pagenum, 1);
+        foreach ($rows['rows'] as &$row) {
+            $_time = $row['record_pay_date'];
+            $row['record_pay_date'] = date('Y-m-d H:i:s', $_time);
+            $_type = $row['record_type'];
+            $row['record_type'] = $_type == 1 ? '+' : '-';
+        }
+        $this->xlb_ret(1, '', $rows);
+    }
+
+    /**
+     * 购买明细
+     */
+    public function xmrAction() {
+        $page       = $this->getParam('page', 1);
+        $pagenum    = $this->getParam('pagenum', 20);
+        $rows       = XlbUserPayrecoryModel::getInstance()
+            ->getMemberPayList($page, $pagenum, 1);
+        foreach ($rows['rows'] as &$row) {
+            $_time = $row['record_pay_date'];
+            $row['record_pay_date'] = date('Y-m-d H:i:s', $_time);
+            $_type = $row['record_type'];
+            $row['record_type'] = $_type == 1 ? '+' : '-';
+        }
+        $this->xlb_ret(1, '', $rows);
     }
 }

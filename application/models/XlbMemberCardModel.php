@@ -76,4 +76,30 @@ class XlbMemberCardModel extends Xlb
         $row = $this->getAdapter()->fetchRow($select);
         return $row;
     }
+
+    /**
+     * 获取所有会员卡
+     * @param int $_status
+     * @return array
+     */
+    public function getListBySatus($_status = 1) {
+        $select = $this->getAdapter()->select();
+        $select->from(
+                array('t'=>$this->_name),
+                array(
+                    '_id'=>'mc_id',
+                    '_name'=>'mc_name',
+                    '_effective_time'=>'mc_effective_time',
+                    '_max_borrow'=>'mc_max_borrow',
+                    '_price'=>'mc_price',
+                    '_type'=>'mc_type',
+                    '_actual_price'=>'mc_actual_price',
+                    '_display'=>'mc_display'
+                )
+            )
+            ->where('mc_status=?', $_status)
+            ->order("mc_id desc");
+        $rows = $this->getAdapter()->fetchAll($select);
+        return $rows;
+    }
 }

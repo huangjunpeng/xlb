@@ -37,11 +37,14 @@ class XlbShareBookModel extends Xlb
      * @param $status
      * @param int $page
      * @param int $pagesize
+     * @param int $long
+     * @param int $lat
      * @return mixed
      */
-    public function getBookByStatus($status, $page = 1, $pagesize = 20) {
+    public function getBookByStatus($status, $page = 1, $pagesize = 20, $long = 0, $lat = 0) {
         $table_1 = XlbBookModel::getInstance()->getDbName();
         $table_2 = XlbCabispaceModel::getInstance()->getDbName();
+        $table_3 = XlbCabinetModel::getInstance()->getDbName();
         $select = $this->getAdapter()->select();
         $select->from(array('t'=>$this->_name),'count(*)')
             ->join(array('t1'=>$table_1),'t.b_id=t1.b_id',array())
@@ -63,6 +66,15 @@ class XlbShareBookModel extends Xlb
         $select->from(array('t'=>$this->_name),array())
             ->join(array('t1'=>$table_1), 't.b_id=t1.b_id', $field)
             ->join(array('t2'=>$table_2), 't2.sb_id=t.sb_id', array('space_id'=>'t2.cs_id'))
+            ->join(array('t3'=>$table_3), 't2.cabi_id=t3.cabi_id',array(
+                'cabi_id' => 't3.cabi_id',
+                'cabi_name' => 't3.cabi_name',
+                'cabi_desc' => 't3.cabi_desc',
+                '_distance' => 'getDistance(t3.cabi_long, t3.cabi_lat, "' . $long . '", "' . $lat . '")',
+                'cabi_long' => 't3.cabi_long',
+                'cabi_lat' => 't3.cabi_lat'
+            ))
+            ->order('_distance ASC')
             ->where('t.sb_status=?',$status)
             ->limitPage($page, $pagesize);
         $rows = $this->getAdapter()->fetchAll($select);

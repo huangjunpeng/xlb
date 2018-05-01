@@ -9,6 +9,47 @@ class CabiController extends XlbController {
     }
 
     /**
+     * 还书
+     */
+    public function returnAction() {
+        //获取订单ID
+        $order_id = $this->getParam('order_id', 0);
+        if ($order_id == 0) {
+            $this->xlb_ret(0, '订单ID不能为空');
+        }
+
+        //获取柜子ID
+        $cabi_id = $this->getParam('cabi_id', 0);
+        if ($order_id == 0) {
+            $this->xlb_ret(0, '柜子ID不能为空');
+        }
+
+        //获取空格子
+        $rows = XlbCabispaceModel::getInstance()
+            ->getCabispaceByCabiId($cabi_id, 0);
+        if (empty($rows)) {
+            $this->xlb_ret(0, '获取空格子失败');
+        }
+        $cs_id = $rows[0]['cs_id'];
+
+        //修改格子状态
+        $this->modifySpace($cs_id, array('cs_status'=>1));
+
+        //获取订单信息
+        $order = XlbOrderModel::getInstance()->getOrderById($order_id);
+        $ret = $this->openCabi((int)$cabi_id, (int)$cs_id);
+        if ($ret === false) {
+            //修改格子状态
+            $this->modifySpace($cs_id, array('cs_status'=>0));
+            $this->xlb_ret(0, '开柜失败');
+        }
+        //修改绘本订单状态
+        $this->modifyOrderBookDetail((int)$order['obd_id'], array('obd_status'=>3));
+
+        $this->xlb_ret(1, '开柜成功', $order);
+    }
+
+    /**
      * 借书
      */
     public function borrowAction() {
@@ -19,6 +60,9 @@ class CabiController extends XlbController {
         }
         //获取详情
         $bookinfo = XlbCabispaceModel::getInstance()->getInfoById($cs_id);
+        if ($bookinfo['sb_status'] != 1) {
+            $this->xlb_ret(0, '绘本不可借');
+        }
 
         //获取数据库实例
         $xom = XlbOrderModel::getInstance();
@@ -141,6 +185,18 @@ class CabiController extends XlbController {
      */
     protected function modifyShare($sb_id, $array) {
         $ret = XlbShareBookModel::getInstance()->editData($sb_id, $array);
+        return $ret > 0 ? true : false;
+    }
+
+    /**
+     * 修改订单绘本状态
+     * @param $obd_id
+     * @param $array
+     * @return bool
+     */
+    protected function modifyOrderBookDetail($obd_id, $array) {
+        $ret = XlbOrderBookDetailModel::getInstance()
+            ->editData($obd_id, $array);
         return $ret > 0 ? true : false;
     }
 
