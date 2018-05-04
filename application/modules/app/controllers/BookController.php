@@ -141,7 +141,7 @@ class BookController extends PublicController
         }
 
         //柜子列表
-        $cabis = XlbShareBookModel::getInstance()->getList($b_id, $cs_id);
+        $cabis = XlbShareBookModel::getInstance()->getList($row['sb_id'], $cs_id);
         if (empty($cabis)) {
             $row['cabis'] = null;
         } else {
