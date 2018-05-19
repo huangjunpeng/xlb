@@ -37,7 +37,7 @@ class CabiController extends XlbController {
 
         //获取订单信息
         $order = XlbOrderModel::getInstance()->getOrderById($order_id);
-        $ret = $this->openCabi((int)$cabi_id, (int)$cs_id);
+        $ret = $this->openCabi((int)$cabi_id, (int)$cs_id, 2);
         if ($ret === false) {
             //修改格子状态
             $this->modifySpace($cs_id, array('cs_status'=>0));
@@ -96,11 +96,13 @@ class CabiController extends XlbController {
         }
 
         //开柜子
-        $ret = $this->openCabi((int)$bookinfo['cabi_id'], (int)$cs_id);
+        $ret = $this->openCabi((int)$bookinfo['cabi_id'], (int)$cs_id, 1);
         if ($ret === false) {
             //更新订单详情
             XlbOrderBookDetailModel::getInstance()
                 ->editData($obd_id, array('obd_status'=>0));
+            $xom->rollBack();
+            $this->xlb_ret(0, '开柜失败');
         }
         $xom->commit();
         $this->xlb_ret(1, '开柜成功');
@@ -204,9 +206,10 @@ class CabiController extends XlbController {
      * 开柜子操作
      * @param $cabi_id
      * @param $cs_id
+     * @param $event
      * @return bool
      */
-    protected function openCabi($cabi_id, $cs_id) {
+    protected function openCabi($cabi_id, $cs_id, $event) {
         //判断大端、小端
         define('BIG_ENDIAN', pack('L', 1) === pack('N', 1));
 
@@ -215,14 +218,12 @@ class CabiController extends XlbController {
         $cmd['serviceId']   = md5(uniqid());
         $cmd['cabinet']     = $cabi_id;
         $cmd['lattice']     = $cs_id;
-        $cmd['ctrl']        = 1;
+        $cmd['event']       = $event;
 
-        //make cmd json str
         $cmdstr = json_encode($cmd);
-        /*$cmdlen = strlen($cmdstr);
-        $pack = pack('s', $cmdlen);
-        $pack .= $cmdstr;*/
         $pack  = $cmdstr;
+
+        self::write_log($pack);
 
         //get server address
         $config = Zend_Registry::get('config');
@@ -241,21 +242,13 @@ class CabiController extends XlbController {
         if ($nret <= 0) {
             return false;
         }
+
         //recv pack
         $buf = @socket_read($socket, 1024);
-        /*$int = unpack('s', $buf);
-        $short = $int[1];
-        $ushort = ($short & 0xff) << 8 | ($short >> 8) & 0xff;
-        $buff = @socket_read($socket, $ushort, PHP_NORMAL_READ);*/
+        self::write_log($buf);
+
         $res = json_decode($buf, true);
-        $cabinet = $res['cabinet'];
-        $lattice = $res['lattice'];
-        $status  = $res['status'];
-        $bookId  = $res['bookId'];
-        if ($cabi_id == $cabinet && $cs_id == $lattice && $status == 2) {
-            return $bookId;
-        }
-        return false;
+        return $res;
     }
 
     /**
@@ -264,7 +257,7 @@ class CabiController extends XlbController {
      * @param $cs_id
      */
     public function openAction($cabi_id, $cs_id) {
-        if (false === $this->openCabi($cabi_id, $cs_id)) {
+        if (false === $this->openCabi($cabi_id, $cs_id, 2)) {
             $this->xlb_ret(0, '打开柜子失败');
         }
         $this->xlb_ret(1, '打开成功');
