@@ -388,6 +388,13 @@ class UserController extends XlbController
         foreach ($rows['rows'] as &$row) {
             $_time = $row['order_createtime'];
             $row['order_createtime'] = date('Y-m-d H:i:s', $_time);
+            $_time = (int)$row['obd_returntime'];
+            if ($_time != 0) {
+                $row['obd_returntime'] = date('Y-m-d H:i:s', $_time);
+            }
+            else {
+                $row['obd_returntime'] = null;
+            }
         }
         $this->xlb_ret(1, '', $rows);
 

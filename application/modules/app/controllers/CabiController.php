@@ -20,7 +20,7 @@ class CabiController extends XlbController {
 
         //获取柜子ID
         $cabi_id = $this->getParam('cabi_id', 0);
-        if ($order_id == 0) {
+        if ($cabi_id == 0) {
             $this->xlb_ret(0, '柜子ID不能为空');
         }
 
@@ -44,7 +44,10 @@ class CabiController extends XlbController {
             $this->xlb_ret(0, '开柜失败');
         }
         //修改绘本订单状态
-        $this->modifyOrderBookDetail((int)$order['obd_id'], array('obd_status'=>3));
+        $this->modifyOrderBookDetail((int)$order['obd_id'], array('obd_status'=>3, 'obd_returntime'=>time()));
+
+        //修改共享绘本状态
+        $this->modifyShare($order['sb_id'], array('sb_status'=>1));
 
         $this->xlb_ret(1, '开柜成功', $order);
     }
@@ -74,25 +77,25 @@ class CabiController extends XlbController {
         //创建订单
         if ($this->createOrder($xom, $order_no) < 0) {
             $xom->rollBack();
-            $this->xlb_ret(0, '开柜失败');
+            $this->xlb_ret(0, '开柜失败, errcode: 1');
         }
 
         //创建订单详情
         if (($obd_id = $this->createOrderDetail($xom, $order_no, $bookinfo)) < 0) {
             $xom->rollBack();
-            $this->xlb_ret(0, '开柜失败');
+            $this->xlb_ret(0, '开柜失败, errcode: 2');
         }
 
         //修改格子状态
         if ($this->modifySpace($cs_id, array('cs_status'=>0)) === false) {
             $xom->rollBack();
-            $this->xlb_ret(0, '开柜失败');
+            $this->xlb_ret(0, '开柜失败, errcode: 3');
         }
 
         //修改共享绘本状态
         if ($this->modifyShare($bookinfo['sb_id'], array('sb_status'=>2)) == false) {
             $xom->rollBack();
-            $this->xlb_ret(0, '开柜失败');
+            $this->xlb_ret(0, '开柜失败, errcode: 4');
         }
 
         //开柜子
@@ -102,7 +105,7 @@ class CabiController extends XlbController {
             XlbOrderBookDetailModel::getInstance()
                 ->editData($obd_id, array('obd_status'=>0));
             $xom->rollBack();
-            $this->xlb_ret(0, '开柜失败');
+            $this->xlb_ret(0, '开柜失败, errcode: 5');
         }
         $xom->commit();
         $this->xlb_ret(1, '开柜成功');
@@ -215,9 +218,9 @@ class CabiController extends XlbController {
 
         //make cmd pack
         $cmd['distID']      = 2;
-        $cmd['serviceId']   = md5(uniqid());
-        $cmd['cabinet']     = $cabi_id;
-        $cmd['lattice']     = $cs_id;
+        $cmd['serviceId']   = 0x1234;
+        $cmd['cabinet']     = 0x12345;
+        $cmd['lattice']     = 0x02;
         $cmd['event']       = $event;
 
         $cmdstr = json_encode($cmd);
@@ -244,11 +247,12 @@ class CabiController extends XlbController {
         }
 
         //recv pack
-        $buf = @socket_read($socket, 1024);
-        self::write_log($buf);
+        //$buf = @socket_read($socket, 1024);
+        //self::write_log($buf);
 
-        $res = json_decode($buf, true);
-        return $res;
+        //$res = json_decode($buf, true);
+        //return $res;
+        return true;
     }
 
     /**

@@ -260,6 +260,9 @@
             $('#admin_add_title').html('添加活动');
             $('#admin_add').toggleClass('display-none');
             $('#admin_list').toggleClass('display-none');
+
+            //清空
+            $('#active_picture').remove();
         });
 
         $('#user_back').click(function () {
@@ -299,13 +302,17 @@
                 if (json.code == 0) {
                     jAlert(json.message);
                 } else {
+
+                    //清空
+                    $('#active_picture').remove();
+
                     $('#_id').val(json.data._id);
                     $('#_name').val(json.data._name);
                     $('#_position').val(json.data._position);
                     $('#_begintime').val(json.data._begintime);
                     $('#_endtime').val(json.data._endtime);
                     $('#_link').val(json.data._link);
-                    var str = '<div class="picture">' +
+                    var str = '<div class="picture" id="active_picture">' +
                         '<img id="imghead" border=0 style="width: 77px;height: 77px;"/></div>';
                     $('.upload_input').append(str);
                     _picture = json.data._picture;

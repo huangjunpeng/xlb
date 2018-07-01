@@ -177,6 +177,8 @@ class PayController extends PublicController
                 $this->write_log("支付失败");
                 $m_order['order_status']  = 2;
                 $ret = XlbOrderModel::getInstance()->editData((int)$order['order_id'], $m_order);
+                XlbOrderModel::getInstance()->commit();
+
                 self::write_log($ret);
                 goto payend;
             }
@@ -195,6 +197,7 @@ class PayController extends PublicController
             $user = XlbUserInfoModel::getInstance()->getRowByID((int)$order['u_id']);
             if (empty($user)) {
                 self::write_log("获取用户信息失败");
+                XlbOrderModel::getInstance()->rollBack();
                 goto payend;
             }
             $user = $user->toArray()[0];
@@ -294,7 +297,7 @@ class PayController extends PublicController
             XlbUserPayrecoryModel::getInstance()->insert($payrecord);
             XlbOrderModel::getInstance()->commit();
 payend:
-            XlbOrderModel::getInstance()->rollBack();
+            self::write_log('success');
             echo "success";
         }else {
             $this->write_log('校验失败');
