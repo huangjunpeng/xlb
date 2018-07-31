@@ -373,7 +373,7 @@ class UserController extends XlbController
     public function xrmAction() {
         //获取用户押金
         $u_deposit = (double)$this->user['u_deposit'];
-        if ($u_deposit <= 0) {
+        if (bccomp($u_deposit, 0, 2) <= 0) {
             $this->xlb_ret(0, '未交押金');
         }
         $order = XlbOrderModel::getInstance()->getDepositOrderByUid($this->uid);
