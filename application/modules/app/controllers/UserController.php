@@ -241,10 +241,14 @@ class UserController extends XlbController
             $this->xlb_ret(0, '订单类型错误');
         }
 
-        //金额
-        $amount = (double)$this->getParam('amount');
-        if (empty($amount)) {
-            $this->xlb_ret(0, '充值金额不能为空');
+        if ($order_type == 3) {
+            $amount = 49;
+        } else {
+            //金额
+            $amount = (double)$this->getParam('amount', 0);
+            if ($order_type != 1 && $order_type != 4 && empty($amount)) {
+                $this->xlb_ret(0, '充值金额不能为空');
+            }
         }
 
         if ($order_type == 1) {
@@ -252,9 +256,15 @@ class UserController extends XlbController
             if (empty($order_no)) {
                 $this->xlb_ret(0, '订单编号不能为空');
             }
+            $_order = XlbOrderModel::getInstance()->getOrderByOrderNo($order_no, $order_type);
+            if (empty($_order)) {
+                $this->xlb_ret(0, '获取订单失败');
+            }
+            $amount = (double)$_order['order_amount_total'];
         } else {
             //充值、押金、会员生成订单
             $order_no = CabiController::build_order_no();
+
             $order = array(
                 'order_type' => $order_type,
                 'order_createtime' => time(),
@@ -264,12 +274,32 @@ class UserController extends XlbController
                 'order_amount_total' => $amount
             );
 
+            if ($order_type == 4) {
+                $mc_id = $this->getParam('mc_id', 0);
+                if (empty($mc_id)) {
+                    $this->xlb_ret(0, '会员卡ID不能为空');
+                }
+                $mc = XlbMemberCardModel::getInstance()->getById($mc_id);
+                if (empty($mc)) {
+                    $this->xlb_ret(0, '获取会员卡信息失败');
+                }
+
+                $mc['_price'] = 0.01;
+
+                $order['mc_id'] = $mc_id;
+                $order['order_amount_total'] = (double)$mc['_price'];
+                $amount = (double)$mc['_price'];
+            }
+
+
             //插入数据库
             $id = XlbOrderModel::getInstance()->insert($order);
             if ($id <=0 || empty($id) || $id === false) {
                 $this->xlb_ret(0, '创建订单失败');
             }
         }
+
+
 
         //签名数组
         $sign_order = array(
@@ -314,7 +344,7 @@ class UserController extends XlbController
         if ($amount > $u_balance) {
             $this->xlb_ret(0, '余额不足');
         }
-        $u_balance = bcsub($u_balance, $amount, 2);
+        $u_balance = (double)$u_balance - (double)$amount;
         $m_user['u_balance'] = $u_balance;
         $ret = XlbUserInfoModel::getInstance()->editData($this->uid, $m_user);
         if ($ret != 1) {
@@ -329,6 +359,16 @@ class UserController extends XlbController
         if ($ret != 1) {
             $this->xlb_ret(0, '支付失败');
         }
+
+        //支付记录
+        $payrecord['record_pay_value'] = $amount;
+        $payrecord['record_pay_date']  = time();
+        $payrecord['record_pay_method'] = 1;
+        $payrecord['u_id'] = $this->uid;
+        $payrecord['order_id'] = $order_no;
+        $payrecord['record_des'] = '余额支付';
+        $payrecord['record_type'] = 2;
+        XlbUserPayrecoryModel::getInstance()->insert($payrecord);
 
         $this->xlb_ret(1, '', $m_user);
     }
@@ -348,6 +388,13 @@ class UserController extends XlbController
         foreach ($rows['rows'] as &$row) {
             $_time = $row['order_createtime'];
             $row['order_createtime'] = date('Y-m-d H:i:s', $_time);
+            $_time = (int)$row['obd_returntime'];
+            if ($_time != 0) {
+                $row['obd_returntime'] = date('Y-m-d H:i:s', $_time);
+            }
+            else {
+                $row['obd_returntime'] = null;
+            }
         }
         $this->xlb_ret(1, '', $rows);
 
@@ -357,14 +404,20 @@ class UserController extends XlbController
      * 我的会员卡列表
      */
     public function xmlAction() {
-        $rows = XlbUserMemberCard::getInstance()->getMemberByUid(1);
-        foreach ($rows as &$row) {
-            $_time = $row['umc_begintime'];
-            $row['umc_begintime'] = date('Y-m-d H:i:s', $_time);
-            $_time = $row['umc_endtime'];
-            $row['umc_endtime'] = date('Y-m-d H:i:s', $_time);
+
+        $user = XlbUserInfoModel::getInstance()->getRowByID((int)$this->uid);
+        if (empty($user)) {
+            self::write_log("获取用户信息失败");
         }
-        $this->xlb_ret(1, '', $rows);
+        $user = $user->toArray()[0];
+        if ($user['u_type'] == 1) {
+            $row = null;
+        } else {
+            $_time = (int)$user['u_vip_endtime'];
+            $row['umc_endtime'] = date('Y年m月d日', $_time);
+            $row['expired'] = $_time <= time() ? true : false;
+        }
+        $this->xlb_ret(1, '', $row);
     }
 
     /**
@@ -380,11 +433,18 @@ class UserController extends XlbController
         if (empty($order)) {
             $this->xlb_ret(0, '获取押金订单失败');
         }
-        $order_no = $order['order_no'];
-        $data['order_no'] = $order_no;
         //退款流程
-
-        $this->xlb_ret(1, '退款成功', $data);
+        $response = PayController::refund($order['order_no'], $order['order_amount_total']);
+        if ($response->msg != 'Business Failed') {
+            XlbUserInfoModel::getInstance()->editData(
+                (int)$this->uid,
+                array('u_deposit'=>0)
+            );
+            $this->xlb_ret(1, '退款成功');
+        }
+        else {
+            $this->xlb_ret(0, '退款失败' . $response->sub_msg);
+        }
     }
 
     /**

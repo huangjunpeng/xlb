@@ -20,7 +20,7 @@ class CabiController extends XlbController {
 
         //获取柜子ID
         $cabi_id = $this->getParam('cabi_id', 0);
-        if ($order_id == 0) {
+        if ($cabi_id == 0) {
             $this->xlb_ret(0, '柜子ID不能为空');
         }
 
@@ -37,14 +37,17 @@ class CabiController extends XlbController {
 
         //获取订单信息
         $order = XlbOrderModel::getInstance()->getOrderById($order_id);
-        $ret = $this->openCabi((int)$cabi_id, (int)$cs_id);
+        $ret = $this->openCabi((int)$cabi_id, (int)$cs_id, 2);
         if ($ret === false) {
             //修改格子状态
             $this->modifySpace($cs_id, array('cs_status'=>0));
             $this->xlb_ret(0, '开柜失败');
         }
         //修改绘本订单状态
-        $this->modifyOrderBookDetail((int)$order['obd_id'], array('obd_status'=>3));
+        $this->modifyOrderBookDetail((int)$order['obd_id'], array('obd_status'=>3, 'obd_returntime'=>time()));
+
+        //修改共享绘本状态
+        $this->modifyShare($order['sb_id'], array('sb_status'=>1));
 
         $this->xlb_ret(1, '开柜成功', $order);
     }
@@ -74,33 +77,35 @@ class CabiController extends XlbController {
         //创建订单
         if ($this->createOrder($xom, $order_no) < 0) {
             $xom->rollBack();
-            $this->xlb_ret(0, '开柜失败');
+            $this->xlb_ret(0, '开柜失败, errcode: 1');
         }
 
         //创建订单详情
         if (($obd_id = $this->createOrderDetail($xom, $order_no, $bookinfo)) < 0) {
             $xom->rollBack();
-            $this->xlb_ret(0, '开柜失败');
+            $this->xlb_ret(0, '开柜失败, errcode: 2');
         }
 
         //修改格子状态
         if ($this->modifySpace($cs_id, array('cs_status'=>0)) === false) {
             $xom->rollBack();
-            $this->xlb_ret(0, '开柜失败');
+            $this->xlb_ret(0, '开柜失败, errcode: 3');
         }
 
         //修改共享绘本状态
         if ($this->modifyShare($bookinfo['sb_id'], array('sb_status'=>2)) == false) {
             $xom->rollBack();
-            $this->xlb_ret(0, '开柜失败');
+            $this->xlb_ret(0, '开柜失败, errcode: 4');
         }
 
         //开柜子
-        $ret = $this->openCabi((int)$bookinfo['cabi_id'], (int)$cs_id);
+        $ret = $this->openCabi((int)$bookinfo['cabi_id'], (int)$cs_id, 1);
         if ($ret === false) {
             //更新订单详情
             XlbOrderBookDetailModel::getInstance()
                 ->editData($obd_id, array('obd_status'=>0));
+            $xom->rollBack();
+            $this->xlb_ret(0, '开柜失败, errcode: 5');
         }
         $xom->commit();
         $this->xlb_ret(1, '开柜成功');
@@ -204,25 +209,24 @@ class CabiController extends XlbController {
      * 开柜子操作
      * @param $cabi_id
      * @param $cs_id
+     * @param $event
      * @return bool
      */
-    protected function openCabi($cabi_id, $cs_id) {
+    protected function openCabi($cabi_id, $cs_id, $event) {
         //判断大端、小端
         define('BIG_ENDIAN', pack('L', 1) === pack('N', 1));
 
         //make cmd pack
         $cmd['distID']      = 2;
-        $cmd['serviceId']   = md5(uniqid());
-        $cmd['cabinet']     = $cabi_id;
-        $cmd['lattice']     = $cs_id;
-        $cmd['ctrl']        = 1;
+        $cmd['serviceId']   = 0x1234;
+        $cmd['cabinet']     = 0x12345;
+        $cmd['lattice']     = 0x02;
+        $cmd['event']       = $event;
 
-        //make cmd json str
         $cmdstr = json_encode($cmd);
-        /*$cmdlen = strlen($cmdstr);
-        $pack = pack('s', $cmdlen);
-        $pack .= $cmdstr;*/
         $pack  = $cmdstr;
+
+        self::write_log($pack);
 
         //get server address
         $config = Zend_Registry::get('config');
@@ -241,21 +245,14 @@ class CabiController extends XlbController {
         if ($nret <= 0) {
             return false;
         }
+
         //recv pack
-        $buf = @socket_read($socket, 1024);
-        /*$int = unpack('s', $buf);
-        $short = $int[1];
-        $ushort = ($short & 0xff) << 8 | ($short >> 8) & 0xff;
-        $buff = @socket_read($socket, $ushort, PHP_NORMAL_READ);*/
-        $res = json_decode($buf, true);
-        $cabinet = $res['cabinet'];
-        $lattice = $res['lattice'];
-        $status  = $res['status'];
-        $bookId  = $res['bookId'];
-        if ($cabi_id == $cabinet && $cs_id == $lattice && $status == 2) {
-            return $bookId;
-        }
-        return false;
+        //$buf = @socket_read($socket, 1024);
+        //self::write_log($buf);
+
+        //$res = json_decode($buf, true);
+        //return $res;
+        return true;
     }
 
     /**
@@ -264,7 +261,7 @@ class CabiController extends XlbController {
      * @param $cs_id
      */
     public function openAction($cabi_id, $cs_id) {
-        if (false === $this->openCabi($cabi_id, $cs_id)) {
+        if (false === $this->openCabi($cabi_id, $cs_id, 2)) {
             $this->xlb_ret(0, '打开柜子失败');
         }
         $this->xlb_ret(1, '打开成功');

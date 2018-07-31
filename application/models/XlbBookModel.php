@@ -134,8 +134,9 @@ class XlbBookModel extends Xlb
                 'describe'=>'b_describe',
                 'picture'=>'b_picture',
                 'score'=>'b_score'));
+        $select->joinLeft(array('t1'=>$table_1),'t.b_id=t1.b_id', array('sb_id', 'sb_status'));
         if (0 != $cs_id) {
-            $select->join(array('t1'=>$table_1),'t.b_id=t1.b_id', array('sb_id'))
+            $select //->join(array('t1'=>$table_1),'t.b_id=t1.b_id', array('sb_id', 'sb_status'))
                 ->join(array('t2'=>$table_2),'t2.sb_id=t1.sb_id', array('cs_id'))
                 ->join(array('t3'=>$table_3),'t3.cabi_id=t2.cabi_id', array(
                     'cabi_desc',
@@ -152,9 +153,9 @@ class XlbBookModel extends Xlb
             ->getCategoryByBId(array($row['id']));
         $row['theme'] = $types[$row['id']];
         $comment = XlbCommentModel::getInstance()
-            ->getCommentByBookId($b_id, 1, 1);
+            ->getCommentByBookId($b_id, 1, 3);
         if (count($comment['rows']) > 0) {
-            $row['comment'] = $comment['rows'][0];
+            $row['comment'] = $comment['rows'];
         } else {
             $row['comment'] = null;
         }

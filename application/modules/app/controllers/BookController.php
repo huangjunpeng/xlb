@@ -140,8 +140,11 @@ class BookController extends PublicController
             $this->xlb_ret(0, '绘本未找到');
         }
 
+        $long = empty((double)$this->_getParam('long')) ? 0 : (double)$this->_getParam('long');
+        $lat  = empty((double)$this->_getParam('lat')) ? 0 : (double)$this->_getParam('lat');
+
         //柜子列表
-        $cabis = XlbShareBookModel::getInstance()->getList($b_id, $cs_id);
+        $cabis = XlbShareBookModel::getInstance()->getList($b_id, $long, $lat);
         if (empty($cabis)) {
             $row['cabis'] = null;
         } else {
