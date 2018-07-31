@@ -75,7 +75,7 @@ class XlbShareBookModel extends Xlb
                 'cabi_lat' => 't3.cabi_lat'
             ))
             //->order('_distance ASC')
-            ->order(' t1.name DESC')
+            ->order('t1.b_name DESC')
             ->where('t.sb_status=?',$status)
             ->limitPage($page, $pagesize);
         $rows = $this->getAdapter()->fetchAll($select);
