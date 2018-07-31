@@ -119,7 +119,7 @@ class XlbController extends PublicController
         if (is_null($row)) {
             $this->xlb_ret(0, '用户不存在');
         }
-        $this->user = $row->toArray();
+        $this->user = $row->toArray()[0];
         return true;
     }
 }

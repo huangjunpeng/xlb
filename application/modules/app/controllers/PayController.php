@@ -175,6 +175,11 @@ class PayController extends PublicController
             //获取支付状态
             if("TRADE_SUCCESS" != @$_POST['trade_status']){
                 $this->write_log("支付失败");
+                XlbMessageModel::getInstance()->addMessage("支付",
+                    XlbMessageModel::$_sysmsg[XlbMessageModel::PAYMENT_FAILED_MESSAGE],
+                    2,
+                    $order['u_id']
+                );
                 $m_order['order_status']  = 2;
                 $ret = XlbOrderModel::getInstance()->editData((int)$order['order_id'], $m_order);
                 XlbOrderModel::getInstance()->commit();
@@ -218,6 +223,12 @@ class PayController extends PublicController
                     $payrecord['record_des'] = '借书消费';
                     $payrecord['record_type'] = 2;
 
+                    XlbMessageModel::getInstance()->addMessage("支付",
+                        XlbMessageModel::$_sysmsg[XlbMessageModel::PAYMENT_SUCCESS_MESSAGE],
+                        2,
+                        $order['u_id']
+                    );
+
                     break;
                 case 2:
                     //充值成功，修改用户余额
@@ -235,6 +246,11 @@ class PayController extends PublicController
                             array('u_balance'=>$u_balance)
                         );
                         self::write_log($ret);
+                        XlbMessageModel::getInstance()->addMessage("支付",
+                            XlbMessageModel::$_sysmsg[XlbMessageModel::PAYMENT_SUCCESS_MESSAGE],
+                            2,
+                            $order['u_id']
+                        );
                     }
                     break;
                 case 3:
@@ -251,6 +267,11 @@ class PayController extends PublicController
                             array('u_deposit'=>$u_deposit)
                         );
                         self::write_log($ret);
+                        XlbMessageModel::getInstance()->addMessage("押金",
+                            XlbMessageModel::$_sysmsg[XlbMessageModel::PAYMENT_DEPOSIT_MESSAGE],
+                            2,
+                            $order['u_id']
+                        );
                     }
                     break;
                 case 4:
@@ -291,6 +312,11 @@ class PayController extends PublicController
                         self::write_log($ret);
 
                         self::write_log('修改用户会员到期时间');
+                        XlbMessageModel::getInstance()->addMessage("会员",
+                            XlbMessageModel::$_sysmsg[XlbMessageModel::PAYMENT_MEMBER_MESSAGE],
+                            2,
+                            $order['u_id']
+                        );
                     }
                     break;
             }

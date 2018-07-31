@@ -425,7 +425,7 @@ class UserController extends XlbController
      */
     public function xrmAction() {
         //获取用户押金
-        $u_deposit = (double)$this->user['u_deposit'];
+        $u_deposit = doubleval($this->user['u_deposit']);
         if (bccomp($u_deposit, 0, 2) <= 0) {
             $this->xlb_ret(0, '未交押金');
         }
@@ -433,6 +433,7 @@ class UserController extends XlbController
         if (empty($order)) {
             $this->xlb_ret(0, '获取押金订单失败');
         }
+
         //退款流程
         $response = PayController::refund($order['order_no'], $order['order_amount_total']);
         if ($response->msg != 'Business Failed') {
@@ -440,6 +441,13 @@ class UserController extends XlbController
                 (int)$this->uid,
                 array('u_deposit'=>0)
             );
+
+            XlbMessageModel::getInstance()->addMessage("押金",
+                XlbMessageModel::$_sysmsg[XlbMessageModel::RETURN_DEPOSIT_MESSAGE],
+                2,
+                $this->uid
+            );
+
             $this->xlb_ret(1, '退款成功');
         }
         else {
@@ -479,5 +487,32 @@ class UserController extends XlbController
             $row['record_type'] = $_type == 1 ? '+' : '-';
         }
         $this->xlb_ret(1, '', $rows);
+    }
+
+    /**
+     * 我的消息
+     */
+    public function umlAction() {
+        $page       = $this->getParam('page', 1);
+        $pagenum    = $this->getParam('pagenum', 20);
+        $status     = (int)$this->_getParam('type', 1);
+        $rows       = XlbMessageModel::getInstance()
+            ->getMessageByuid($this->uid, $status, $page, $pagenum);
+        foreach ($rows['rows'] as &$row) {
+            $row['m_creattime'] = date('Y-m-d H:i:s', $row['m_creattime']);
+        }
+        $this->xlb_ret(1, '', $rows);
+    }
+
+    /**
+     * 设置我的消息已读
+     */
+    public function umrAction() {
+        $id  = $this->getParam('id', 0);
+        if (empty($id)) {
+            $this->xlb_ret(0, "消息id不能为空");
+        }
+        $ret = XlbMessageModel::getInstance()->setRead($id);
+        $this->xlb_ret(1, '设置成功', $ret);
     }
 }
