@@ -1,0 +1,27 @@
+2018-01-09 15:39:13  array (
+  'gmt_create' => '2018-01-09 15:39:02',
+  'charset' => 'UTF-8',
+  'gmt_payment' => '2018-01-09 15:39:13',
+  'notify_time' => '2018-01-09 15:39:13',
+  'subject' => '测试',
+  'sign' => 'dtdTVSOHj2eHFPdyM3VQbUSfObIUylXFYFua1jKUe99hkXgyXfwpiZA4RID3EFIeSmb92Bnl59TexlLE+nuW+vHxO98vfCe/iGVfX9RuBREcTTjEuEDJN+TZHpwtf9ZO4cIjo1beAtJTQxKlPbSkDGjiFxeaPQPuUI9uD+159tE=',
+  'buyer_id' => '2088702518161085',
+  'invoice_amount' => '0.01',
+  'version' => '1.0',
+  'notify_id' => 'b958a94f8695a205832d04dacf35111gmd',
+  'fund_bill_list' => '[{"amount":"0.01","fundChannel":"ALIPAYACCOUNT"}]',
+  'notify_type' => 'trade_status_sync',
+  'out_trade_no' => '20181915401511',
+  'total_amount' => '0.01',
+  'trade_status' => 'TRADE_SUCCESS',
+  'trade_no' => '2018010921001004080548647188',
+  'auth_app_id' => '2017081608219300',
+  'receipt_amount' => '0.01',
+  'point_amount' => '0.00',
+  'app_id' => '2017081608219300',
+  'buyer_pay_amount' => '0.01',
+  'sign_type' => 'RSA',
+  'seller_id' => '2088221312206887',
+)
+2018-01-09 15:39:13  array (
+)

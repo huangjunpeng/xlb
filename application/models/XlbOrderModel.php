@@ -115,6 +115,8 @@ class XlbOrderModel extends Xlb
      */
     public function getOrderListByStatus($page, $pagesize, $_status, $uid) {
         $table_1 = XlbOrderBookDetailModel::getInstance()->getDbName();
+        $table_2 = XlbBookModel::getInstance()->getDbName();
+        $table_3 = XlbShareBookModel::getInstance()->getDbName();
         $select = $this->getAdapter()->select();
         $select->from(array('t'=>$this->_name),'count(*)')
             ->join(array('t1'=>$table_1), 't.order_no=t1.order_no', array())
@@ -143,6 +145,27 @@ class XlbOrderModel extends Xlb
                     'sb_share_price',
                     'b_id'
                 ))
+                ->join(array('t2'=>$table_2), 't1.b_id=t2.b_id',
+                    array(
+                        'b_name',
+                        'b_age_reading',
+                        'b_author',
+                        'b_press',
+                        'b_press_data',
+                        'b_languages',
+                        'b_describe',
+                        'b_isbn',
+                        'b_picture',
+                        'b_score'
+                    ))
+                ->joinLeft(array('t3'=>$table_3), 't1.b_id=t3.b_id',
+                    array(
+                        'sb_id',
+                        'sb_number',
+                        'sb_share_price',
+                        'sb_creattime',
+                        'sb_status'
+                    ))
                 ->where('t1.obd_status=?', $_status)
                 ->where('t.order_type=?', 1)
                 ->where('t.u_id=?', $uid)

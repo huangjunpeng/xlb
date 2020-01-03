@@ -61,6 +61,7 @@ class XlbController extends PublicController
         if (XLB_DEBUG) {
             return;
         }
+        return;
         $this->log->insert(array(
             'u_id'              => $this->uid,
             'log_ip'            => $this->get_client_ip(),
@@ -88,7 +89,6 @@ class XlbController extends PublicController
      * @return bool
      */
     private function _checkAuth() {
-        return true;
         $act = array(
             XLB_APP     => array('login','sendsms'),
             XLB_ADMIN   => array('login')
@@ -120,7 +120,7 @@ class XlbController extends PublicController
         if (is_null($row)) {
             $this->xlb_ret(0, '用户不存在');
         }
-        $this->user = $row->toArray();
+        $this->user = $row->toArray()[0];
         return true;
     }
 }

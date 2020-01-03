@@ -74,7 +74,8 @@ class XlbShareBookModel extends Xlb
                 'cabi_long' => 't3.cabi_long',
                 'cabi_lat' => 't3.cabi_lat'
             ))
-            ->order('_distance ASC')
+            //->order('_distance ASC')
+            ->order('t1.b_name DESC')
             ->where('t.sb_status=?',$status)
             ->limitPage($page, $pagesize);
         $rows = $this->getAdapter()->fetchAll($select);
@@ -159,10 +160,12 @@ class XlbShareBookModel extends Xlb
     /**
      * 获取附近柜子列表
      * @param $b_id
+     * @param $long
+     * @param $lat
      * @param int $cs_id
      * @return array
      */
-    public function getList($b_id, $cs_id = 0) {
+    public function getList($b_id, $long, $lat,$cs_id = 0) {
         $table_3 = XlbCabinetModel::getInstance()->getDbName();
         $table_2 = XlbCabispaceModel::getInstance()->getDbName();
         $select = $this->getAdapter()->select();
@@ -175,9 +178,11 @@ class XlbShareBookModel extends Xlb
                 '_name' => 't3.cabi_name',
                 '_desc' => 't3.cabi_desc',
                 '_long' => 't3.cabi_long',
-                '_lat' => 't3.cabi_lat'
+                '_lat' => 't3.cabi_lat',
+                '_distance' => 'getDistance(t3.cabi_long, t3.cabi_lat, "' . $long . '", "' . $lat . '")'
             ))
-            ->where('t.b_id=?', $b_id);
+            ->where('t.b_id=?', $b_id)
+            ->order('_distance ASC');
         if ($cs_id != 0) {
             $select->where('t2.cs_id=?', $cs_id);
         }

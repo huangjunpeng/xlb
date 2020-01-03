@@ -1,6 +1,8 @@
 <?php
 require_once XLB_WEB_ROOT.'/alipay/aop/AopClient.php';
 require_once XLB_WEB_ROOT.'/alipay/aop/request/AlipayTradeAppPayRequest.php';
+require_once XLB_WEB_ROOT.'/alipay/aop/request/AlipayTradeRefundRequest.php';
+require_once XLB_WEB_ROOT.'/alipay/aop/SignData.php';
 class PayController extends PublicController
 {
     /**
@@ -106,6 +108,42 @@ class PayController extends PublicController
     }
 
     /**
+     * 退款
+     * @param $order_no
+     * @param $order_amount_total
+     * @return bool|SimpleXMLElement[]
+     */
+    static public function refund($order_no, $order_amount_total) {
+        //初始化
+        $aop = new AopClient;
+        $aop->gatewayUrl            = self::$config['gatewayUrl'];
+        $aop->appId                 = self::$config['app_id'];
+        $aop->rsaPrivateKey         = self::$config['merchant_private_key'];
+        $aop->format                = self::$config['json'];
+        $aop->postCharset           = self::$config['charset'];
+        $aop->signType              = self::$config['sign_type'];
+        $aop->alipayrsaPublicKey    = self::$config['alipay_public_key'];
+        $aop->apiVersion            = "1.0";
+
+
+        $bizContentarr['trade_no']          = "";
+        $bizContentarr['out_trade_no']      = $order_no;
+        $bizContentarr['refund_amount']     = $order_amount_total;
+        $bizContentarr['out_request_no']    = "";
+        $bizContentarr['refund_reason']     = "";
+
+        $request = new AlipayTradeRefundRequest();
+        $request->setBizContent (json_encode($bizContentarr,JSON_UNESCAPED_UNICODE));
+
+        $response = $aop->Execute($request);
+
+        //打开后，将报文写入log文件
+        self::write_log("response: ".var_export($response,true));
+        $response = $response->alipay_trade_refund_response;
+        return $response;
+    }
+
+    /**
      * 异步通知地址
      */
     public function notifyAction() {
@@ -125,6 +163,8 @@ class PayController extends PublicController
             //获取订单编号
             $order_no = @$_POST['out_trade_no'];
 
+            XlbOrderModel::getInstance()->beginTransaction();
+
             //获取订单信息
             $order = XlbOrderModel::getInstance()->getOrderByOrderNo($order_no, $order_type);
             if (empty($order)) {
@@ -135,8 +175,15 @@ class PayController extends PublicController
             //获取支付状态
             if("TRADE_SUCCESS" != @$_POST['trade_status']){
                 $this->write_log("支付失败");
+                XlbMessageModel::getInstance()->addMessage("支付",
+                    XlbMessageModel::$_sysmsg[XlbMessageModel::PAYMENT_FAILED_MESSAGE],
+                    2,
+                    $order['u_id']
+                );
                 $m_order['order_status']  = 2;
                 $ret = XlbOrderModel::getInstance()->editData((int)$order['order_id'], $m_order);
+                XlbOrderModel::getInstance()->commit();
+
                 self::write_log($ret);
                 goto payend;
             }
@@ -148,36 +195,70 @@ class PayController extends PublicController
             $ret = XlbOrderModel::getInstance()->editData((int)$order['order_id'], $m_order);
             self::write_log($ret);
 
+            $this->write_log(var_export(@$order,true));
+
             //获取用户信息
             self::write_log('获取用户信息');
             $user = XlbUserInfoModel::getInstance()->getRowByID((int)$order['u_id']);
             if (empty($user)) {
                 self::write_log("获取用户信息失败");
+                XlbOrderModel::getInstance()->rollBack();
                 goto payend;
             }
-            $user = $user->toArray();
+            $user = $user->toArray()[0];
+            $this->write_log(var_export(@$user,true));
+
+            //支付记录
+            $payrecord['record_pay_value'] = $order['order_amount_total'];
+            $payrecord['record_pay_date']  = time();
+            $payrecord['record_pay_method'] = 2;
+            $payrecord['u_id'] = $order['u_id'];
+            $payrecord['order_id'] = $order['order_id'];
+
 
             switch ($order_type)
             {
                 case 1:
                     //支付成功
+                    $payrecord['record_des'] = '借书消费';
+                    $payrecord['record_type'] = 2;
+
+                    XlbMessageModel::getInstance()->addMessage("支付",
+                        XlbMessageModel::$_sysmsg[XlbMessageModel::PAYMENT_SUCCESS_MESSAGE],
+                        2,
+                        $order['u_id']
+                    );
+
                     break;
                 case 2:
                     //充值成功，修改用户余额
                     {
+                        $payrecord['record_des'] = '余额充值';
+                        $payrecord['record_type'] = 1;
+
                         self::write_log('修改用户余额');
-                        $u_balance = bcadd((double)$user['u_balance'], (double)$order['order_amount_total'], 2);
+                        self::write_log((double)$user['u_balance']);
+                        self::write_log((double)$order['order_amount_total']);
+                        $u_balance = (double)$user['u_balance'] + (double)$order['order_amount_total'];
                         self::write_log($u_balance);
                         $ret = XlbUserInfoModel::getInstance()->editData(
                             (int)$order['u_id'],
                             array('u_balance'=>$u_balance)
                         );
                         self::write_log($ret);
+                        XlbMessageModel::getInstance()->addMessage("支付",
+                            XlbMessageModel::$_sysmsg[XlbMessageModel::PAYMENT_SUCCESS_MESSAGE],
+                            2,
+                            $order['u_id']
+                        );
                     }
                     break;
                 case 3:
                     //押金成功，修改用户押金
                     {
+                        $payrecord['record_des'] = '押金支付';
+                        $payrecord['record_type'] = 1;
+
                         self::write_log('修改用户押金');
                         $u_deposit = (double)$order['order_amount_total'];
                         self::write_log($u_deposit);
@@ -186,16 +267,63 @@ class PayController extends PublicController
                             array('u_deposit'=>$u_deposit)
                         );
                         self::write_log($ret);
+                        XlbMessageModel::getInstance()->addMessage("押金",
+                            XlbMessageModel::$_sysmsg[XlbMessageModel::PAYMENT_DEPOSIT_MESSAGE],
+                            2,
+                            $order['u_id']
+                        );
                     }
                     break;
                 case 4:
                     //会员成功，修改用户会员到期时间，修改订单状态
                     {
+                        $payrecord['record_des'] = '购买会员';
+                        $payrecord['record_type'] = 2;
+
+                        //获取会员卡
+                        $mc_id = $order['mc_id'];
+                        self::write_log($mc_id);
+                        $mc = XlbMemberCardModel::getInstance()->getById($mc_id);
+                        self::write_log(var_export($mc, true));
+                        $_time = (int)$mc['_effective_time'] * 24 * 60 * 60;
+                        self::write_log($_time);
+
+                        $umc_begintime = (int)$user['u_vip_endtime'] > 0 ? (int)$user['u_vip_endtime'] : time();
+
+                        $u_vip_endtime = $umc_begintime + $_time;
+                        self::write_log($u_vip_endtime);
+
+                        $data['u_vip_endtime'] = $u_vip_endtime;
+                        if ($user['u_type'] == 1) {
+                            $data['u_type'] = 2;
+                        }
+
+                        $ret = XlbUserInfoModel::getInstance()->editData(
+                            (int)$order['u_id'],
+                            $data
+                        );
+                        self::write_log($ret);
+                        $umc['u_id'] = (int)$order['u_id'];
+                        $umc['mc_id'] = $mc_id;
+                        $umc['umc_begintime'] = $umc_begintime;
+                        $umc['umc_endtime'] = $u_vip_endtime;
+
+                        $ret = XlbUserMemberCard::getInstance()->insert($umc);
+                        self::write_log($ret);
+
                         self::write_log('修改用户会员到期时间');
+                        XlbMessageModel::getInstance()->addMessage("会员",
+                            XlbMessageModel::$_sysmsg[XlbMessageModel::PAYMENT_MEMBER_MESSAGE],
+                            2,
+                            $order['u_id']
+                        );
                     }
                     break;
             }
+            XlbUserPayrecoryModel::getInstance()->insert($payrecord);
+            XlbOrderModel::getInstance()->commit();
 payend:
+            self::write_log('success');
             echo "success";
         }else {
             $this->write_log('校验失败');

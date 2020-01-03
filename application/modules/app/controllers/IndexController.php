@@ -46,6 +46,14 @@ class IndexController extends PublicController
             $u_nickname = $user['u_nickname'];
         }
 
+        if ($firstlogin) {
+            XlbMessageModel::getInstance()->addMessage("注册",
+                XlbMessageModel::$_sysmsg[XlbMessageModel::REGISTER_MESSAGE],
+                1,
+                $uid
+            );
+        }
+
         //生成token
         $token = Tools::getEncodeUid(XLB_APP.';'.$uid);
         $ret = array(

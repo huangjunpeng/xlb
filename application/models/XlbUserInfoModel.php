@@ -56,7 +56,8 @@ class XlbUserInfoModel extends Xlb
                 'uid'=>'u_id',
                 'nickname'=>'u_nickname',
                 'mobile'=>'u_mobile',
-                'picture'=>'u_picture'
+                'picture'=>'u_picture',
+                'type' => 'u_type'
             ))
             ->where('u_id=?',$u_id);
         $row = $this->getAdapter()->fetchRow($select);
