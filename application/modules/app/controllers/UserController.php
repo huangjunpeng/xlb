@@ -427,10 +427,9 @@ class UserController extends XlbController
 
         //获取用户押金
         $u_deposit = doubleval($this->user['u_deposit']);
-        if ($u_deposit <= 0) {
+        if (bccomp($u_deposit, 0, 2) <= 0) {
             $this->xlb_ret(0, '未交押金');
         }
-
         $order = XlbOrderModel::getInstance()->getDepositOrderByUid($this->uid);
         if (empty($order)) {
             $this->xlb_ret(0, '获取押金订单失败');
